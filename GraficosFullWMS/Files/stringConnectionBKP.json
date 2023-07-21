@@ -1,0 +1,24 @@
+[
+  {
+    "server": "172.25.100.247",
+    "porta": "1521",
+    "dataBase": "full11g",
+    "usuario": "r22sp11",
+    "senha": "r22sp11"
+  },
+  {
+    "server": "172.25.100.247",
+    "porta": "1521",
+    "dataBase": "full11g",
+    "usuario": "r22sp11_felipe",
+    "senha": "r22sp11_felipe"
+  }
+][
+  {
+    "server": "172.25.100.250",
+    "porta": "1521",
+    "dataBase": "oracle12c",
+    "usuario": "giassi",
+    "senha": "giassi"
+  }
+]

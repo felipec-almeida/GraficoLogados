@@ -9,6 +9,7 @@ namespace GraficosFullWMS
         public string DataInicio { get; private set; }
         public string DataFim { get; private set; }
         public int UsuarioId { get; private set; }
+        public int codEmpresa { get; private set; }
 
         public Form3()
         {
@@ -51,11 +52,13 @@ namespace GraficosFullWMS
             }
 
             string idUsuario = CodUsuario.Text;
+            string codEmp = CodEmpresa.Text;
 
-            if (idUsuario != null)
+            if (idUsuario != null && codEmp != null)
             {
 
                 UsuarioId = int.Parse(idUsuario);
+                codEmpresa = int.Parse(codEmp);
 
             }
 

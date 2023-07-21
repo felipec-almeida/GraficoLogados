@@ -1,15 +1,16 @@
-﻿using Oracle.ManagedDataAccess.Client;
+﻿using GraficosFullWMS.Classes;
+using GraficosFullWMS.Dominio.File;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
+using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
-
 
 namespace GraficosFullWMS
 {
@@ -17,14 +18,22 @@ namespace GraficosFullWMS
     {
 
         public string ConnectionStringResult { get; private set; }
+
+        private Connections connectionsSave = new Connections();
+        private FileOperations<List<ConnectionSave>> fileOperations;
+
         public Form2()
         {
+
             InitializeComponent();
             Senha.UseSystemPasswordChar = true;
 
             //Texto padrão.
             portaConexao.Text = "Porta padrão: 1521";
             portaConexao.ForeColor = Color.Gray;
+            fileOperations = new FileOperations<List<ConnectionSave>>(Path.Combine(Directory.GetCurrentDirectory(), "Files", "stringConnection.json"));
+
+            JsonReaderFile();
 
         }
 
@@ -53,11 +62,6 @@ namespace GraficosFullWMS
             string usuario = NomeUsuario.Text;
             string senha = Senha.Text;
 
-            //string server = "172.25.100.247";
-            //string dataBase = "full11g";
-            //string usuario = "r22sp11";
-            //string senha = "r22sp11";
-
             string connectionString = $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={server})(PORT={porta}))(CONNECT_DATA=(SERVICE_NAME={dataBase})));User Id={usuario};Password={senha};";
 
             try
@@ -66,9 +70,10 @@ namespace GraficosFullWMS
                 using (OracleConnection connection = new OracleConnection(connectionString))
                 {
 
+                    connection.Open();
                     MessageBox.Show("Conexão feita com sucesso!");
                     ConnectionStringResult = connectionString;
-                    this.Close();
+                    connection.Close();
 
 
                 }
@@ -86,51 +91,44 @@ namespace GraficosFullWMS
 
         private void Form2_Load(object sender, EventArgs e)
         {
-
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void ConnectionSaveDataBase(object sender, EventArgs e)
         {
 
-            string porta;
+            string Porta = portaConexao.Text;
 
-            if (portaConexao.Text == null && portaConexao.Text == "Porta padrão: 1521")
+            if (Porta == "Porta padrão: 1521")
             {
 
                 MessageBox.Show("Importante - Nenhuma porta inserida, setando porta padrão: 1521", "Importante", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 portaConexao.Text = "1521";
-                porta = portaConexao.Text;
-
-            }
-            else
-            {
-
-                porta = portaConexao.Text;
+                Porta = portaConexao.Text;
 
             }
 
-            string server = NomeServidor.Text;
-            string dataBase = NomeDataBase.Text;
-            string usuario = NomeUsuario.Text;
-            string senha = Senha.Text;
+            string Server = NomeServidor.Text;
+            string DataBase = NomeDataBase.Text;
+            string Usuario = NomeUsuario.Text;
+            string UsuarioSenha = Senha.Text;
 
-            ConnectionSave conexao = new ConnectionSave
+            if (comboBoxConnections.SelectedIndex >= 0 && this.connectionsSave.connections.FirstOrDefault(x => x.usuario == comboBoxConnections.SelectedItem.ToString()) != null)
             {
 
-                server = server,
-                porta = porta,
-                dataBase = dataBase,
-                usuario = usuario,
-                senha = senha
+                MessageBox.Show("Erro - Já existe uma base salva com este mesmo nome, tente novamente!", "Erro ao Conectar", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
 
-            };
+            }
 
-            //string server = "172.25.100.247";
-            //string dataBase = "full11g";
-            //string usuario = "r22sp11";
-            //string senha = "r22sp11";
+            ConnectionSave connectionJSON = new ConnectionSave(Server, Porta, DataBase, Usuario, UsuarioSenha);
+            this.connectionsSave.connections.Add(connectionJSON);
 
-            string connectionString = $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={server})(PORT={porta}))(CONNECT_DATA=(SERVICE_NAME={dataBase})));User Id={usuario};Password={senha};";
+            string json = JsonConvert.SerializeObject(this.connectionsSave.connections, Formatting.Indented);
+
+            fileOperations.Save(json);
+            // Abre arquivo JSON
+
+            string connectionString = $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={Server})(PORT={Porta}))(CONNECT_DATA=(SERVICE_NAME={DataBase})));User Id={Usuario};Password={UsuarioSenha};";
 
             try
             {
@@ -138,9 +136,10 @@ namespace GraficosFullWMS
                 using (OracleConnection connection = new OracleConnection(connectionString))
                 {
 
+                    connection.Open();
                     MessageBox.Show("Conexão feita com sucesso!");
                     ConnectionStringResult = connectionString;
-                    this.Close();
+                    connection.Close();
 
 
                 }
@@ -153,6 +152,8 @@ namespace GraficosFullWMS
                 return;
 
             }
+
+            JsonReaderFile();
 
         }
 
@@ -179,22 +180,70 @@ namespace GraficosFullWMS
             }
 
         }
-    }
 
-    public class ListConnectionSave
-    {
+        private void JsonReaderFile()
+        {
 
-        List<ConnectionSave> connections { get; set; }
+            try
+            {
 
-    }
-    public class ConnectionSave
-    {
+                string json = fileOperations.Load();
 
-        public string server { get; set; }
-        public string porta { get; set; }
-        public string dataBase { get; set; }
-        public string usuario { get; set; }
-        public string senha { get; set; }
+                var connectionsObject = JsonConvert.DeserializeObject<List<ConnectionSave>>(json);
 
+                if (connectionsObject != null && connectionsObject.Count > 0)
+                {
+                    foreach (var connection in connectionsObject)
+                    {
+                        this.connectionsSave.connections.Add(connection);
+                        comboBoxConnections.Items.Add(connection.usuario);
+
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+
+                //MessageBox.Show("Erro ao carregar as Conexões!", "Erro - Conexões", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                comboBoxConnections.Text = "Nenhuma Conexão Salva";
+
+            }
+
+
+        }
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+            try
+            {
+
+                var connection = this.connectionsSave.connections.FirstOrDefault(x => x.usuario == comboBoxConnections.SelectedItem.ToString());
+                button3.Visible = true;
+
+                this.NomeServidor.Text = connection.server;
+                this.portaConexao.Text = connection.porta;
+                this.NomeUsuario.Text = connection.usuario;
+                this.NomeDataBase.Text = connection.dataBase;
+                this.Senha.Text = connection.senha;
+
+            }
+            catch (Exception error)
+            {
+
+                MessageBox.Show($"Não foi possível encontrar uma base {NomeUsuario.Text}! Erro: {error.Message}", "Erro de conexão!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            };
+
+        }
+
+        private void RemoverBase(object sender, EventArgs e)
+        {
+
+            string json = fileOperations.Load();
+
+            var connectionObject = JsonConvert.DeserializeObject<List<ConnectionSave>>(json);
+
+        }
     }
 }

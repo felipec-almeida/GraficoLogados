@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Media;
 
@@ -18,6 +19,7 @@ namespace GraficosFullWMS
         private string dataInicio;
         private string dataFim;
         private int UsuarioId;
+        private int CodEmpresa;
 
         private List<DateTime> DataHora = new List<DateTime>();
         private List<int> Logados = new List<int>();
@@ -26,16 +28,14 @@ namespace GraficosFullWMS
         {
             InitializeComponent();
 
-
-            elementHost1.Visible = false;
-            cartesianChart1.Zoom = ZoomingOptions.None;
-            cartesianChart1.Pan = PanningOptions.None;
-            cartesianChart1.DisableAnimations = false;
-
             cartesianChart1.Series.Clear();
             cartesianChart1.AxisX.Clear();
             cartesianChart1.AxisY.Clear();
 
+            elementHost1.Visible = false;
+            cartesianChart1.Zoom = ZoomingOptions.X;
+            cartesianChart1.Pan = PanningOptions.X;
+            cartesianChart1.DisableAnimations = false;
 
         }
 
@@ -50,14 +50,26 @@ namespace GraficosFullWMS
             this.connectionString = form2.ConnectionStringResult;
         }
 
-        private void CriaGrafico()
+        private async void CriaGrafico()
         {
 
             cartesianChart1.Series.Clear();
             cartesianChart1.AxisX.Clear();
             cartesianChart1.AxisY.Clear();
 
-            ExibirBarraProgresso(100, 50);
+            var progressoAtual = new Progress<int>(valorProgresso =>
+            {
+
+                progressBar1.Value = valorProgresso;
+
+            });
+
+            await ExibirBarraProgresso(100, progressoAtual);
+
+            MessageBox.Show("Gráfico Gerado com Sucesso!", "Gráfico Gerado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            label2.Visible = false;
+            progressBar1.Visible = false;
 
             var DataPoints = new ChartValues<int>(Logados);
 
@@ -95,6 +107,10 @@ namespace GraficosFullWMS
         private void elementHost1_ChildChanged(object sender, System.Windows.Forms.Integration.ChildChangedEventArgs e)
         {
 
+            cartesianChart1.Series.Clear();
+            cartesianChart1.AxisX.Clear();
+            cartesianChart1.AxisY.Clear();
+
         }
 
         private void OpenModalButton_Click(object sender, EventArgs e)
@@ -112,8 +128,9 @@ namespace GraficosFullWMS
                 this.dataInicio = form3.DataInicio;
                 this.dataFim = form3.DataFim;
                 this.UsuarioId = form3.UsuarioId;
+                this.CodEmpresa = form3.codEmpresa;
 
-                ConnectionToDB(this.connectionString, this.dataInicio, this.dataFim, this.UsuarioId);
+                ConnectionToDB(this.connectionString, this.dataInicio, this.dataFim, this.UsuarioId, this.CodEmpresa);
 
             }
             else
@@ -126,7 +143,7 @@ namespace GraficosFullWMS
 
         }
 
-        public void ConnectionToDB(string connectionString, string dataInicio, string dataFim, int UsuarioId)
+        public void ConnectionToDB(string connectionString, string dataInicio, string dataFim, int UsuarioId, int CodEmpresa)
         {
 
             try
@@ -141,8 +158,9 @@ namespace GraficosFullWMS
                     command.CommandType = CommandType.StoredProcedure;
 
                     command.Parameters.Add("p_tipo", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = 1;
-                    command.Parameters.Add("data_inicio", OracleDbType.Varchar2, ParameterDirection.Input).Value = dataInicio;
-                    command.Parameters.Add("data_fim", OracleDbType.Varchar2, ParameterDirection.Input).Value = dataFim;
+                    command.Parameters.Add("p_codemp", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = CodEmpresa;
+                    command.Parameters.Add("p_data_inicio", OracleDbType.Varchar2, ParameterDirection.Input).Value = dataInicio;
+                    command.Parameters.Add("p_data_fim", OracleDbType.Varchar2, ParameterDirection.Input).Value = dataFim;
 
                     OracleParameter cursorParameter = new OracleParameter("cursorParameter", OracleDbType.RefCursor);
                     cursorParameter.Direction = ParameterDirection.Output;
@@ -156,11 +174,14 @@ namespace GraficosFullWMS
                         while (reader.Read())
                         {
 
+                            //Retorna a DataInicio
                             DateTime coluna1 = reader.GetDateTime(0);
-                            int coluna2 = reader.GetInt32(1);
+
+                            //Retorna quantidade de Logados
+                            int coluna4 = reader.GetInt32(3);
 
                             DataHora.Add(coluna1);
-                            Logados.Add(coluna2);
+                            Logados.Add(coluna4);
 
                         }
 
@@ -214,7 +235,7 @@ namespace GraficosFullWMS
 
                                 // Verifica a Existência da função fnc_usu_log
 
-                                string procedureVerify2 = "select count(1) from user_procedures o where upper(o.object_type) = 'FUNCTION' and upper(o.object_name) = 'FNC_USU_LOG'";
+                                string procedureVerify2 = "select count(1) from user_procedures o where upper(o.object_type) = 'FUNCTION' and upper(o.object_name) = 'FNC_USU_LOG3'";
 
                                 OracleCommand commandVerify2 = new OracleCommand(procedureVerify2, connection);
                                 commandVerify2.CommandType = CommandType.Text;
@@ -230,33 +251,31 @@ namespace GraficosFullWMS
                                         if (contador2 < 1)
                                         {
 
-
-                                            string fncString = "create or replace function fnc_usu_log(p_usu_id in number,\n" +
-                                            "                                       p_colab  in number,\n" +
-                                            "                                       p_data   in date) return number is\n" +
-                                            "   v_aux number;\n" +
-                                            "begin\n" +
-                                            "   if p_usu_id is not null then\n" +
-                                            "      select 1\n" +
-                                            "        into v_aux\n" +
-                                            "        from ger_usuarios_logados l\n" +
-                                            "       where l.ger_usuario_id = p_usu_id\n" +
-                                            "         and p_data between l.dthr and nvl(l.dthr_saida, sysdate)\n" +
-                                            "         and rownum < 2;\n" +
-                                            "      return(1);\n" +
-                                            "   else\n" +
-                                            "      select 1\n" +
-                                            "        into v_aux\n" +
-                                            "        from wms_colaboradores_logados l\n" +
-                                            "       where l.colab_cod_colab = p_colab\n" +
-                                            "         and p_data between l.dthr_ent and nvl(l.dthr_saida, sysdate)\n" +
-                                            "         and rownum < 2;\n" +
-                                            "      return(1);\n" +
-                                            "   end if;\n" +
-                                            "exception\n" +
-                                            "   when no_data_found then\n" +
-                                            "      return 0;\n" +
-                                            "end;";
+                                            string fncString = @"create or replace function fnc_usu_log3(p_tipo   in char,
+                                        p_codemp in number,
+                                        p_data   in date) return number is
+                                       v_aux number := 0;
+                                    begin
+                                       if p_tipo in ('U', 'T') then
+                                          select count(1) + v_aux
+                                            into v_aux
+                                            from ger_usuarios_logados l
+                                           where l.empresa = p_codemp
+                                             and p_data between l.dthr and nvl(l.dthr_saida, sysdate);
+                                       end if;
+                                       if p_tipo in ('C', 'T') then
+                                          select count(1) + v_aux
+                                            into v_aux
+                                            from wms_colaboradores_logados l
+                                           where l.empr_codemp = p_codemp
+                                             and p_data between l.dthr_ent and nvl(l.dthr_saida, sysdate);
+                                       end if;
+                                       return v_aux;
+                                    exception
+                                       when no_data_found then
+                                          return 0;
+                                    end;
+                                    ";
 
                                             OracleCommand commandFNC = new OracleCommand(fncString, connection);
                                             commandFNC.CommandType = CommandType.Text;
@@ -271,192 +290,91 @@ namespace GraficosFullWMS
 
                                 // Cria a Procedure FullWMSLincenças
 
-                                string prcString = "create or replace procedure prc_fullwms_licencas(p_tipo      in integer,\n" +
-                                "                                                 data_inicio in varchar2,\n" +
-                                "                                                 data_fim    in varchar2,\n" +
-                                "                                                 p_retorno   out sys_refcursor) is\n" +
-                                "begin\n" +
-                                "   if p_tipo = 1 then\n" +
-                                "      open p_retorno for /* Logados - Hora / Minuto */\n" +
-                                "         select dt,\n" +
-                                "                count(logado) as logados\n" +
-                                "           from (with tab as (select (to_date(data_inicio, 'DD/MM/YYYY') + (level - 1) / 24 / 60) dt\n" +
-                                "                                from dual\n" +
-                                "                              connect by level <= (to_date(data_fim, 'DD/MM/YYYY') -\n" +
-                                "                                         to_date(data_inicio, 'DD/MM/YYYY')) * 24 * 60 + 1)\n" +
-                                "                   select dt,\n" +
-                                "                          ger_usuario_id,\n" +
-                                "                          colab,\n" +
-                                "                          fnc_usu_log(ger_usuario_id, colab, dt) as logado\n" +
-                                "                     from tab\n" +
-                                "                    cross join (select distinct l.ger_usuario_id,\n" +
-                                "                                                null as colab\n" +
-                                "                                  from ger_usuarios_logados l\n" +
-                                "                                 where l.dthr > to_date(data_inicio, 'DD/MM/YYYY')\n" +
-                                "                                   and (l.dthr_saida is null or\n" +
-                                "                                       l.dthr_saida < to_date(data_fim, 'DD/MM/YYYY'))) usu\n" +
-                                "                    cross join (select distinct null,\n" +
-                                "                                                c.colab_cod_colab\n" +
-                                "                                  from wms_colaboradores_logados c\n" +
-                                "                                 where c.dthr_ent > to_date(data_inicio, 'DD/MM/YYYY')\n" +
-                                "                                   and (c.dthr_saida is null or\n" +
-                                "                                       c.dthr_saida < to_date(data_fim, 'DD/MM/YYYY'))) colab\n" +
-                                "                    where fnc_usu_log(ger_usuario_id, colab, dt) > 0\n" +
-                                "                    group by dt,\n" +
-                                "                             ger_usuario_id,\n" +
-                                "                             colab\n" +
-                                "                    order by 1,\n" +
-                                "                             2)\n" +
-                                "                    group by dt\n" +
-                                "                    order by 1;\n" +
-                                "\n" +
-                                "\n" +
-                                "   elsif p_tipo = 2 then\n" +
-                                "      /* Logados e Colaboradores - Hora / Minuto */\n" +
-                                "      open p_retorno for\n" +
-                                "         with tab as\n" +
-                                "          (select (to_date(data_inicio, 'DD/MM/YYYY') + (level - 1) / 24 / 60) dt\n" +
-                                "             from dual\n" +
-                                "           connect by level <=\n" +
-                                "                      (to_date(data_fim, 'DD/MM/YYYY') - to_date(data_inicio, 'DD/MM/YYYY')) * 24 * 60 + 1)\n" +
-                                "         select dt,\n" +
-                                "                ger_usuario_id,\n" +
-                                "                colab,\n" +
-                                "                fnc_usu_log(ger_usuario_id, colab, dt) as logado\n" +
-                                "           from tab\n" +
-                                "          cross join (select distinct l.ger_usuario_id,\n" +
-                                "                                      null as colab\n" +
-                                "                        from ger_usuarios_logados l\n" +
-                                "                       where l.dthr > to_date(data_inicio, 'DD/MM/YYYY')\n" +
-                                "                         and (l.dthr_saida is null or l.dthr_saida < to_date(data_fim, 'DD/MM/YYYY'))) usu\n" +
-                                "          cross join (select distinct null,\n" +
-                                "                                      c.colab_cod_colab\n" +
-                                "                        from wms_colaboradores_logados c\n" +
-                                "                       where c.dthr_ent > to_date(data_inicio, 'DD/MM/YYYY')\n" +
-                                "                         and (c.dthr_saida is null or c.dthr_saida < to_date(data_fim, 'DD/MM/YYYY'))) colab\n" +
-                                "          where fnc_usu_log(ger_usuario_id, colab, dt) > 0\n" +
-                                "          group by dt,\n" +
-                                "                   ger_usuario_id,\n" +
-                                "                   colab\n" +
-                                "          order by 1,\n" +
-                                "                   2;\n" +
-                                "\n" +
-                                "   elsif p_tipo = 3 then\n" +
-                                "      /* Logados - Hora / Minuto (Mostra apenas o MAX de logados) */\n" +
-                                "      open p_retorno for\n" +
-                                "         select dt,\n" +
-                                "                sum(logado) as logados\n" +
-                                "           from (with tab as (select (to_date(data_inicio, 'DD/MM/YYYY') + (level - 1) / 24 / 60) dt\n" +
-                                "                                from dual\n" +
-                                "                              connect by level <= (to_date(data_fim, 'DD/MM/YYYY') -\n" +
-                                "                                         to_date(data_inicio, 'DD/MM/YYYY')) * 24 * 60 + 1)\n" +
-                                "                   select dt,\n" +
-                                "                          ger_usuario_id,\n" +
-                                "                          colab,\n" +
-                                "                          fnc_usu_log(ger_usuario_id, colab, dt) as logado\n" +
-                                "                     from tab\n" +
-                                "                    cross join (select distinct l.ger_usuario_id,\n" +
-                                "                                                null as colab\n" +
-                                "                                  from ger_usuarios_logados l\n" +
-                                "                                 where l.dthr > to_date(data_inicio, 'DD/MM/YYYY')\n" +
-                                "                                   and (l.dthr_saida is null or\n" +
-                                "                                       l.dthr_saida < to_date(data_fim, 'DD/MM/YYYY'))) usu\n" +
-                                "                    cross join (select distinct null,\n" +
-                                "                                                c.colab_cod_colab\n" +
-                                "                                  from wms_colaboradores_logados c\n" +
-                                "                                 where c.dthr_ent > to_date(data_inicio, 'DD/MM/YYYY')\n" +
-                                "                                   and (c.dthr_saida is null or\n" +
-                                "                                       c.dthr_saida < to_date(data_fim, 'DD/MM/YYYY'))) colab\n" +
-                                "                    where fnc_usu_log(ger_usuario_id, colab, dt) > 0\n" +
-                                "                    group by dt,\n" +
-                                "                             ger_usuario_id,\n" +
-                                "                             colab\n" +
-                                "                    order by 1,\n" +
-                                "                             2)\n" +
-                                "                    group by dt\n" +
-                                "                   having sum(logado) > 1\n" +
-                                "                    order by 1;\n" +
-                                "\n" +
-                                "\n" +
-                                "   elsif p_tipo = 4 then\n" +
-                                "      /* Logados - Hora */\n" +
-                                "      open p_retorno for\n" +
-                                "         select dt,\n" +
-                                "                sum(logado) as logados\n" +
-                                "           from (with tab as (select (to_date('02/05/2023', 'DD/MM/YYYY') + (level - 1) / 24) dt\n" +
-                                "                                from dual\n" +
-                                "                              connect by level <= (to_date('10/05/2023', 'DD/MM/YYYY') -\n" +
-                                "                                         to_date('02/05/2023', 'DD/MM/YYYY')) * 24 * 60 + 1)\n" +
-                                "                   select dt,\n" +
-                                "                          ger_usuario_id,\n" +
-                                "                          colab,\n" +
-                                "                          fnc_usu_log(ger_usuario_id, colab, dt) as logado\n" +
-                                "                     from tab\n" +
-                                "                    cross join (select distinct l.ger_usuario_id,\n" +
-                                "                                                null as colab\n" +
-                                "                                  from ger_usuarios_logados l\n" +
-                                "                                 where l.dthr > to_date('02/05/2023', 'DD/MM/YYYY')\n" +
-                                "                                   and (l.dthr_saida is null or\n" +
-                                "                                       l.dthr_saida < to_date('10/05/2023', 'DD/MM/YYYY'))) usu\n" +
-                                "                    cross join (select distinct null,\n" +
-                                "                                                c.colab_cod_colab\n" +
-                                "                                  from wms_colaboradores_logados c\n" +
-                                "                                 where c.dthr_ent > to_date('02/05/2023', 'DD/MM/YYYY')\n" +
-                                "                                   and (c.dthr_saida is null or\n" +
-                                "                                       c.dthr_saida < to_date('10/05/2023', 'DD/MM/YYYY'))) colab\n" +
-                                "                    where fnc_usu_log(ger_usuario_id, colab, dt) > 0\n" +
-                                "                    group by dt,\n" +
-                                "                             ger_usuario_id,\n" +
-                                "                             colab\n" +
-                                "                    order by 1,\n" +
-                                "                             2)\n" +
-                                "                    group by dt\n" +
-                                "                    order by 1;\n" +
-                                "\n" +
-                                "\n" +
-                                "   else\n" +
-                                "      /* Logados - Hora / Minuto (Padrão, volta para o caso 1 caso não seja nennhuma das outras opções) */\n" +
-                                "      open p_retorno for\n" +
-                                "         select dt,\n" +
-                                "                sum(logado) as logados\n" +
-                                "           from (with tab as (select (to_date(data_inicio, 'DD/MM/YYYY') + (level - 1) / 24 / 60) dt\n" +
-                                "                                from dual\n" +
-                                "                              connect by level <= (to_date(data_fim, 'DD/MM/YYYY') -\n" +
-                                "                                         to_date(data_inicio, 'DD/MM/YYYY')) * 24 * 60 + 1)\n" +
-                                "                   select dt,\n" +
-                                "                          ger_usuario_id,\n" +
-                                "                          colab,\n" +
-                                "                          fnc_usu_log(ger_usuario_id, colab, dt) as logado\n" +
-                                "                     from tab\n" +
-                                "                    cross join (select distinct l.ger_usuario_id,\n" +
-                                "                                                null as colab\n" +
-                                "                                  from ger_usuarios_logados l\n" +
-                                "                                 where l.dthr > to_date(data_inicio, 'DD/MM/YYYY')\n" +
-                                "                                   and (l.dthr_saida is null or\n" +
-                                "                                       l.dthr_saida < to_date(data_fim, 'DD/MM/YYYY'))) usu\n" +
-                                "                    cross join (select distinct null,\n" +
-                                "                                                c.colab_cod_colab\n" +
-                                "                                  from wms_colaboradores_logados c\n" +
-                                "                                 where c.dthr_ent > to_date(data_inicio, 'DD/MM/YYYY')\n" +
-                                "                                   and (c.dthr_saida is null or\n" +
-                                "                                       c.dthr_saida < to_date(data_fim, 'DD/MM/YYYY'))) colab\n" +
-                                "                    where fnc_usu_log(ger_usuario_id, colab, dt) > 0\n" +
-                                "                    group by dt,\n" +
-                                "                             ger_usuario_id,\n" +
-                                "                             colab\n" +
-                                "                    order by 1,\n" +
-                                "                             2)\n" +
-                                "                    group by dt\n" +
-                                "                    order by 1;\n" +
-                                "\n" +
-                                "\n" +
-                                "   end if;\n" +
-                                "end;";
+                                string prcString = @"create or replace procedure prc_fullwms_licencas(p_tipo        in number,
+                                                 p_codemp      in number,
+                                                 p_data_inicio in varchar2,
+                                                 p_data_fim    in varchar2,
+                                                 p_retorno     out sys_refcursor) is
+
+                                   v_data_inicio date := to_date(p_data_inicio, 'DD/MM/YYYY');
+                                   v_data_fim    date := to_date(p_data_fim, 'DD/MM/YYYY');
+
+                                begin
+
+                                   if p_tipo = 1 then
+   
+                                      open p_retorno for
+                                         select l.dthr as data_entrada,
+                                                l.dthr_saida as data_saida,
+                                                l.ger_usuario_id as usuario_id,
+                                                fnc_usu_log3('U', l.empresa, l.dthr) as usuarios_logados
+                                           from ger_usuarios_logados l
+                                          where l.empresa = p_codemp
+                                            and l.dthr >= v_data_inicio
+                                            and (l.dthr_saida is null or l.dthr < v_data_fim + 1)
+                                          order by l.dthr asc;
+
+                                   elsif p_tipo = 2 then
+   
+                                      open p_retorno for
+      
+                                         select c.dthr_ent as data_entrada,
+                                                c.dthr_saida as data_saida,
+                                                c.colab_cod_colab as colab_id,
+                                                fnc_usu_log3('C', c.empr_codemp, c.dthr_ent) as colaboradores_logados
+                                           from wms_colaboradores_logados c
+                                          where c.empr_codemp = p_codemp
+                                            and c.dthr_ent >= v_data_inicio
+                                            and (c.dthr_saida is null or c.dthr_ent < v_data_fim + 1)
+                                          order by c.dthr_ent;
+          
+                                   else
+   
+                                      open p_retorno for
+      
+                                         select x.*,
+                                                to_char(max(x.total) over(partition by trunc(x.data_entrada))) || ' / ' ||
+                                                to_char(max(x.total) over()) as max_diario
+                                           from (select l.dthr           as data_entrada,
+                                                        l.dthr_saida     as data_saida,
+                                                        l.ger_usuario_id as usuario,
+                                                        -- fnc_usu_log3('U', l.empresa, l.dthr) as usuarios_logados,
+                                                        null as colab,
+                                                        -- null as colabs_logados,
+                                                        fnc_usu_log3('T', l.empresa, l.dthr) as total
+                                                   from ger_usuarios_logados l
+                                                  where l.empresa = p_codemp
+                                                    and l.dthr >= v_data_inicio
+                                                    and (l.dthr_saida is null or l.dthr < v_data_fim + 1)
+                                                 union all
+                                                 select c.dthr_ent,
+                                                        c.dthr_saida,
+                                                        null as usuario,
+                                                        -- null              as usuarios_logados,
+                                                        c.colab_cod_colab as colab_id,
+                                                        -- fnc_usu_log3('C', c.empr_codemp, c.dthr_ent) as colaboradores_logados,
+                                                        fnc_usu_log3('T', c.empr_codemp, c.dthr_ent) as total
+                                                   from wms_colaboradores_logados c
+                                                  where c.empr_codemp = p_codemp
+                                                    and c.dthr_ent >= v_data_inicio
+                                                    and (c.dthr_saida is null or c.dthr_ent < v_data_fim + 1)) x
+                                          order by data_entrada asc;
+   
+                                   end if;
+
+                                end;
+                                ";
 
                                 OracleCommand commandPRC = new OracleCommand(prcString, connection);
                                 commandPRC.CommandType = CommandType.Text;
 
                                 commandPRC.ExecuteNonQuery();
+
+                            }
+                            else
+                            {
+
+                                MessageBox.Show("Importante - Uma ou mais funções já estão importadas na base conectada!", "Importante", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                             }
 
@@ -472,34 +390,32 @@ namespace GraficosFullWMS
             catch (Exception ex)
             {
 
-                MessageBox.Show($"Erro ao gerar o código, tente novamente! {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                MessageBox.Show($"");
+                MessageBox.Show($"Houve um erro ao gerar o código, tente novamente! {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
 
             }
 
         }
 
-        private void ExibirBarraProgresso(int valorMaximo, int velocidadeBarraProgresso)
+        private async Task ExibirBarraProgresso(int valorMaximo, IProgress<int> progressoAtual)
         {
 
-            ProgressBar progressBar = new ProgressBar();
-            progressBar.Maximum = valorMaximo;
-            progressBar.Value = 0;
-            progressBar.Visible = true;
-            progressBar.Style = ProgressBarStyle.Continuous;
+            progressBar1.Maximum = valorMaximo;
+            progressBar1.Value = 0;
+            progressBar1.Visible = true;
+            progressBar1.Style = ProgressBarStyle.Continuous;
 
             for (int i = 0; i <= valorMaximo; i++)
             {
 
-                progressBar.Value = i;
-                Application.DoEvents();
+                progressBar1.Value = i;
+                progressoAtual.Report(i);
 
-                System.Threading.Thread.Sleep(velocidadeBarraProgresso);
+                await Task.Delay(50);
 
             }
 
-            progressBar.Visible = false;
+            progressBar1.Visible = false;
 
         }
         private void button3_Click(object sender, EventArgs e)
