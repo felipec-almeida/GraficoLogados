@@ -6,10 +6,9 @@ namespace GraficosFullWMS
     public partial class Form3 : Form
     {
 
-        public string DataInicio { get; private set; }
-        public string DataFim { get; private set; }
-        public int UsuarioId { get; private set; }
-        public int codEmpresa { get; private set; }
+        public string DataInicial { get; private set; }
+        public string DataFinal { get; private set; }
+        public int TipoRetorno { get; private set; }
 
         public Form3()
         {
@@ -24,23 +23,22 @@ namespace GraficosFullWMS
         private void button1_Click(object sender, EventArgs e)
         {
 
-            DateTime? dataInicialTemp = DataInicial.Value;
-            DateTime? dataFinalTemp = DataFinal.Value;
-
+            DateTime? dataInicialTemp = DataInicio.Value;
+            DateTime? dataFinalTemp = DataFim.Value;
 
             //Verificação de Entrada das Datas
             if (dataInicialTemp.HasValue && dataFinalTemp.HasValue)
             {
 
-                DataInicio = dataInicialTemp.Value.ToString("dd/MM/yyyy");
-                DataFim = dataFinalTemp.Value.ToString("dd/MM/yyyy");
+                DataInicial = dataInicialTemp.Value.ToString("dd/MM/yyyy");
+                DataFinal = dataFinalTemp.Value.ToString("dd/MM/yyyy");
 
             }
             else if (dataInicialTemp.HasValue && !dataFinalTemp.HasValue)
             {
 
-                DataInicio = dataInicialTemp.Value.ToString("dd/MM/yyyy");
-                DataFim = DateTime.Now.ToString("dd/MM/yyyy");
+                DataInicial = dataInicialTemp.Value.ToString("dd/MM/yyyy");
+                DataFinal = DateTime.Now.ToString("dd/MM/yyyy");
 
             }
             else
@@ -51,14 +49,33 @@ namespace GraficosFullWMS
 
             }
 
-            string idUsuario = CodUsuario.Text;
-            string codEmp = CodEmpresa.Text;
-
-            if (idUsuario != null && codEmp != null)
+            try
             {
 
-                UsuarioId = int.Parse(idUsuario);
-                codEmpresa = int.Parse(codEmp);
+                string tipoRetorno = Tipo.SelectedItem.ToString();
+
+                if (int.Parse(tipoRetorno) > 3 && int.Parse(tipoRetorno) == 0)
+                {
+
+                    MessageBox.Show($"Erro - Valor selecionado não permitido, tente novamente.", "Erro!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+
+                }
+                else if (tipoRetorno == null)
+                {
+
+                    throw new NullReferenceException(Tipo.SelectedItem.ToString());
+
+                }
+
+                TipoRetorno = int.Parse(tipoRetorno);
+
+            }
+            catch (NullReferenceException error)
+            {
+
+                MessageBox.Show($"Erro - O tipo do retorno não pode estar nulo! {error.Message}", "Erro!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
 
             }
 

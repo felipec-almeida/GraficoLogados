@@ -29,24 +29,14 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form3));
-            this.CodUsuario = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
-            this.DataInicial = new Syncfusion.WinForms.Input.SfDateTimeEdit();
-            this.DataFinal = new Syncfusion.WinForms.Input.SfDateTimeEdit();
-            this.CodEmpresa = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
+            this.DataInicio = new System.Windows.Forms.DateTimePicker();
+            this.DataFim = new System.Windows.Forms.DateTimePicker();
+            this.Tipo = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
-            // 
-            // CodUsuario
-            // 
-            this.CodUsuario.Location = new System.Drawing.Point(12, 180);
-            this.CodUsuario.Margin = new System.Windows.Forms.Padding(4);
-            this.CodUsuario.Name = "CodUsuario";
-            this.CodUsuario.Size = new System.Drawing.Size(304, 22);
-            this.CodUsuario.TabIndex = 2;
             // 
             // label1
             // 
@@ -54,7 +44,7 @@
             this.label1.Location = new System.Drawing.Point(9, 160);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(309, 20);
+            this.label1.Size = new System.Drawing.Size(247, 16);
             this.label1.TabIndex = 3;
             this.label1.Text = "Retorne o Tipo de Retorno do Relatório:";
             // 
@@ -81,7 +71,7 @@
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(89, 256);
+            this.button1.Location = new System.Drawing.Point(51, 225);
             this.button1.Margin = new System.Windows.Forms.Padding(4);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(152, 49);
@@ -90,61 +80,53 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // DataInicial
+            // DataInicio
             // 
-            this.DataInicial.Cursor = System.Windows.Forms.Cursors.Default;
-            this.DataInicial.DateTimeEditingMode = Syncfusion.WinForms.Input.Enums.DateTimeEditingMode.Mask;
-            this.DataInicial.Location = new System.Drawing.Point(12, 37);
-            this.DataInicial.Name = "DataInicial";
-            this.DataInicial.Size = new System.Drawing.Size(229, 35);
-            this.DataInicial.TabIndex = 7;
-            this.DataInicial.ToolTipText = "";
+            this.DataInicio.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.DataInicio.Location = new System.Drawing.Point(15, 46);
+            this.DataInicio.Name = "DataInicio";
+            this.DataInicio.Size = new System.Drawing.Size(226, 22);
+            this.DataInicio.TabIndex = 7;
+            this.DataInicio.Value = new System.DateTime(2023, 6, 1, 10, 59, 0, 0);
             // 
-            // DataFinal
+            // DataFim
             // 
-            this.DataFinal.Cursor = System.Windows.Forms.Cursors.Default;
-            this.DataFinal.DateTimeEditingMode = Syncfusion.WinForms.Input.Enums.DateTimeEditingMode.Mask;
-            this.DataFinal.Location = new System.Drawing.Point(12, 109);
-            this.DataFinal.Name = "DataFinal";
-            this.DataFinal.Size = new System.Drawing.Size(229, 35);
-            this.DataFinal.TabIndex = 8;
-            this.DataFinal.ToolTipText = "";
+            this.DataFim.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.DataFim.Location = new System.Drawing.Point(15, 115);
+            this.DataFim.Name = "DataFim";
+            this.DataFim.Size = new System.Drawing.Size(226, 22);
+            this.DataFim.TabIndex = 8;
+            this.DataFim.Value = new System.DateTime(2023, 6, 30, 11, 1, 0, 0);
             // 
-            // CodEmpresa
+            // Tipo
             // 
-            this.CodEmpresa.Location = new System.Drawing.Point(12, 226);
-            this.CodEmpresa.Margin = new System.Windows.Forms.Padding(4);
-            this.CodEmpresa.Name = "CodEmpresa";
-            this.CodEmpresa.Size = new System.Drawing.Size(304, 22);
-            this.CodEmpresa.TabIndex = 9;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(13, 206);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(183, 16);
-            this.label4.TabIndex = 10;
-            this.label4.Text = "Digite o Código da Empresa: ";
+            this.Tipo.FormattingEnabled = true;
+            this.Tipo.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "3"});
+            this.Tipo.Location = new System.Drawing.Point(12, 187);
+            this.Tipo.Name = "Tipo";
+            this.Tipo.Size = new System.Drawing.Size(229, 24);
+            this.Tipo.TabIndex = 9;
             // 
             // Form3
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(329, 317);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.CodEmpresa);
-            this.Controls.Add(this.DataFinal);
-            this.Controls.Add(this.DataInicial);
+            this.ClientSize = new System.Drawing.Size(264, 287);
+            this.Controls.Add(this.Tipo);
+            this.Controls.Add(this.DataFim);
+            this.Controls.Add(this.DataInicio);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.CodUsuario);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
+            this.MaximizeBox = false;
             this.Name = "Form3";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Gerar Gráfico";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -152,14 +134,12 @@
         }
 
         #endregion
-        private System.Windows.Forms.TextBox CodUsuario;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button button1;
-        private Syncfusion.WinForms.Input.SfDateTimeEdit DataInicial;
-        private Syncfusion.WinForms.Input.SfDateTimeEdit DataFinal;
-        private System.Windows.Forms.TextBox CodEmpresa;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.DateTimePicker DataInicio;
+        private System.Windows.Forms.DateTimePicker DataFim;
+        private System.Windows.Forms.ComboBox Tipo;
     }
 }

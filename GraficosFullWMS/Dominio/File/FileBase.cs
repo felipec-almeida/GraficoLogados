@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -44,5 +45,19 @@ namespace GraficosFullWMS.Dominio.File
 
             return;
         }
+
+        public void Override(string text)
+        {
+
+            using (StreamWriter sw = new StreamWriter(this.Path))
+            {
+
+                sw.Write(text);
+                sw.Flush();
+
+            }
+
+        }
+
     }
 }

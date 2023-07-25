@@ -1,12 +1,9 @@
 ﻿using GraficosFullWMS.Classes;
 using GraficosFullWMS.Dominio.File;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
 using Oracle.ManagedDataAccess.Client;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -18,6 +15,7 @@ namespace GraficosFullWMS
     {
 
         public string ConnectionStringResult { get; private set; }
+        public string mensagemLabel { get; private set; }
 
         private Connections connectionsSave = new Connections();
         private FileOperations<List<ConnectionSave>> fileOperations;
@@ -75,6 +73,9 @@ namespace GraficosFullWMS
                     ConnectionStringResult = connectionString;
                     connection.Close();
 
+                    mensagemLabel = $"Conectado a Base: {usuario.ToUpper()}";
+                    Close();
+
 
                 }
 
@@ -115,8 +116,51 @@ namespace GraficosFullWMS
             if (comboBoxConnections.SelectedIndex >= 0 && this.connectionsSave.connections.FirstOrDefault(x => x.usuario == comboBoxConnections.SelectedItem.ToString()) != null)
             {
 
-                MessageBox.Show("Erro - Já existe uma base salva com este mesmo nome, tente novamente!", "Erro ao Conectar", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                DialogResult result = MessageBox.Show("Aviso - Já existe uma base salva com este mesmo nome, deseja continuar mesmo assim?", "Aviso!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (result == DialogResult.Yes)
+                {
+
+                    //Remove a base selecionada para criá-la novamente com os novos dados
+                    AtualizarBase();
+
+                    string ConnectionString = $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={Server})(PORT={Porta}))(CONNECT_DATA=(SERVICE_NAME={DataBase})));User Id={Usuario};Password={UsuarioSenha};";
+
+                    try
+                    {
+
+                        using (OracleConnection connection = new OracleConnection(ConnectionString))
+                        {
+
+                            connection.Open();
+                            MessageBox.Show("Conexão feita com sucesso!");
+                            ConnectionStringResult = ConnectionString;
+                            connection.Close();
+
+                            mensagemLabel = $"Conectado a Base: {Usuario.ToUpper()}";
+                            Close();
+
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+
+                        MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+
+                    }
+
+                    JsonReaderFile();
+
+                    return;
+
+                }
+                else
+                {
+
+                    return;
+
+                }
 
             }
 
@@ -141,6 +185,8 @@ namespace GraficosFullWMS
                     ConnectionStringResult = connectionString;
                     connection.Close();
 
+                    mensagemLabel = $"Conectado a Base: {Usuario.ToUpper()}";
+                    Close();
 
                 }
 
@@ -237,13 +283,110 @@ namespace GraficosFullWMS
 
         }
 
+        private void AtualizarBase()
+        {
+            string json = fileOperations.Load();
+            var connectionObjects = JsonConvert.DeserializeObject<List<ConnectionSave>>(json);
+
+            // Procura pela conexão selecionada
+            var selectedConnection = connectionObjects.FirstOrDefault(con => con.usuario == comboBoxConnections.SelectedItem.ToString());
+
+            if (selectedConnection == null)
+            {
+                MessageBox.Show("Conexão selecionada não encontrada!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Obtém o índice da conexão encontrada
+            int indexOfConnection = connectionObjects.IndexOf(selectedConnection);
+
+            DialogResult result = MessageBox.Show($"Tem certeza que deseja atualizar a conexão {selectedConnection.usuario}?", "Importante", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            if (result == DialogResult.Yes)
+            {
+                // Atualiza os dados da conexão
+                selectedConnection.usuario = this.NomeUsuario.Text;
+                selectedConnection.dataBase = this.NomeDataBase.Text;
+                selectedConnection.porta = this.portaConexao.Text;
+                selectedConnection.server = this.NomeServidor.Text;
+                selectedConnection.senha = this.Senha.Text;
+
+                // Sobrescreve a conexão existente com os dados atualizados
+                connectionObjects[indexOfConnection].usuario = selectedConnection.usuario;
+                connectionObjects[indexOfConnection].dataBase = selectedConnection.dataBase;
+                connectionObjects[indexOfConnection].porta = selectedConnection.porta;
+                connectionObjects[indexOfConnection].server = selectedConnection.server;
+                connectionObjects[indexOfConnection].senha = selectedConnection.senha;
+
+                // Sobrescreve o arquivo JSON com os dados atualizados
+                string newConnectionObject = JsonConvert.SerializeObject(connectionObjects, Formatting.Indented);
+                fileOperations.Override(newConnectionObject);
+
+                MessageBox.Show($"Conexão {selectedConnection.usuario} foi atualizada com sucesso!", "Atualização feita com sucesso!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                return;
+            }
+        }
+
+
         private void RemoverBase(object sender, EventArgs e)
         {
 
             string json = fileOperations.Load();
-
             var connectionObject = JsonConvert.DeserializeObject<List<ConnectionSave>>(json);
 
+            for (int i = 0; i < connectionObject.Count; i++)
+            {
+
+                if (comboBoxConnections.SelectedItem.ToString() == connectionObject[i].usuario && connectionsSave.connections.FirstOrDefault(x => x.usuario.Equals(connectionObject[i].usuario)) != null)
+                {
+
+                    DialogResult result = MessageBox.Show($"Tem certeza que deseja remover a conexão {connectionObject[i--].usuario}?", "Importante", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (result == DialogResult.Yes)
+                    {
+
+                        MessageBox.Show($"Conexão {connectionObject[i + 1].usuario} foi removida com sucesso!", "Remoção feita com sucesso!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        connectionObject.RemoveAt(i + 1);
+
+                        //Sobrescreve com o conteúdo novo.
+                        string newConnectionObject = JsonConvert.SerializeObject(connectionObject, Formatting.Indented);
+                        fileOperations.Override(newConnectionObject);
+
+                        //Atualiza o comboBox
+                        if (connectionObject != null && connectionObject.Count > 0)
+                        {
+
+                            //Remove todos os índices antigos.
+                            comboBoxConnections.DataSource = null;
+                            comboBoxConnections.Items.Clear();
+
+                            //Adiciona os novos índices.
+                            foreach (var connection in connectionObject)
+                            {
+                                comboBoxConnections.Items.Add(connection.usuario);
+                            }
+
+                            comboBoxConnections.SelectedIndex = 0;
+
+                        }
+
+                        return;
+
+                    }
+                    else
+                    {
+
+                        return;
+
+                    }
+
+                }
+
+            }
+
         }
+
     }
 }

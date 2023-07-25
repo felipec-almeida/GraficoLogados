@@ -70,3 +70,8 @@ C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\bin\Debug\Syncfusion.SfI
 C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\bin\Debug\Syncfusion.Shared.Base.xml
 C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\bin\Debug\Newtonsoft.Json.dll
 C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\bin\Debug\MessageManager.dll
+C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\bin\Debug\GraficosFullWMS.exe.manifest
+C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\bin\Debug\GraficosFullWMS.application
+C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\obj\Debug\GraficosFullWMS.exe.manifest
+C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\obj\Debug\GraficosFullWMS.application
