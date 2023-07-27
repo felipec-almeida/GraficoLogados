@@ -15,13 +15,13 @@
 
 ## Interface Inicial
 
-![image](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/fb024ddf-18ec-4534-a007-64bc93d0b3c1)
+![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/9db8cfc8-a413-403b-bf40-d6f0a634a3c4)
 
 ## Conexão ao Banco de Dados
 > A conexão com o banco de dados, por ora, não possui suporte a outros tipos de banco de dados, como por exemplo *MySQL, SQLServer, PostgreSQL* e dentre outros. Pretendo implementar essa funcionalidade no futuro, mas por enquanto, apenas há compatibilidade com o *PLSQL*. No formulário, ele irá pedir todas as informações necessárias para conseguir se conectar ao banco. Se todos os dados forem fornecidos corretamente, o formulário irá tentar se conectar ao banco de dados, informando que conseguiu se conectar na base informada.
 
- ![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/8b27bf35-7bdf-401b-9879-b7ce4c202bf4)
- ![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/8806af38-36da-4009-a7aa-c7bcfbbfd2ea)
+![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/92567569-d09e-4cf4-b86a-90eb31c3f1bf)
+![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/fbcf9e72-b6ff-4245-a500-bdfe240e4387)
 
 ### Salvar Conexões
 > Esta funcionalidade permite o usuário salvar suas conexões sem precisar ter de colocar os dados toda vez que entrar na aplicação. Ela fica salva num arquivo *.JSON (stringConnection.json)* que guarda todas as conexões salvas até o momento. Junto com essa funcionalidade, é possível atualizar os dados de conexão que foram salvas no arquivo .JSON, além de remove-los caso seja necessário.
@@ -40,18 +40,19 @@
 > Trata-se de uma funcionalidade que irá disponibilizar ao usuário a opção de importar as procedures e funcitions na base selecionada (serve também como atualização caso já exista na base), ou removê-la caso desejar.
 
 #### Importar *Procedures e Functions*
-![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/ffc3f0fe-b377-432e-816a-9b594ebde215)
-![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/046f85a4-fa72-4a73-9249-7f49f8637301)
-![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/985299a5-8b1d-44a9-9f77-1b5a93e95b0f)
+![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/643d060a-3e72-4af8-a8cf-4d443c637be0)
+![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/bcd1e505-d3e1-4e9e-89d5-5c992b2cea63)
+![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/6a4ea502-591a-4a88-9605-fb514f719e91)
 
 #### Remover *Procedures e Functions*
-![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/2374ced0-4770-4562-9589-ec043b8a71ac)
-![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/69005f05-4c34-4c6b-8c7c-b4094708750c)
+![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/0536ac9a-9f62-4fd9-bb85-91a424a277ba)
+![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/5ee7d863-8b2a-408d-810f-d4b28f058202)
 
 ### Gerar Gráfico
 > A funcionalidade principal da aplicação. Recebe todos os parâmetros fornecidos pelo Base do Banco de Dados conectado, gerando então um gráfico no qual mostra o total de logados durante uma determinada data, tal qual é especificada pelo usuário.
+ 
+![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/1ef87ab6-c29c-4360-9924-c13abf87c9f6)
 
-![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/9bd9e142-f3ad-4edd-ba86-2e1cc6cc91b1)
 #### Tipos de Retorno
 > São possíveis 3 tipos de retorno para a geração dos Gráficos. Após o gráfico ser gerado, ao passar o mouse sobre uma parte do mesmo, irá mostrar informações relevantes, como por exemplo a data e a quantidade de logados nesta data.
 1. O Tipo 1 retorna o total de **Usuários** logados durante a data fornecida.
@@ -59,7 +60,7 @@
 3. O Tipo Três retorna o total de **Usuários e Colaboradores** logados durante a data fornecida, unificando os dois valores em um só Gráfico. Ressalta-se que este Tipo em específico pode demorar brevemente para ser executado, dependendo da quantidade de **Usuários e/ou Colaboradores** logados durante a data Fornecida.
 
 #### Tipo 1
-![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/8151ddf9-fb92-4ee1-8eff-950b515b24f2)
+![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/3f7f6cfc-6687-4498-8398-2c50827b7b2e)
 
 #### Tipo 2
 ![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/d26eccee-65e1-489b-b440-1873ccd28c57)
