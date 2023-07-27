@@ -62,7 +62,7 @@
 ![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/8151ddf9-fb92-4ee1-8eff-950b515b24f2)
 
 #### Tipo 2
-![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/a7256bbc-6aaa-406d-936e-b50d40faf9a6)
+![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/d26eccee-65e1-489b-b440-1873ccd28c57)
 
 #### Tipo 3
-![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/ab62acad-abaa-4a2a-9704-fd4025b8fd34)
+![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/e5755e62-6538-4ead-b503-ee72e3950b3b)
