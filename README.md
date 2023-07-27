@@ -39,7 +39,7 @@
 ### Importar ou Remover *Procedures e Functions*
 > Trata-se de uma funcionalidade que irá disponibilizar ao usuário a opção de importar as procedures e funcitions na base selecionada (serve também como atualização caso já exista na base), ou removê-la caso desejar.
 
- #### Importar *Procedures e Functions*
+#### Importar *Procedures e Functions*
 ![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/ffc3f0fe-b377-432e-816a-9b594ebde215)
 ![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/046f85a4-fa72-4a73-9249-7f49f8637301)
 ![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/985299a5-8b1d-44a9-9f77-1b5a93e95b0f)
@@ -48,3 +48,21 @@
 ![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/2374ced0-4770-4562-9589-ec043b8a71ac)
 ![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/69005f05-4c34-4c6b-8c7c-b4094708750c)
 
+### Gerar Gráfico
+> A funcionalidade principal da aplicação. Recebe todos os parâmetros fornecidos pelo Base do Banco de Dados conectado, gerando então um gráfico no qual mostra o total de logados durante uma determinada data, tal qual é especificada pelo usuário.
+
+![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/9bd9e142-f3ad-4edd-ba86-2e1cc6cc91b1)
+#### Tipos de Retorno
+> São possíveis 3 tipos de retorno para a geração dos Gráficos. Após o gráfico ser gerado, ao passar o mouse sobre uma parte do mesmo, irá mostrar informações relevantes, como por exemplo a data e a quantidade de logados nesta data.
+1. O Tipo 1 retorna o total de **Usuários** logados durante a data fornecida.
+2. O Tipo 2 retorna o total de **Colaboradores** logados durante a data fornecida.
+3. O Tipo Três retorna o total de **Usuários e Colaboradores** logados durante a data fornecida, unificando os dois valores em um só Gráfico. Ressalta-se que este Tipo em específico pode demorar brevemente para ser executado, dependendo da quantidade de **Usuários e/ou Colaboradores** logados durante a data Fornecida.
+
+#### Tipo 1
+![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/8151ddf9-fb92-4ee1-8eff-950b515b24f2)
+
+#### Tipo 2
+![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/a7256bbc-6aaa-406d-936e-b50d40faf9a6)
+
+#### Tipo 3
+![Capturar](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/ab62acad-abaa-4a2a-9704-fd4025b8fd34)
