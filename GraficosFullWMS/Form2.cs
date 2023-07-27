@@ -91,7 +91,7 @@ namespace GraficosFullWMS
         }
 
         private void Form2_Load(object sender, EventArgs e)
-        {
+        { 
         }
 
         private void ConnectionSaveDataBase(object sender, EventArgs e)
@@ -120,9 +120,6 @@ namespace GraficosFullWMS
                 if (result == DialogResult.Yes)
                 {
 
-                    //Remove a base selecionada para criá-la novamente com os novos dados
-                    AtualizarBase();
-
                     string ConnectionString = $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={Server})(PORT={Porta}))(CONNECT_DATA=(SERVICE_NAME={DataBase})));User Id={Usuario};Password={UsuarioSenha};";
 
                     try
@@ -145,12 +142,15 @@ namespace GraficosFullWMS
                     catch (Exception ex)
                     {
 
-                        MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show($"{ex.Message} | {ex.InnerException}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
 
                     }
 
                     JsonReaderFile();
+
+                    //Atualiza o .JSON
+                    AtualizarBase();
 
                     return;
 
@@ -169,7 +169,6 @@ namespace GraficosFullWMS
 
             string json = JsonConvert.SerializeObject(this.connectionsSave.connections, Formatting.Indented);
 
-            fileOperations.Save(json);
             // Abre arquivo JSON
 
             string connectionString = $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={Server})(PORT={Porta}))(CONNECT_DATA=(SERVICE_NAME={DataBase})));User Id={Usuario};Password={UsuarioSenha};";
@@ -194,12 +193,16 @@ namespace GraficosFullWMS
             catch (Exception ex)
             {
 
-                MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
 
             }
 
+            //Lê primeiramente o ComboBox.
             JsonReaderFile();
+
+            // Salva o .JSON normalmente
+            fileOperations.Save(json);
 
         }
 
@@ -237,6 +240,13 @@ namespace GraficosFullWMS
 
                 var connectionsObject = JsonConvert.DeserializeObject<List<ConnectionSave>>(json);
 
+                if (connectionsObject == null)
+                {
+
+                    throw new Exception();
+
+                }
+
                 if (connectionsObject != null && connectionsObject.Count > 0)
                 {
                     foreach (var connection in connectionsObject)
@@ -251,8 +261,7 @@ namespace GraficosFullWMS
             catch (Exception)
             {
 
-                //MessageBox.Show("Erro ao carregar as Conexões!", "Erro - Conexões", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                comboBoxConnections.Text = "Nenhuma Conexão Salva";
+                comboBoxConnections.Text = "Nenhuma Conexão Selecionada";
 
             }
 
@@ -289,45 +298,53 @@ namespace GraficosFullWMS
             var connectionObjects = JsonConvert.DeserializeObject<List<ConnectionSave>>(json);
 
             // Procura pela conexão selecionada
-            var selectedConnection = connectionObjects.FirstOrDefault(con => con.usuario == comboBoxConnections.SelectedItem.ToString());
 
-            if (selectedConnection == null)
+            try
             {
+
+                var selectedConnection = connectionObjects.FirstOrDefault(con => con.usuario == comboBoxConnections.SelectedItem.ToString());
+
+                // Obtém o índice da conexão encontrada
+                int indexOfConnection = connectionObjects.IndexOf(selectedConnection);
+
+                DialogResult result = MessageBox.Show($"Tem certeza que deseja atualizar a conexão {selectedConnection.usuario}?", "Importante", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                if (result == DialogResult.Yes)
+                {
+                    // Atualiza os dados da conexão
+                    selectedConnection.usuario = this.NomeUsuario.Text;
+                    selectedConnection.dataBase = this.NomeDataBase.Text;
+                    selectedConnection.porta = this.portaConexao.Text;
+                    selectedConnection.server = this.NomeServidor.Text;
+                    selectedConnection.senha = this.Senha.Text;
+
+                    // Sobrescreve a conexão existente com os dados atualizados
+                    connectionObjects[indexOfConnection].usuario = selectedConnection.usuario;
+                    connectionObjects[indexOfConnection].dataBase = selectedConnection.dataBase;
+                    connectionObjects[indexOfConnection].porta = selectedConnection.porta;
+                    connectionObjects[indexOfConnection].server = selectedConnection.server;
+                    connectionObjects[indexOfConnection].senha = selectedConnection.senha;
+
+                    // Sobrescreve o arquivo JSON com os dados atualizados
+                    string newConnectionObject = JsonConvert.SerializeObject(connectionObjects, Formatting.Indented);
+                    fileOperations.Override(newConnectionObject);
+
+                    MessageBox.Show($"Conexão {selectedConnection.usuario} foi atualizada com sucesso!", "Atualização feita com sucesso!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    return;
+                }
+
+            }
+            catch (Exception)
+            {
+
                 MessageBox.Show("Conexão selecionada não encontrada!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
+
             }
 
-            // Obtém o índice da conexão encontrada
-            int indexOfConnection = connectionObjects.IndexOf(selectedConnection);
-
-            DialogResult result = MessageBox.Show($"Tem certeza que deseja atualizar a conexão {selectedConnection.usuario}?", "Importante", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
-            if (result == DialogResult.Yes)
-            {
-                // Atualiza os dados da conexão
-                selectedConnection.usuario = this.NomeUsuario.Text;
-                selectedConnection.dataBase = this.NomeDataBase.Text;
-                selectedConnection.porta = this.portaConexao.Text;
-                selectedConnection.server = this.NomeServidor.Text;
-                selectedConnection.senha = this.Senha.Text;
-
-                // Sobrescreve a conexão existente com os dados atualizados
-                connectionObjects[indexOfConnection].usuario = selectedConnection.usuario;
-                connectionObjects[indexOfConnection].dataBase = selectedConnection.dataBase;
-                connectionObjects[indexOfConnection].porta = selectedConnection.porta;
-                connectionObjects[indexOfConnection].server = selectedConnection.server;
-                connectionObjects[indexOfConnection].senha = selectedConnection.senha;
-
-                // Sobrescreve o arquivo JSON com os dados atualizados
-                string newConnectionObject = JsonConvert.SerializeObject(connectionObjects, Formatting.Indented);
-                fileOperations.Override(newConnectionObject);
-
-                MessageBox.Show($"Conexão {selectedConnection.usuario} foi atualizada com sucesso!", "Atualização feita com sucesso!", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            else
-            {
-                return;
-            }
         }
 
 
