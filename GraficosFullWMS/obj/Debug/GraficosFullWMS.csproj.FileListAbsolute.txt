@@ -75,3 +75,5 @@ C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\bin\Debug\GraficosFullWM
 C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\bin\Debug\GraficosFullWMS.application
 C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\obj\Debug\GraficosFullWMS.exe.manifest
 C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\obj\Debug\GraficosFullWMS.application
+C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\obj\Debug\GraficosFullWMS.Custom.CustomTextBox.resources
+C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\obj\Debug\GraficosFullWMS.Custom.CustomComboBox.resources

@@ -20,7 +20,7 @@ namespace GraficosFullWMS
 
         private string dataInicio;
         private string dataFim;
-        private int tipoRetorno;
+        private string tipoRetorno;
 
         private List<DateTime> DataHora = new List<DateTime>();
         private List<int> Logados = new List<int>();
@@ -113,10 +113,10 @@ namespace GraficosFullWMS
 
         }
 
-        private async void CriaGrafico(int tipo)
+        private async void CriaGrafico(string tipo)
         {
 
-            if (tipo > 3)
+            if (tipo == null)
             {
 
                 MessageBox.Show("Houve um erro ao gerar o gráfico, verifique os campos preenchidos e tente novamente!", "Erro!", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -125,7 +125,7 @@ namespace GraficosFullWMS
 
             }
 
-            if (tipo == 1)
+            if (tipo == "1 - Usuários Logados")
             {
 
                 var progressoAtual = new Progress<int>(valorProgresso =>
@@ -175,7 +175,7 @@ namespace GraficosFullWMS
                 Controls.Add(elementHost1);
 
             }
-            else if (tipo == 2)
+            else if (tipo == "2 - Colaboradores Logados")
             {
 
                 var progressoAtual = new Progress<int>(valorProgresso =>
@@ -225,7 +225,7 @@ namespace GraficosFullWMS
                 Controls.Add(elementHost1);
 
             }
-            else if (tipo == 3)
+            else if (tipo == "3 - Total Logados")
             {
 
                 var progressoAtual = new Progress<int>(valorProgresso =>
@@ -275,10 +275,73 @@ namespace GraficosFullWMS
                 Controls.Add(elementHost1);
 
             }
+            else if (tipo == "4 - Usuários/Colaboradores")
+            {
+
+                var progressoAtual = new Progress<int>(valorProgresso =>
+                {
+
+                    progressBar1.Value = valorProgresso;
+
+                });
+
+                await ExibirBarraProgresso(100, progressoAtual);
+
+                MessageBox.Show("Gráfico Gerado com Sucesso!", "Gráfico Gerado", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                label2.Visible = false;
+                progressBar1.Visible = false;
+
+                var DataPoints = new ChartValues<int>(Logados);
+
+                LineSeries series = new LineSeries
+                {
+                    Title = "Usuários",
+                    Values = DataPoints,
+                    LineSmoothness = 1,
+                    Stroke = System.Windows.Media.Brushes.CornflowerBlue,
+                    StrokeThickness = 1.5
+                };
+
+                var DataPoints2 = new ChartValues<int>(Colaboradores);
+
+                LineSeries series2 = new LineSeries
+                {
+
+                    Title = "Colaboradores",
+                    Values = DataPoints2,
+                    LineSmoothness = 1,
+                    Stroke = System.Windows.Media.Brushes.Aquamarine,
+                    StrokeThickness = 1.5
+
+                };
+
+                cartesianChart1.AxisX.Add(new Axis
+                {
+                    Title = "Data de Entrada",
+                    Labels = DataHora.Select(data => data.ToString("dd/MM/yyyy HH:mm")).ToList(),
+                });
+
+                cartesianChart1.AxisY.Add(new Axis
+                {
+                    Title = "Usuários / Colaboradores"
+                });
+
+                elementHost1.Visible = true;
+
+                System.Windows.Media.Brush backgroundColor = new SolidColorBrush(Colors.White);
+                cartesianChart1.Background = backgroundColor;
+
+                cartesianChart1.Series.Add(series);
+                cartesianChart1.Series.Add(series2);
+
+                Controls.Add(elementHost1);
+
+            }
 
         }
 
-        public void ConnectionToDB(string connectionString, string dataInicio, string dataFim, int Tipo)
+        public void ConnectionToDB(string connectionString, string dataInicio, string dataFim, string Tipo)
         {
 
             try
@@ -287,7 +350,7 @@ namespace GraficosFullWMS
                 using (OracleConnection connection = new OracleConnection(connectionString))
                 {
 
-                    if (Tipo == 1)
+                    if (Tipo == "1 - Usuários Logados")
                     {
 
                         connection.Open();
@@ -327,14 +390,14 @@ namespace GraficosFullWMS
 
                             }
 
-                            CriaGrafico(1);
+                            CriaGrafico("1 - Usuários Logados");
 
                         }
 
                         connection.Close();
 
                     }
-                    else if (Tipo == 2)
+                    else if (Tipo == "2 - Colaboradores Logados")
                     {
 
                         connection.Open();
@@ -373,14 +436,14 @@ namespace GraficosFullWMS
 
                             }
 
-                            CriaGrafico(2);
+                            CriaGrafico("2 - Colaboradores Logados");
 
                         }
 
                         connection.Close();
 
                     }
-                    else if (Tipo == 3)
+                    else if (Tipo == "3 - Total Logados")
                     {
 
                         connection.Open();
@@ -418,7 +481,59 @@ namespace GraficosFullWMS
 
                             }
 
-                            CriaGrafico(3);
+                            CriaGrafico("3 - Total Logados");
+
+                        }
+
+                        connection.Close();
+
+                    }
+                    else if (Tipo == "4 - Usuários/Colaboradores")
+                    {
+
+                        connection.Open();
+
+                        OracleCommand command = new OracleCommand("prc_fullwms_licencas", connection);
+                        command.CommandType = CommandType.StoredProcedure;
+
+                        command.Parameters.Add("p_tipo", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = 3;
+                        command.Parameters.Add("p_data_inicio", OracleDbType.Varchar2, ParameterDirection.Input).Value = dataInicio;
+                        command.Parameters.Add("p_data_fim", OracleDbType.Varchar2, ParameterDirection.Input).Value = dataFim;
+
+                        OracleParameter cursorParameter = new OracleParameter("cursorParameter", OracleDbType.RefCursor);
+                        cursorParameter.Direction = ParameterDirection.Output;
+                        command.Parameters.Add(cursorParameter);
+
+                        command.ExecuteNonQuery();
+
+                        using (OracleDataReader reader = ((OracleRefCursor)cursorParameter.Value).GetDataReader())
+                        {
+
+                            DataHora.Clear();
+                            Logados.Clear();
+                            Colaboradores.Clear();
+
+                            while (reader.Read())
+                            {
+
+                                //Retorna a DataInicio
+                                DateTime coluna1 = reader.GetDateTime(0);
+
+                                //Retorna quantidade de Colaboradores e Logados
+                                int coluna3 = reader.GetInt32(3);
+
+                                int coluna4 = reader.GetInt32(4);
+
+                                if (coluna4.ToString() == null)
+                                    MessageBox.Show("Erro, coluna4 nula.");
+
+                                DataHora.Add(coluna1);
+                                Logados.Add(coluna3);
+                                Colaboradores.Add(coluna4);
+
+                            }
+
+                            CriaGrafico("4 - Usuários/Colaboradores");
 
                         }
 
@@ -475,9 +590,9 @@ namespace GraficosFullWMS
                 MessageBoxManager.Register();
 
                 DialogResult result = MessageBox.Show("Deseja importar ou remover as querys da Base Conectada?", "Importante!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-                
+
                 MessageBoxManager.Unregister();
-                
+
                 if (result == DialogResult.Yes)
                 {
 

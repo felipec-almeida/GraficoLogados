@@ -196,7 +196,7 @@ namespace GraficosFullWMS.Classes
                                                                     l.empresa        as empresa,
                                                                     l.ger_usuario_id as usuario,
                                                                     -- fnc_usu_log3('U', l.empresa, l.dthr) as usuarios_logados,
-                                                                    null as colab,
+                                                                    0 as colab,
                                                                     -- null as colabs_logados,
                                                                     fnc_usu_log3('T', l.empresa, l.dthr) as total
                                                                from ger_usuarios_logados l
@@ -206,7 +206,7 @@ namespace GraficosFullWMS.Classes
                                                              select c.dthr_ent,
                                                                     c.dthr_saida,
                                                                     c.empr_codemp,
-                                                                    null as usuario,
+                                                                    0 as usuario,
                                                                     -- null              as usuarios_logados,
                                                                     c.colab_cod_colab as colab_id,
                                                                     -- fnc_usu_log3('C', c.empr_codemp, c.dthr_ent) as colaboradores_logados,

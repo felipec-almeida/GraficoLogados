@@ -14,6 +14,7 @@ namespace GraficosFullWMS
     public partial class Form2 : Form
     {
 
+        // Default Properties
         public string ConnectionStringResult { get; private set; }
         public string mensagemLabel { get; private set; }
 
@@ -24,7 +25,9 @@ namespace GraficosFullWMS
         {
 
             InitializeComponent();
-            Senha.UseSystemPasswordChar = true;
+
+            //Custom Window
+
 
             //Texto padrão.
             portaConexao.Text = "Porta padrão: 1521";
@@ -91,7 +94,7 @@ namespace GraficosFullWMS
         }
 
         private void Form2_Load(object sender, EventArgs e)
-        { 
+        {
         }
 
         private void ConnectionSaveDataBase(object sender, EventArgs e)
@@ -346,7 +349,6 @@ namespace GraficosFullWMS
             }
 
         }
-
 
         private void RemoverBase(object sender, EventArgs e)
         {

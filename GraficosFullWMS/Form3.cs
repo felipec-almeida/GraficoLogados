@@ -8,7 +8,7 @@ namespace GraficosFullWMS
 
         public string DataInicial { get; private set; }
         public string DataFinal { get; private set; }
-        public int TipoRetorno { get; private set; }
+        public string TipoRetorno { get; private set; }
 
         public Form3()
         {
@@ -54,10 +54,10 @@ namespace GraficosFullWMS
 
                 string tipoRetorno = Tipo.SelectedItem.ToString();
 
-                if (int.Parse(tipoRetorno) > 3 && int.Parse(tipoRetorno) == 0)
+                if (tipoRetorno == "")
                 {
 
-                    MessageBox.Show($"Erro - Valor selecionado não permitido, tente novamente.", "Erro!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"{tipoRetorno} - Erro - Valor selecionado não permitido, tente novamente.", "Erro!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
 
                 }
@@ -68,7 +68,7 @@ namespace GraficosFullWMS
 
                 }
 
-                TipoRetorno = int.Parse(tipoRetorno);
+                TipoRetorno = tipoRetorno;
 
             }
             catch (NullReferenceException error)

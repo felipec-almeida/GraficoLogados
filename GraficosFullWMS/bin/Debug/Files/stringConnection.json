@@ -1,0 +1,142 @@
+[
+  {
+    "server": "172.25.100.247",
+    "porta": "1521",
+    "dataBase": "full11g",
+    "usuario": "r22sp12",
+    "senha": "r22sp12"
+  },
+  {
+    "server": "168.138.247.251",
+    "porta": "1521",
+    "dataBase": "producao.subnetfullsoftp.vcnfullsoft.oraclevcn.com",
+    "usuario": "alemao",
+    "senha": "XNtzCbjAIMkp"
+  },
+  {
+    "server": "168.138.247.251",
+    "porta": "1521",
+    "dataBase": "producao.subnetfullsoftp.vcnfullsoft.oraclevcn.com",
+    "usuario": "baklizi",
+    "senha": "bakli11PROD#pj5#ft"
+  },
+  {
+    "server": "168.138.247.251",
+    "porta": "1521",
+    "dataBase": "producao.subnetfullsoftp.vcnfullsoft.oraclevcn.com",
+    "usuario": "alpar",
+    "senha": "zOpjpXuICnpN"
+  },
+  {
+    "server": "168.138.247.251",
+    "porta": "1521",
+    "dataBase": "producao.subnetfullsoftp.vcnfullsoft.oraclevcn.com",
+    "usuario": "arsystemsc",
+    "senha": "ARS#nTSYSi625sq0MSC#p"
+  },
+  {
+    "server": "168.138.247.251",
+    "porta": "1521",
+    "dataBase": "producao.subnetfullsoftp.vcnfullsoft.oraclevcn.com",
+    "usuario": "coberchapas",
+    "senha": "c0B3rc#4P#5D0r#p"
+  },
+  {
+    "server": "168.138.247.251",
+    "porta": "1521",
+    "dataBase": "producao.subnetfullsoftp.vcnfullsoft.oraclevcn.com",
+    "usuario": "cristalcopo",
+    "senha": "Cr1st4l#cl0usDc0lA#!"
+  },
+  {
+    "server": "168.138.247.251",
+    "porta": "1521",
+    "dataBase": "producao.subnetfullsoftp.vcnfullsoft.oraclevcn.com",
+    "usuario": "diferpan",
+    "senha": "YbzA0cqhywIlc8er"
+  },
+  {
+    "server": "168.138.247.251",
+    "porta": "1521",
+    "dataBase": "producao.subnetfullsoftp.vcnfullsoft.oraclevcn.com",
+    "usuario": "facchini",
+    "senha": "B#sp#nDaT#b#Facch21"
+  },
+  {
+    "server": "168.138.247.251",
+    "porta": "1521",
+    "dataBase": "producao.subnetfullsoftp.vcnfullsoft.oraclevcn.com",
+    "usuario": "guimaraesagricola",
+    "senha": "guimaraesagricola"
+  },
+  {
+    "server": "168.138.247.251",
+    "porta": "1521",
+    "dataBase": "producao.subnetfullsoftp.vcnfullsoft.oraclevcn.com",
+    "usuario": "guimaraespvl",
+    "senha": "yPSlKniQFDOB"
+  },
+  {
+    "server": "168.138.247.251",
+    "porta": "1521",
+    "dataBase": "producao.subnetfullsoftp.vcnfullsoft.oraclevcn.com",
+    "usuario": "medix",
+    "senha": "M3d1x#cl0usDc0lA#!"
+  },
+  {
+    "server": "168.138.247.251",
+    "porta": "1521",
+    "dataBase": "producao.subnetfullsoftp.vcnfullsoft.oraclevcn.com",
+    "usuario": "redesimlubsp",
+    "senha": "zPlYkUqQZXlT"
+  },
+  {
+    "server": "168.138.247.251",
+    "porta": "1521",
+    "dataBase": "producao.subnetfullsoftp.vcnfullsoft.oraclevcn.com",
+    "usuario": "riopreto2",
+    "senha": "r#I#O#prEt#b#OROP"
+  },
+  {
+    "server": "168.138.247.251",
+    "porta": "1521",
+    "dataBase": "producao.subnetfullsoftp.vcnfullsoft.oraclevcn.com",
+    "usuario": "santa_massa",
+    "senha": "GrJMKA9ZCjhbMuy8"
+  },
+  {
+    "server": "168.138.247.251",
+    "porta": "1521",
+    "dataBase": "producao.subnetfullsoftp.vcnfullsoft.oraclevcn.com",
+    "usuario": "vex",
+    "senha": "eHbgxchaOoEz"
+  },
+  {
+    "server": "168.138.247.251",
+    "porta": "1521",
+    "dataBase": "producao.subnetfullsoftp.vcnfullsoft.oraclevcn.com",
+    "usuario": "vex_geral",
+    "senha": "vez#cl0usPRD"
+  },
+  {
+    "server": "168.138.247.251",
+    "porta": "1521",
+    "dataBase": "producao.subnetfullsoftp.vcnfullsoft.oraclevcn.com",
+    "usuario": "vex_nestle",
+    "senha": "BSxAaUVBxuyb"
+  },
+  {
+    "server": "172.25.100.247",
+    "porta": "1521",
+    "dataBase": "full11g",
+    "usuario": "r22sp11_felipe",
+    "senha": "r22sp11_felipe"
+  },
+  {
+    "server": "168.138.247.251",
+    "porta": "1521",
+    "dataBase": "producao.subnetfullsoftp.vcnfullsoft.oraclevcn.com",
+    "usuario": "berto",
+    "senha": "B#nT04i625sq0289#"
+  }
+]

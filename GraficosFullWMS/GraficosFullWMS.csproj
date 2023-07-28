@@ -158,6 +158,18 @@
     <Compile Include="Classes\ConnectionSave.cs" />
     <Compile Include="Classes\ImportOrRemoveQuery.cs" />
     <Compile Include="Classes\MessageBoxManager.cs" />
+    <Compile Include="Custom\CustomComboBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Custom\CustomDatePicker.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Custom\CustomTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Custom\CustomTextBox.Designer.cs">
+      <DependentUpon>CustomTextBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Dominio\File\FileBase.cs" />
     <Compile Include="Dominio\File\FileOperations.cs" />
     <Compile Include="Dominio\File\IFile.cs" />
@@ -181,6 +193,12 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Custom\CustomComboBox.resx">
+      <DependentUpon>CustomComboBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Custom\CustomTextBox.resx">
+      <DependentUpon>CustomTextBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -223,6 +241,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="License-LGPL.txt" />
+    <None Include="Resources\calendarDark.png" />
+    <None Include="Resources\calendarWhite.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Files\" />

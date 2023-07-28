@@ -42,14 +42,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GraficosFullWMS.exe" size="305640">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GraficosFullWMS.exe" size="325608">
       <assemblyIdentity name="GraficosFullWMS" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>rtmzRPZ+kGDiTIC3vRo9lTlTajQUm48AfuwOZKbVLmI=</dsig:DigestValue>
+        <dsig:DigestValue>yi45ifPcOqzFlvFp/Vm1ImrrMtDHINyCcZmKytVM4z8=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
