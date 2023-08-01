@@ -277,7 +277,7 @@ namespace GraficosFullWMS
             {
 
                 var connection = this.connectionsSave.connections.FirstOrDefault(x => x.usuario == comboBoxConnections.SelectedItem.ToString());
-                button3.Visible = true;
+                button3.Enabled = true;
 
                 this.NomeServidor.Text = connection.server;
                 this.portaConexao.Text = connection.porta;

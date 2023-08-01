@@ -7,10 +7,12 @@ using Oracle.ManagedDataAccess.Types;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Media;
+using Syncfusion.Windows.Forms.Interop;
 
 namespace GraficosFullWMS
 {
@@ -23,8 +25,8 @@ namespace GraficosFullWMS
         private string tipoRetorno;
 
         private List<DateTime> DataHora = new List<DateTime>();
-        private List<int> Logados = new List<int>();
-        private List<int> Colaboradores = new List<int>();
+        private List<double> Logados = new List<double>();
+        private List<double> Colaboradores = new List<double>();
         private List<int> TotalLogados = new List<int>();
 
         public Form1()
@@ -142,14 +144,14 @@ namespace GraficosFullWMS
                 label2.Visible = false;
                 progressBar1.Visible = false;
 
-                var DataPoints = new ChartValues<int>(Logados);
+                var DataPoints = new ChartValues<double>(Logados);
 
                 LineSeries series = new LineSeries
                 {
                     Title = "Usuários Logados",
                     Values = DataPoints,
                     PointGeometry = null,
-                    LineSmoothness = 1,
+                    LineSmoothness = 0.2,
                     Stroke = System.Windows.Media.Brushes.CornflowerBlue,
                     StrokeThickness = 1.5
                 };
@@ -192,16 +194,16 @@ namespace GraficosFullWMS
                 label2.Visible = false;
                 progressBar1.Visible = false;
 
-                var DataPoints = new ChartValues<int>(Colaboradores);
+                var DataPoints = new ChartValues<double>(Colaboradores);
 
                 LineSeries series = new LineSeries
                 {
                     Title = "Colaboradores Logados",
                     Values = DataPoints,
                     PointGeometry = null,
-                    LineSmoothness = 1,
+                    LineSmoothness = 0.2,
                     Stroke = System.Windows.Media.Brushes.CornflowerBlue,
-                    StrokeThickness = 1.5
+                    StrokeThickness = 1
                 };
 
                 cartesianChart1.AxisX.Add(new Axis
@@ -271,69 +273,6 @@ namespace GraficosFullWMS
                 cartesianChart1.Background = backgroundColor;
 
                 cartesianChart1.Series.Add(series);
-
-                Controls.Add(elementHost1);
-
-            }
-            else if (tipo == "4 - Usuários/Colaboradores")
-            {
-
-                var progressoAtual = new Progress<int>(valorProgresso =>
-                {
-
-                    progressBar1.Value = valorProgresso;
-
-                });
-
-                await ExibirBarraProgresso(100, progressoAtual);
-
-                MessageBox.Show("Gráfico Gerado com Sucesso!", "Gráfico Gerado", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-                label2.Visible = false;
-                progressBar1.Visible = false;
-
-                var DataPoints = new ChartValues<int>(Logados);
-
-                LineSeries series = new LineSeries
-                {
-                    Title = "Usuários",
-                    Values = DataPoints,
-                    LineSmoothness = 1,
-                    Stroke = System.Windows.Media.Brushes.CornflowerBlue,
-                    StrokeThickness = 1.5
-                };
-
-                var DataPoints2 = new ChartValues<int>(Colaboradores);
-
-                LineSeries series2 = new LineSeries
-                {
-
-                    Title = "Colaboradores",
-                    Values = DataPoints2,
-                    LineSmoothness = 1,
-                    Stroke = System.Windows.Media.Brushes.Aquamarine,
-                    StrokeThickness = 1.5
-
-                };
-
-                cartesianChart1.AxisX.Add(new Axis
-                {
-                    Title = "Data de Entrada",
-                    Labels = DataHora.Select(data => data.ToString("dd/MM/yyyy HH:mm")).ToList(),
-                });
-
-                cartesianChart1.AxisY.Add(new Axis
-                {
-                    Title = "Usuários / Colaboradores"
-                });
-
-                elementHost1.Visible = true;
-
-                System.Windows.Media.Brush backgroundColor = new SolidColorBrush(Colors.White);
-                cartesianChart1.Background = backgroundColor;
-
-                cartesianChart1.Series.Add(series);
-                cartesianChart1.Series.Add(series2);
 
                 Controls.Add(elementHost1);
 
@@ -488,58 +427,6 @@ namespace GraficosFullWMS
                         connection.Close();
 
                     }
-                    else if (Tipo == "4 - Usuários/Colaboradores")
-                    {
-
-                        connection.Open();
-
-                        OracleCommand command = new OracleCommand("prc_fullwms_licencas", connection);
-                        command.CommandType = CommandType.StoredProcedure;
-
-                        command.Parameters.Add("p_tipo", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = 3;
-                        command.Parameters.Add("p_data_inicio", OracleDbType.Varchar2, ParameterDirection.Input).Value = dataInicio;
-                        command.Parameters.Add("p_data_fim", OracleDbType.Varchar2, ParameterDirection.Input).Value = dataFim;
-
-                        OracleParameter cursorParameter = new OracleParameter("cursorParameter", OracleDbType.RefCursor);
-                        cursorParameter.Direction = ParameterDirection.Output;
-                        command.Parameters.Add(cursorParameter);
-
-                        command.ExecuteNonQuery();
-
-                        using (OracleDataReader reader = ((OracleRefCursor)cursorParameter.Value).GetDataReader())
-                        {
-
-                            DataHora.Clear();
-                            Logados.Clear();
-                            Colaboradores.Clear();
-
-                            while (reader.Read())
-                            {
-
-                                //Retorna a DataInicio
-                                DateTime coluna1 = reader.GetDateTime(0);
-
-                                //Retorna quantidade de Colaboradores e Logados
-                                int coluna3 = reader.GetInt32(3);
-
-                                int coluna4 = reader.GetInt32(4);
-
-                                if (coluna4.ToString() == null)
-                                    MessageBox.Show("Erro, coluna4 nula.");
-
-                                DataHora.Add(coluna1);
-                                Logados.Add(coluna3);
-                                Colaboradores.Add(coluna4);
-
-                            }
-
-                            CriaGrafico("4 - Usuários/Colaboradores");
-
-                        }
-
-                        connection.Close();
-
-                    }
 
                 }
 
@@ -560,12 +447,12 @@ namespace GraficosFullWMS
             progressBar1.Maximum = valorMaximo;
             progressBar1.Value = 0;
             progressBar1.Visible = true;
-            progressBar1.Style = ProgressBarStyle.Continuous;
+            progressBar1.Style = ProgressBarStyle.Blocks;
 
             for (int i = 0; i <= valorMaximo; i++)
             {
 
-                progressBar1.Value = i;
+                progressBar1.Value++;
                 progressoAtual.Report(i);
 
                 await Task.Delay(50);
@@ -587,9 +474,10 @@ namespace GraficosFullWMS
 
                 MessageBoxManager.Yes = "Importar";
                 MessageBoxManager.No = "Remover";
+                MessageBoxManager.Cancel = "Cancelar";
                 MessageBoxManager.Register();
 
-                DialogResult result = MessageBox.Show("Deseja importar ou remover as querys da Base Conectada?", "Importante!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                DialogResult result = MessageBox.Show("Deseja importar ou remover as querys da Base Conectada?", "Importante!", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
 
                 MessageBoxManager.Unregister();
 
@@ -597,6 +485,12 @@ namespace GraficosFullWMS
                 {
 
                     IRQ.ImportQuery();
+
+                }
+                else if (result == DialogResult.Cancel)
+                {
+
+                    return;
 
                 }
                 else
@@ -616,5 +510,6 @@ namespace GraficosFullWMS
             }
 
         }
+
     }
 }

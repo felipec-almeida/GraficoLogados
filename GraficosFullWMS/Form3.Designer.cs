@@ -32,10 +32,10 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.Tipo = new GraficosFullWMS.Custom.CustomComboBox();
-            this.DataInicio = new GraficosFullWMS.Custom.CustomDatePicker();
             this.DataFim = new GraficosFullWMS.Custom.CustomDatePicker();
+            this.DataInicio = new GraficosFullWMS.Custom.CustomDatePicker();
+            this.Tipo = new GraficosFullWMS.Custom.CustomComboBox();
+            this.button1 = new GraficosFullWMS.Custom.CustomButtons();
             this.SuspendLayout();
             // 
             // label1
@@ -71,17 +71,33 @@
             this.label3.TabIndex = 5;
             this.label3.Text = "Digite a Data Inicial:";
             // 
-            // button1
+            // DataFim
             // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(73, 238);
-            this.button1.Margin = new System.Windows.Forms.Padding(4);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(152, 49);
-            this.button1.TabIndex = 6;
-            this.button1.Text = "Enviar";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.DataFim.BorderColor = System.Drawing.Color.CornflowerBlue;
+            this.DataFim.BorderSize = 2;
+            this.DataFim.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F);
+            this.DataFim.Location = new System.Drawing.Point(12, 118);
+            this.DataFim.MinimumSize = new System.Drawing.Size(4, 35);
+            this.DataFim.Name = "DataFim";
+            this.DataFim.Size = new System.Drawing.Size(277, 35);
+            this.DataFim.SkinColor = System.Drawing.SystemColors.Window;
+            this.DataFim.TabIndex = 11;
+            this.DataFim.TextColor = System.Drawing.Color.DimGray;
+            this.DataFim.Value = new System.DateTime(2023, 6, 30, 0, 0, 0, 0);
+            // 
+            // DataInicio
+            // 
+            this.DataInicio.BorderColor = System.Drawing.Color.CornflowerBlue;
+            this.DataInicio.BorderSize = 2;
+            this.DataInicio.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F);
+            this.DataInicio.Location = new System.Drawing.Point(12, 49);
+            this.DataInicio.MinimumSize = new System.Drawing.Size(4, 35);
+            this.DataInicio.Name = "DataInicio";
+            this.DataInicio.Size = new System.Drawing.Size(277, 35);
+            this.DataInicio.SkinColor = System.Drawing.SystemColors.Window;
+            this.DataInicio.TabIndex = 10;
+            this.DataInicio.TextColor = System.Drawing.Color.DimGray;
+            this.DataInicio.Value = new System.DateTime(2023, 6, 1, 0, 0, 0, 0);
             // 
             // Tipo
             // 
@@ -95,8 +111,7 @@
             this.Tipo.Items.AddRange(new object[] {
             "1 - Usuários Logados",
             "2 - Colaboradores Logados",
-            "3 - Total Logados",
-            "4 - Usuários/Colaboradores"});
+            "3 - Total Logados"});
             this.Tipo.ListBackColor = System.Drawing.Color.White;
             this.Tipo.ListTextColor = System.Drawing.Color.DimGray;
             this.Tipo.Location = new System.Drawing.Point(12, 191);
@@ -107,33 +122,24 @@
             this.Tipo.TabIndex = 9;
             this.Tipo.Texts = "";
             // 
-            // DataInicio
+            // button1
             // 
-            this.DataInicio.BorderColor = System.Drawing.Color.CornflowerBlue;
-            this.DataInicio.BorderSize = 2;
-            this.DataInicio.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F);
-            this.DataInicio.Location = new System.Drawing.Point(12, 49);
-            this.DataInicio.MinimumSize = new System.Drawing.Size(0, 35);
-            this.DataInicio.Name = "DataInicio";
-            this.DataInicio.Size = new System.Drawing.Size(277, 35);
-            this.DataInicio.SkinColor = System.Drawing.SystemColors.Window;
-            this.DataInicio.TabIndex = 10;
-            this.DataInicio.TextColor = System.Drawing.Color.DimGray;
-            this.DataInicio.Value = new System.DateTime(2023, 6, 1, 0, 0, 0, 0);
-            // 
-            // DataFim
-            // 
-            this.DataFim.BorderColor = System.Drawing.Color.CornflowerBlue;
-            this.DataFim.BorderSize = 2;
-            this.DataFim.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.5F);
-            this.DataFim.Location = new System.Drawing.Point(12, 118);
-            this.DataFim.MinimumSize = new System.Drawing.Size(0, 35);
-            this.DataFim.Name = "DataFim";
-            this.DataFim.Size = new System.Drawing.Size(277, 35);
-            this.DataFim.SkinColor = System.Drawing.SystemColors.Window;
-            this.DataFim.TabIndex = 11;
-            this.DataFim.TextColor = System.Drawing.Color.DimGray;
-            this.DataFim.Value = new System.DateTime(2023, 6, 30, 0, 0, 0, 0);
+            this.button1.BackColor = System.Drawing.Color.CornflowerBlue;
+            this.button1.BackgroundColor = System.Drawing.Color.CornflowerBlue;
+            this.button1.BorderColor = System.Drawing.Color.CornflowerBlue;
+            this.button1.BorderRadius = 20;
+            this.button1.BorderSize = 0;
+            this.button1.FlatAppearance.BorderSize = 0;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button1.ForeColor = System.Drawing.Color.White;
+            this.button1.Location = new System.Drawing.Point(44, 242);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(206, 46);
+            this.button1.TabIndex = 12;
+            this.button1.Text = "Gerar";
+            this.button1.TextColor = System.Drawing.Color.White;
+            this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // Form3
             // 
@@ -141,10 +147,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.ClientSize = new System.Drawing.Size(301, 300);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.DataFim);
             this.Controls.Add(this.DataInicio);
             this.Controls.Add(this.Tipo);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
@@ -164,9 +170,9 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button button1;
         private Custom.CustomComboBox Tipo;
         private Custom.CustomDatePicker DataInicio;
         private Custom.CustomDatePicker DataFim;
+        private Custom.CustomButtons button1;
     }
 }

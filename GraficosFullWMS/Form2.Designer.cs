@@ -33,17 +33,17 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.button3 = new System.Windows.Forms.Button();
             this.comboBoxConnections = new GraficosFullWMS.Custom.CustomComboBox();
             this.Senha = new GraficosFullWMS.Custom.CustomTextBox();
             this.NomeUsuario = new GraficosFullWMS.Custom.CustomTextBox();
             this.portaConexao = new GraficosFullWMS.Custom.CustomTextBox();
             this.NomeDataBase = new GraficosFullWMS.Custom.CustomTextBox();
             this.NomeServidor = new GraficosFullWMS.Custom.CustomTextBox();
+            this.button1 = new GraficosFullWMS.Custom.CustomButtons();
+            this.button2 = new GraficosFullWMS.Custom.CustomButtons();
+            this.button3 = new GraficosFullWMS.Custom.CustomButtons();
             this.SuspendLayout();
             // 
             // label1
@@ -90,30 +90,6 @@
             this.label4.TabIndex = 7;
             this.label4.Text = "Digite a Senha:";
             // 
-            // button1
-            // 
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(16, 475);
-            this.button1.Margin = new System.Windows.Forms.Padding(4);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(123, 50);
-            this.button1.TabIndex = 9;
-            this.button1.Text = "Conectar";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.ConnectionDataBase);
-            // 
-            // button2
-            // 
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(147, 475);
-            this.button2.Margin = new System.Windows.Forms.Padding(4);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(120, 50);
-            this.button2.TabIndex = 10;
-            this.button2.Text = "Salvar e Conectar";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.ConnectionSaveDataBase);
-            // 
             // label5
             // 
             this.label5.AutoSize = true;
@@ -135,17 +111,6 @@
             this.label6.Size = new System.Drawing.Size(128, 18);
             this.label6.TabIndex = 13;
             this.label6.Text = "Conexões Salvas:";
-            // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(85, 532);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(124, 42);
-            this.button3.TabIndex = 15;
-            this.button3.Text = "Remover Conexão Salva";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Visible = false;
-            this.button3.Click += new System.EventHandler(this.RemoverBase);
             // 
             // comboBoxConnections
             // 
@@ -252,22 +217,80 @@
             this.NomeServidor.TabIndex = 16;
             this.NomeServidor.UnderlinedStyle = true;
             // 
+            // button1
+            // 
+            this.button1.BackColor = System.Drawing.Color.CornflowerBlue;
+            this.button1.BackgroundColor = System.Drawing.Color.CornflowerBlue;
+            this.button1.BorderColor = System.Drawing.Color.AliceBlue;
+            this.button1.BorderRadius = 20;
+            this.button1.BorderSize = 0;
+            this.button1.FlatAppearance.BorderSize = 0;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button1.ForeColor = System.Drawing.Color.White;
+            this.button1.Location = new System.Drawing.Point(5, 476);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(136, 52);
+            this.button1.TabIndex = 22;
+            this.button1.Text = "Conectar";
+            this.button1.TextColor = System.Drawing.Color.White;
+            this.button1.UseVisualStyleBackColor = false;
+            this.button1.Click += new System.EventHandler(this.ConnectionDataBase);
+            // 
+            // button2
+            // 
+            this.button2.BackColor = System.Drawing.Color.CornflowerBlue;
+            this.button2.BackgroundColor = System.Drawing.Color.CornflowerBlue;
+            this.button2.BorderColor = System.Drawing.Color.CornflowerBlue;
+            this.button2.BorderRadius = 20;
+            this.button2.BorderSize = 0;
+            this.button2.FlatAppearance.BorderSize = 0;
+            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button2.ForeColor = System.Drawing.Color.White;
+            this.button2.Location = new System.Drawing.Point(148, 476);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(125, 52);
+            this.button2.TabIndex = 23;
+            this.button2.Text = "Salvar e Conectar";
+            this.button2.TextColor = System.Drawing.Color.White;
+            this.button2.UseVisualStyleBackColor = false;
+            this.button2.Click += new System.EventHandler(this.ConnectionSaveDataBase);
+            // 
+            // button3
+            // 
+            this.button3.BackColor = System.Drawing.Color.CornflowerBlue;
+            this.button3.BackgroundColor = System.Drawing.Color.CornflowerBlue;
+            this.button3.BorderColor = System.Drawing.Color.CornflowerBlue;
+            this.button3.BorderRadius = 20;
+            this.button3.BorderSize = 0;
+            this.button3.Enabled = false;
+            this.button3.FlatAppearance.BorderSize = 0;
+            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button3.ForeColor = System.Drawing.Color.White;
+            this.button3.Location = new System.Drawing.Point(68, 534);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(150, 50);
+            this.button3.TabIndex = 24;
+            this.button3.Text = "Remover Conexão Salva";
+            this.button3.TextColor = System.Drawing.Color.White;
+            this.button3.UseVisualStyleBackColor = false;
+            this.button3.Click += new System.EventHandler(this.RemoverBase);
+            // 
             // Form2
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.SystemColors.Window;
-            this.ClientSize = new System.Drawing.Size(279, 586);
+            this.ClientSize = new System.Drawing.Size(285, 586);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.comboBoxConnections);
             this.Controls.Add(this.Senha);
             this.Controls.Add(this.NomeUsuario);
             this.Controls.Add(this.portaConexao);
             this.Controls.Add(this.NomeDataBase);
             this.Controls.Add(this.NomeServidor);
-            this.Controls.Add(this.button3);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -290,16 +313,16 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Button button3;
         private Custom.CustomTextBox NomeServidor;
         private Custom.CustomTextBox NomeDataBase;
         private Custom.CustomTextBox portaConexao;
         private Custom.CustomTextBox NomeUsuario;
         private Custom.CustomTextBox Senha;
         private Custom.CustomComboBox comboBoxConnections;
+        private Custom.CustomButtons button1;
+        private Custom.CustomButtons button2;
+        private Custom.CustomButtons button3;
     }
 }
