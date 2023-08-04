@@ -1,4 +1,4 @@
-# Projeto - Gráfico de Logados
+# Projeto - Gráfico de Logados (OBS - DOCUMENTAÇÃO DESATUALIZADA - TO DO)
 
 > Este foi um projeto no qual desenvolvi durante meu expediente de trabalho como estagiário, onde havia a necessidade de ter o conhecimento de quantos usuários estariam logados simultâneamente numa data específica, a fim de conseguir ter um controle do uso destes usuários ao software provido pela empresa na qual estou atualmente.
 >
