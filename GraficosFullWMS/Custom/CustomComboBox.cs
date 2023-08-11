@@ -73,6 +73,7 @@ namespace GraficosFullWMS.Custom
             this.Padding = new Padding(borderSize);//Border Size
             this.Font = new Font(this.Font.Name, 10F);
             base.BackColor = borderColor; //Border Color
+            this.SelectedItem = "Selecione uma Conexão";
             this.ResumeLayout();
             AdjustComboBoxDimensions();
         }
@@ -312,6 +313,18 @@ namespace GraficosFullWMS.Custom
         {
             get { return cmbList.SelectedItem; }
             set { cmbList.SelectedItem = value; }
+        }
+
+        [Category("Custom ComboBox Code - Data")]
+        [Bindable(true)]
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public string SelectedText
+        {
+
+            get { return cmbList.SelectedText; }
+            set { cmbList.SelectedText = value; }
+
         }
 
         [Category("Custom ComboBox Code - Data")]

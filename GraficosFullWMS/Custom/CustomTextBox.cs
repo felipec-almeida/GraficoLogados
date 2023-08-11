@@ -163,14 +163,13 @@ namespace GraficosFullWMS.Custom
             get
             {
 
-                return base.Text;
+                return textBox1.Text;
 
             }
 
             set
             {
 
-                base.Text = value;
                 textBox1.Text = value;
 
             }

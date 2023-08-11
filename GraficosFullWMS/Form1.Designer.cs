@@ -1,4 +1,7 @@
-﻿namespace GraficosFullWMS
+﻿using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace GraficosFullWMS
 {
     partial class Form1
     {
@@ -65,7 +68,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(745, 43);
+            this.label2.Location = new System.Drawing.Point(741, 23);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(134, 20);
             this.label2.TabIndex = 8;
@@ -73,8 +76,8 @@
             // 
             // button2
             // 
-            this.button2.BackColor = System.Drawing.Color.CornflowerBlue;
-            this.button2.BackgroundColor = System.Drawing.Color.CornflowerBlue;
+            this.button2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(10)))), ((int)(((byte)(14)))));
+            this.button2.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(10)))), ((int)(((byte)(14)))));
             this.button2.BorderColor = System.Drawing.Color.CornflowerBlue;
             this.button2.BorderRadius = 20;
             this.button2.BorderSize = 0;
@@ -93,8 +96,8 @@
             // 
             // button3
             // 
-            this.button3.BackColor = System.Drawing.Color.CornflowerBlue;
-            this.button3.BackgroundColor = System.Drawing.Color.CornflowerBlue;
+            this.button3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(10)))), ((int)(((byte)(14)))));
+            this.button3.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(10)))), ((int)(((byte)(14)))));
             this.button3.BorderColor = System.Drawing.Color.CornflowerBlue;
             this.button3.BorderRadius = 20;
             this.button3.BorderSize = 0;
@@ -113,8 +116,8 @@
             // 
             // button1
             // 
-            this.button1.BackColor = System.Drawing.Color.CornflowerBlue;
-            this.button1.BackgroundColor = System.Drawing.Color.CornflowerBlue;
+            this.button1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(10)))), ((int)(((byte)(14)))));
+            this.button1.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(10)))), ((int)(((byte)(14)))));
             this.button1.BorderColor = System.Drawing.Color.CornflowerBlue;
             this.button1.BorderRadius = 20;
             this.button1.BorderSize = 0;
@@ -133,18 +136,18 @@
             // 
             // progressBar1
             // 
-            this.progressBar1.ChannelColor = System.Drawing.Color.CornflowerBlue;
-            this.progressBar1.ChannelHeight = 15;
+            this.progressBar1.ChannelColor = System.Drawing.Color.AliceBlue;
+            this.progressBar1.ChannelHeight = 35;
             this.progressBar1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.progressBar1.ForeBackColor = System.Drawing.Color.CornflowerBlue;
+            this.progressBar1.ForeBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(10)))), ((int)(((byte)(14)))));
             this.progressBar1.ForeColor = System.Drawing.Color.White;
-            this.progressBar1.Location = new System.Drawing.Point(745, 66);
+            this.progressBar1.Location = new System.Drawing.Point(745, 46);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.ShowMaximun = false;
             this.progressBar1.ShowValue = GraficosFullWMS.Custom.TextPosition.Sliding;
-            this.progressBar1.Size = new System.Drawing.Size(343, 40);
-            this.progressBar1.SliderColor = System.Drawing.Color.CornflowerBlue;
-            this.progressBar1.SliderHeight = 6;
+            this.progressBar1.Size = new System.Drawing.Size(343, 60);
+            this.progressBar1.SliderColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(10)))), ((int)(((byte)(14)))));
+            this.progressBar1.SliderHeight = 20;
             this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar1.SymbolAfter = "";
             this.progressBar1.SymbolBefore = "";

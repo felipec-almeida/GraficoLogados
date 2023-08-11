@@ -22,8 +22,8 @@ namespace GraficosFullWMS.Custom
         private Color channelColor = Color.LightSteelBlue;
         private Color sliderColor = Color.RoyalBlue;
         private Color foreBackColor = Color.RoyalBlue;
-        private int channelHeight = 6;
-        private int sliderHeight = 6;
+        private int channelHeight = 25;
+        private int sliderHeight = 26;
         private TextPosition showValue = TextPosition.Right;
         private string symbolBefore = "";
         private string symbolAfter = "";

@@ -8,12 +8,14 @@ namespace GraficosFullWMS.Classes
     public class ImportOrRemoveQuery
     {
 
-        public string connectionString { get; set; }
+        private string ConnectionString;
 
-        public ImportOrRemoveQuery(string ConnectionString)
+        public string connectionString { get { return ConnectionString; } set { ConnectionString = value; } }
+
+        public ImportOrRemoveQuery(string connectionString)
         {
 
-            this.connectionString = ConnectionString;
+            this.connectionString = connectionString;
 
         }
 
@@ -23,14 +25,76 @@ namespace GraficosFullWMS.Classes
             try
             {
 
-                using (OracleConnection connection = new OracleConnection(this.connectionString))
+                using (OracleConnection connection = new OracleConnection(this.ConnectionString))
                 {
 
                     connection.Open();
 
+                    // Verifica se existe os Índices necessários para a execução da Procedure.
+
+                    string verifyIndex = @"select count(1) as resultado
+                                          from user_indexes i
+                                         where i.INDEX_NAME = 'IX_WMS_COLABO_LOGADOS_DATAS'";
+
+                    OracleCommand commandIndex = new OracleCommand(verifyIndex, connection);
+                    commandIndex.CommandType = CommandType.Text;
+
+                    using (OracleDataReader reader = commandIndex.ExecuteReader())
+                    {
+
+                        if (reader.Read())
+                        {
+
+                            int contador = reader.GetInt32(0);
+
+                            if (contador == 0)
+                            {
+
+                                MessageBox.Show("Criando os Índices necessários para execução da aplicação...", "Criando os Índices", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                string createIndex1 = @"create index IX_WMS_COLABO_LOGADOS_DATAS on WMS_COLABORADORES_LOGADOS (dthr_ent, dthr_saida)";
+                                OracleCommand createCommand1 = new OracleCommand(createIndex1, connection);
+                                createCommand1.ExecuteNonQuery();
+
+                            }
+
+                        }
+
+                    }
+
+                    // Segunda Verificação
+                    string verifyIndex2 = @"select count(1) as resultado
+                                            from user_indexes i
+                                            where i.INDEX_NAME = 'IX_GER_USUARIOS_LOGADOS_DATAS'";
+
+                    OracleCommand commandIndex2 = new OracleCommand(verifyIndex2, connection);
+                    commandIndex2.CommandType = CommandType.Text;
+
+                    using (OracleDataReader reader2 = commandIndex2.ExecuteReader())
+                    {
+
+                        if (reader2.Read())
+                        {
+
+                            int contador = reader2.GetInt32(0);
+
+                            if (contador == 0)
+                            {
+
+                                string createIndex2 = @"create index IX_GER_USUARIOS_LOGADOS_DATAS on GER_USUARIOS_LOGADOS (dthr, dthr_saida)";
+                                OracleCommand createCommand2 = new OracleCommand(createIndex2, connection);
+                                createCommand2.ExecuteNonQuery();
+
+                            }
+
+                        }
+
+                        MessageBox.Show("Os Índices necessários foram criados com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    }
+
                     //Verifica se a Procedure prc_full_wms_licencas existe na Base Conectada.
 
-                    string procedureVerify = "select count(1) from user_procedures o where upper(o.object_type) = 'PROCEDURE' and upper(o.object_name) = 'PRC_FULLWMS_LICENCAS'";
+                    string procedureVerify = @"select count(1) from user_procedures o where upper(o.object_type) = 'PROCEDURE' and upper(o.object_name) = 'PRC_FULLWMS_LICENCAS'";
 
                     OracleCommand commandVerify = new OracleCommand(procedureVerify, connection);
                     commandVerify.CommandType = CommandType.Text;
@@ -69,7 +133,7 @@ namespace GraficosFullWMS.Classes
 
                                 // Verifica a Existência da função fnc_usu_log
 
-                                string procedureVerify2 = "select count(1) from user_procedures o where upper(o.object_type) = 'FUNCTION' and upper(o.object_name) = 'FNC_USU_LOG3'";
+                                string procedureVerify2 = @"select count(1) from user_procedures o where upper(o.object_type) = 'FUNCTION' and upper(o.object_name) = 'FNC_USU_LOG3'";
 
                                 OracleCommand commandVerify2 = new OracleCommand(procedureVerify2, connection);
                                 commandVerify2.CommandType = CommandType.Text;
@@ -85,7 +149,7 @@ namespace GraficosFullWMS.Classes
                                         if (contador2 == 1)
                                         {
 
-                                            DialogResult result2 = MessageBox.Show("Importante - A procedure prc_fullwms_licencas já existe, deseja executar mesmo assim?", "Importante", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                                            DialogResult result2 = MessageBox.Show("Importante - A function fnc_usu_log3 já existe, deseja executar mesmo assim?", "Importante", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                                             if (result2 == DialogResult.Yes)
                                             {
 
@@ -150,6 +214,7 @@ namespace GraficosFullWMS.Classes
                                 string prcString = @"create or replace procedure prc_fullwms_licencas(p_tipo        in number,
                                                  p_data_inicio in varchar2,
                                                  p_data_fim    in varchar2,
+                                                 p_codemp      in number default null,
                                                  p_retorno     out sys_refcursor) is
 
                                                v_data_inicio date := to_date(p_data_inicio, 'DD/MM/YYYY');
@@ -167,6 +232,7 @@ namespace GraficosFullWMS.Classes
                                                             fnc_usu_log3('U', l.empresa, l.dthr) as usuarios_logados
                                                        from ger_usuarios_logados l
                                                       where l.dthr >= v_data_inicio
+                                                        and (p_codemp is null or p_codemp = l.empresa)
                                                         and (l.dthr_saida is null or l.dthr < v_data_fim + 1)
                                                       order by l.dthr asc;
    
@@ -181,41 +247,72 @@ namespace GraficosFullWMS.Classes
                                                             fnc_usu_log3('C', c.empr_codemp, c.dthr_ent) as colaboradores_logados
                                                        from wms_colaboradores_logados c
                                                       where c.dthr_ent >= v_data_inicio
+                                                        and (p_codemp is null or p_codemp = c.empr_codemp)
                                                         and (c.dthr_saida is null or c.dthr_ent < v_data_fim + 1)
                                                       order by c.dthr_ent;
    
-                                               else
+                                               elsif p_tipo = 3 then
    
                                                   open p_retorno for
       
                                                      select x.*,
                                                             to_char(max(x.total) over(partition by trunc(x.data_entrada))) || ' / ' ||
                                                             to_char(max(x.total) over()) as max_diario
-                                                       from (select l.dthr           as data_entrada,
-                                                                    l.dthr_saida     as data_saida,
-                                                                    l.empresa        as empresa,
-                                                                    l.ger_usuario_id as usuario,
-                                                                    -- fnc_usu_log3('U', l.empresa, l.dthr) as usuarios_logados,
-                                                                    0 as colab,
-                                                                    -- null as colabs_logados,
+                                                       from (select l.dthr as data_entrada,
+                                                                    l.dthr_saida as data_saida,
+                                                                    l.empresa as empresa,
+                                                                    fnc_usu_log3('U', l.empresa, l.dthr) as usuarios_logados,
+                                                                    0 as colabs_logados,
                                                                     fnc_usu_log3('T', l.empresa, l.dthr) as total
                                                                from ger_usuarios_logados l
                                                               where l.dthr >= v_data_inicio
+                                                                and (p_codemp is null or p_codemp = l.empresa)
                                                                 and (l.dthr_saida is null or l.dthr < v_data_fim + 1)
                                                              union all
                                                              select c.dthr_ent,
                                                                     c.dthr_saida,
                                                                     c.empr_codemp,
-                                                                    0 as usuario,
-                                                                    -- null              as usuarios_logados,
-                                                                    c.colab_cod_colab as colab_id,
-                                                                    -- fnc_usu_log3('C', c.empr_codemp, c.dthr_ent) as colaboradores_logados,
+                                                                    0 as usuarios_logados,
+                                                                    fnc_usu_log3('C', c.empr_codemp, c.dthr_ent) as colaboradores_logados,
                                                                     fnc_usu_log3('T', c.empr_codemp, c.dthr_ent) as total
                                                                from wms_colaboradores_logados c
                                                               where c.dthr_ent >= v_data_inicio
+                                                                and (p_codemp is null or p_codemp = c.empr_codemp)
                                                                 and (c.dthr_saida is null or c.dthr_ent < v_data_fim + 1)) x
                                                       order by data_entrada asc;
    
+                                               elsif p_tipo = 4 then
+                                                  open p_retorno for
+                                                     select data_entrada,
+                                                            sum(max_usuarios) as max_usuarios,
+                                                            sum(max_colabs) as max_colabs
+                                                       from (select data_entrada,
+                                                                    to_char(max(usuarios)) as max_usuarios,
+                                                                    to_char(max(colabs_logados)) as max_colabs
+                                                               from (select trunc(l.dthr) as data_entrada,
+                                                                            fnc_usu_log3('U', l.empresa, l.dthr) as usuarios,
+                                                                            0 as colabs_logados
+                                                                       from ger_usuarios_logados l
+                                                                      where l.dthr >= v_data_inicio
+                                                                        and l.dthr < v_data_fim + 1
+                                                                     union all
+                                                                     select trunc(c.dthr_ent),
+                                                                            0 as usuarios_logados,
+                                                                            fnc_usu_log3('C', c.empr_codemp, c.dthr_ent) as colaboradores_logados
+                                                                       from wms_colaboradores_logados c
+                                                                      where c.dthr_ent >= v_data_inicio
+                                                                        and c.dthr_ent < v_data_fim + 1)
+                                                              group by data_entrada
+                 
+                                                             union all
+                 
+                                                             select v_data_inicio + level - 1 as data_entrada,
+                                                                    '0' as max_usuarios,
+                                                                    '0' as max_colabs
+                                                               from dual
+                                                             connect by level <= (v_data_fim - v_data_inicio + 1))
+                                                      group by data_entrada
+                                                      order by data_entrada;
                                                end if;
 
                                             end;
