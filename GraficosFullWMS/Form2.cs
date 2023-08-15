@@ -53,7 +53,7 @@ namespace GraficosFullWMS
 
             string porta;
 
-            if (portaConexao.Text == null && portaConexao.Text.Equals("Porta padrão: 1521".Trim()))
+            if (portaConexao.Text.Equals(null) && portaConexao.Text.Equals("Porta padrão: 1521".Trim()))
             {
 
                 MessageBox.Show("Importante - Nenhuma porta inserida, setando porta padrão: 1521", "Importante", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -267,7 +267,7 @@ namespace GraficosFullWMS
                     ConnectionStringResult = connectionString;
                     connection.Close();
 
-                    mensagemLabel = $"Conectado a Base: {NomeConexao.ToUpper()}";
+                    mensagemLabel = $"Conectado a Base: {NomeConexao}";
                     this.DialogResult = DialogResult.OK;
                     Close();
 

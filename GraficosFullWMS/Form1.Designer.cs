@@ -35,6 +35,7 @@ namespace GraficosFullWMS
             this.label1 = new System.Windows.Forms.Label();
             this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
             this.cartesianChart1 = new LiveCharts.Wpf.CartesianChart();
+            this.cartesianChart1.DataClick += new LiveCharts.Events.DataClickHandler(this.elementHost1_ChartOnDataClick);
             this.label2 = new System.Windows.Forms.Label();
             this.button2 = new GraficosFullWMS.Custom.CustomButtons();
             this.button3 = new GraficosFullWMS.Custom.CustomButtons();

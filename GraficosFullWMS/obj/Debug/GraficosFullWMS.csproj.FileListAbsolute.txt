@@ -50,3 +50,4 @@ C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\obj\Debug\GraficosFullWM
 C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\obj\Debug\GraficosFullWMS.exe
 C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\obj\Debug\GraficosFullWMS.pdb
 C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\obj\Debug\GraficosFullWMS.Form4.resources
+C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\obj\Debug\GraficosFullWMS.Form5.resources

@@ -50,3 +50,4 @@ C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\obj\Release\GraficosFull
 C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\obj\Release\GraficosFullWMS.csproj.CopyComplete
 C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\obj\Release\GraficosFullWMS.exe
 C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\obj\Release\GraficosFullWMS.pdb
+C:\Users\Felipe\Desktop\GraficosFullWMS\GraficosFullWMS\obj\Release\GraficosFullWMS.Form5.resources

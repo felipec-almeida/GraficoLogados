@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GraficosFullWMS.Classes;
+﻿using System.Collections.Generic;
 
 namespace GraficosFullWMS.Classes
 {
