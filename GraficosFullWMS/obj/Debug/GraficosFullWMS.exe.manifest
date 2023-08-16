@@ -50,7 +50,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>xC3oHeAvP/nBNL7TLAxMRKK1zjnuJvDsfCxKmNSZtHo=</dsig:DigestValue>
+        <dsig:DigestValue>gRrTC1RnUOpZ0LO40vwz1pz3F6tDF0/yhzB6vbNzBpE=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -243,13 +243,13 @@
       <dsig:DigestValue>72JnmWiUecykh+SYFgF6hiXi6YpjeewK/US79+5Urtw=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="GraficosFullWMS.exe.config" size="1720">
+  <file name="GraficosFullWMS.exe.config" size="1733">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>GmxBgXzqJlxq0bkB6tnPXq0QkvNblALne/eidc6cs2w=</dsig:DigestValue>
+      <dsig:DigestValue>DhSoa+J4CCLjBvwc8ECYddhuTWuD2znHo7SmB2aytlU=</dsig:DigestValue>
     </hash>
   </file>
 </asmv1:assembly>

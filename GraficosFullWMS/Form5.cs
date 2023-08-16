@@ -15,7 +15,6 @@ namespace GraficosFullWMS
 {
     public partial class Form5 : Form
     {
-
         private string p_data;
         private string connectionString;
         private int tipo;
@@ -26,19 +25,15 @@ namespace GraficosFullWMS
             this.p_data = p_data;
             this.connectionString = connectionString;
             this.tipo = tipo;
-
             LoadData();
-
         }
 
         private void Form5_Load(object sender, EventArgs e)
         {
-
         }
 
         private void LoadData()
         {
-
             string commandString = string.Empty;
 
             if (tipo.Equals(1))
@@ -98,14 +93,12 @@ select 'C' as tipo,
             {
                 try
                 {
-
                     OracleCommand command = new OracleCommand(commandString, connection);
                     command.CommandType = CommandType.Text;
                     connection.Open();
                     OracleDataAdapter adapter = new OracleDataAdapter(command);
                     adapter.Fill(resultados);
                     DataGridLogados.DataSource = resultados;
-
                 }
                 catch (Exception ex)
                 {

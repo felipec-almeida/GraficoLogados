@@ -26,24 +26,14 @@ namespace GraficosFullWMS
         {
 
             InitializeComponent();
-
-            //Custom Window
-
-
-            //Texto padrão.
             portaConexao.Text = "Porta padrão: 1521";
-
             portaConexao.ForeColor = Color.Gray;
-
             fileOperations = new FileOperations<List<ConnectionSave>>(Path.Combine(Directory.GetCurrentDirectory(), "Files", "stringConnection.json"));
-
             JsonReaderFile();
 
             if (comboBoxConnections.SelectedIndex.Equals(-1))
             {
-
                 comboBoxConnections.SelectedText = "Selecione uma Conexão";
-
             }
 
         }
@@ -55,39 +45,30 @@ namespace GraficosFullWMS
 
             if (portaConexao.Text.Equals(null) && portaConexao.Text.Equals("Porta padrão: 1521".Trim()))
             {
-
                 MessageBox.Show("Importante - Nenhuma porta inserida, setando porta padrão: 1521", "Importante", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 portaConexao.Text = "1521";
                 porta = portaConexao.Text;
-
             }
             else
             {
-
                 porta = portaConexao.Text;
-
             }
 
             string NomeConexao;
 
             if (nomeConexao.Text != null)
             {
-
                 NomeConexao = nomeConexao.Text;
-
             }
             else
             {
-
                 NomeConexao = NomeUsuario.Text;
-
             }
 
             string server = NomeServidor.Text;
             string dataBase = NomeDataBase.Text;
             string usuario = NomeUsuario.Text;
             string senha = Senha.Text;
-
             this.ConnectionName = nomeConexao.Text;
             string connectionString = $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={server})(PORT={porta}))(CONNECT_DATA=(SERVICE_NAME={dataBase})));User Id={usuario};Password={senha};";
 
@@ -96,26 +77,20 @@ namespace GraficosFullWMS
 
                 using (OracleConnection connection = new OracleConnection(connectionString))
                 {
-
                     connection.Open();
                     MessageBox.Show("Conexão feita com sucesso!");
                     ConnectionStringResult = connectionString;
                     connection.Close();
-
                     mensagemLabel = $"Conectado a Base: {NomeConexao}";
                     this.DialogResult = DialogResult.OK;
                     Close();
-
-
                 }
 
             }
             catch (Exception ex)
             {
-
                 MessageBox.Show(ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
-
             }
 
         }
@@ -129,28 +104,22 @@ namespace GraficosFullWMS
 
             string Porta = portaConexao.Text;
 
-            if (Porta == "Porta padrão: 1521")
+            if (Porta.Equals("Porta padrão: 1521"))
             {
-
                 MessageBox.Show("Importante - Nenhuma porta inserida, setando porta padrão: 1521", "Importante", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 portaConexao.Text = "1521";
                 Porta = portaConexao.Text;
-
             }
 
             string NomeConexao;
 
             if (nomeConexao.Text != null)
             {
-
                 NomeConexao = nomeConexao.Text;
-
             }
             else
             {
-
                 NomeConexao = NomeUsuario.Text;
-
             }
 
             string Server = NomeServidor.Text;
@@ -158,30 +127,24 @@ namespace GraficosFullWMS
             string Usuario = NomeUsuario.Text;
             string UsuarioSenha = Senha.Text;
             this.ConnectionName = nomeConexao.Text;
-            // this.connectionsSave.connections.FirstOrDefault(x => x.nomeConexao.Equals(comboBoxConnections.SelectedText)) != null || 
 
             try
             {
-
 
                 string jsonTemp;
 
                 if (!File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "Files", "stringConnection.json")))
                 {
-
                     throw new ArgumentNullException();
-
                 }
                 else
                 {
-
                     jsonTemp = fileOperations.Load();
-
                 }
 
                 var connectionObject = JsonConvert.DeserializeObject<List<ConnectionSave>>(jsonTemp);
 
-                if (connectionObject.FirstOrDefault(x => x.nomeConexao.Equals(NomeConexao)) != null)
+                if (connectionObject.Find(x => x.nomeConexao.Equals(NomeConexao)) != null)
                 {
 
                     DialogResult result = MessageBox.Show("Aviso - Já existe uma base salva com este mesmo nome, deseja continuar mesmo assim?", "Aviso!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -195,65 +158,47 @@ namespace GraficosFullWMS
 
                             using (OracleConnection connection = new OracleConnection(ConnectionString))
                             {
-
                                 connection.Open();
                                 MessageBox.Show("Conexão feita com sucesso!");
                                 ConnectionStringResult = ConnectionString;
                                 connection.Close();
-
                                 mensagemLabel = $"Conectado a Base: {NomeConexao.ToUpper()}";
                                 Close();
-
                             }
 
                         }
                         catch (Exception ex)
                         {
-
                             MessageBox.Show($"{ex.Message} | {ex.InnerException}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
-
                         }
 
                         JsonReaderFile();
-
-                        //Atualiza o .JSON
                         AtualizarBase();
                         this.DialogResult = DialogResult.OK;
 
                         return;
-
                     }
                     else
                     {
-
                         return;
-
                     }
 
                 }
                 else
                 {
-
                     throw new ArgumentNullException();
-
                 }
 
             }
             catch (ArgumentNullException)
             {
-
                 MessageBox.Show($"Salvando Conexão {NomeConexao}...", "Importante", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
             }
 
             ConnectionSave connectionJSON = new ConnectionSave(NomeConexao, Server, Porta, DataBase, Usuario, UsuarioSenha);
             this.connectionsSave.connections.Add(connectionJSON);
-
             string json = JsonConvert.SerializeObject(this.connectionsSave.connections, Formatting.Indented);
-
-            // Abre arquivo JSON
-
             string connectionString = $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={Server})(PORT={Porta}))(CONNECT_DATA=(SERVICE_NAME={DataBase})));User Id={Usuario};Password={UsuarioSenha};";
 
             try
@@ -261,25 +206,20 @@ namespace GraficosFullWMS
 
                 using (OracleConnection connection = new OracleConnection(connectionString))
                 {
-
                     connection.Open();
                     MessageBox.Show("Conexão feita com sucesso!");
                     ConnectionStringResult = connectionString;
                     connection.Close();
-
                     mensagemLabel = $"Conectado a Base: {NomeConexao}";
                     this.DialogResult = DialogResult.OK;
                     Close();
-
                 }
 
             }
             catch (Exception ex)
             {
-
                 MessageBox.Show($"{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
-
             }
 
             //Lê primeiramente o ComboBox.
@@ -293,25 +233,21 @@ namespace GraficosFullWMS
         private void portaConexao_Enter(object sender, EventArgs e)
         {
 
-            if (portaConexao.Text == "Porta padrão: 1521")
+            if (portaConexao.Text.Equals("Porta padrão: 1521"))
             {
-
                 portaConexao.Text = string.Empty;
                 portaConexao.ForeColor = Color.Black;
-
             }
 
         }
 
         private void portaConexao_Leave(object sender, EventArgs e)
         {
-
             if (string.IsNullOrEmpty(portaConexao.Text))
             {
                 portaConexao.Text = "Porta padrão: 1521";
                 portaConexao.ForeColor = Color.Gray;
             }
-
         }
 
         private void JsonReaderFile()
@@ -321,14 +257,11 @@ namespace GraficosFullWMS
             {
 
                 string json = fileOperations.Load();
-
                 var connectionsObject = JsonConvert.DeserializeObject<List<ConnectionSave>>(json);
 
-                if (connectionsObject == null)
+                if (connectionsObject.Equals(null))
                 {
-
                     throw new Exception();
-
                 }
 
                 if (connectionsObject != null && connectionsObject.Count > 0)
@@ -337,16 +270,13 @@ namespace GraficosFullWMS
                     {
                         this.connectionsSave.connections.Add(connection);
                         comboBoxConnections.Items.Add(connection.nomeConexao);
-
                     }
                 }
 
             }
             catch (Exception)
             {
-
                 comboBoxConnections.Text = "Nenhuma Conexão Selecionada";
-
             }
 
 
@@ -356,23 +286,18 @@ namespace GraficosFullWMS
 
             try
             {
-
-                var connection = this.connectionsSave.connections.FirstOrDefault(x => x.nomeConexao.Equals(comboBoxConnections.SelectedItem.ToString()));
+                var connection = this.connectionsSave.connections.Find(x => x.nomeConexao.Equals(comboBoxConnections.SelectedItem.ToString()));
                 button3.Enabled = true;
-
                 this.nomeConexao.Text = connection.nomeConexao;
                 this.NomeServidor.Text = connection.server;
                 this.portaConexao.Text = connection.porta;
                 this.NomeUsuario.Text = connection.usuario;
                 this.NomeDataBase.Text = connection.dataBase;
                 this.Senha.Text = connection.senha;
-
             }
             catch (Exception error)
             {
-
                 MessageBox.Show($"Não foi possível encontrar uma base {nomeConexao.Text}! Erro: {error.Message}", "Erro de conexão!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
             };
 
         }
@@ -382,19 +307,13 @@ namespace GraficosFullWMS
             string json = fileOperations.Load();
             var connectionObjects = JsonConvert.DeserializeObject<List<ConnectionSave>>(json);
 
-            // Procura pela conexão selecionada
-
             try
             {
-
-                var selectedConnection = connectionObjects.FirstOrDefault(con => con.nomeConexao.Equals(comboBoxConnections.SelectedItem.ToString()));
-
-                // Obtém o índice da conexão encontrada
+                var selectedConnection = connectionObjects.Find(con => con.nomeConexao.Equals(comboBoxConnections.SelectedItem.ToString()));
                 int indexOfConnection = connectionObjects.IndexOf(selectedConnection);
-
                 DialogResult result = MessageBox.Show($"Tem certeza que deseja atualizar a conexão {selectedConnection.nomeConexao}?", "Importante", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
-                if (result == DialogResult.Yes)
+                if (result.Equals(DialogResult.Yes))
                 {
                     // Atualiza os dados da conexão
                     selectedConnection.nomeConexao = this.nomeConexao.Text;
@@ -415,7 +334,6 @@ namespace GraficosFullWMS
                     // Sobrescreve o arquivo JSON com os dados atualizados
                     string newConnectionObject = JsonConvert.SerializeObject(connectionObjects, Formatting.Indented);
                     fileOperations.Override(newConnectionObject);
-
                     this.DialogResult = DialogResult.OK;
                     MessageBox.Show($"Conexão {selectedConnection.nomeConexao} foi atualizada com sucesso!", "Atualização feita com sucesso!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
@@ -427,10 +345,8 @@ namespace GraficosFullWMS
             }
             catch (Exception)
             {
-
                 MessageBox.Show("Conexão selecionada não encontrada!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
-
             }
 
         }
@@ -439,10 +355,8 @@ namespace GraficosFullWMS
         {
 
             string NomeConexao = nomeConexao.Text;
-
             string json = fileOperations.Load();
             var connectionObject = JsonConvert.DeserializeObject<List<ConnectionSave>>(json);
-
             MessageBoxManager.Yes = "Remover";
             MessageBoxManager.No = "Duplicar";
             MessageBoxManager.Register();
@@ -456,7 +370,7 @@ namespace GraficosFullWMS
                 for (int i = 0; i < connectionObject.Count; i++)
                 {
 
-                    if (comboBoxConnections.SelectedItem.ToString().Equals(connectionObject[i].nomeConexao) && connectionsSave.connections.FirstOrDefault(x => x.usuario.Equals(connectionObject[i].usuario)) != null)
+                    if (comboBoxConnections.SelectedItem.ToString().Equals(connectionObject[i].nomeConexao) && connectionsSave.connections.Find(x => x.usuario.Equals(connectionObject[i].usuario)) != null)
                     {
 
                         DialogResult result = MessageBox.Show($"Tem certeza que deseja remover a conexão {connectionObject[i--].nomeConexao}?", "Importante", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -494,9 +408,7 @@ namespace GraficosFullWMS
                         }
                         else
                         {
-
                             return;
-
                         }
 
                     }
@@ -507,16 +419,14 @@ namespace GraficosFullWMS
             else if (result1.Equals(DialogResult.No))
             {
 
-                var connection = this.connectionsSave.connections.FirstOrDefault(x => x.nomeConexao.Equals(NomeConexao));
+                var connection = this.connectionsSave.connections.Find(x => x.nomeConexao.Equals(NomeConexao));
 
                 try
                 {
 
                     if (connection.Equals(null))
                     {
-
                         throw new NullReferenceException();
-
                     }
                     else
                     {
@@ -524,9 +434,7 @@ namespace GraficosFullWMS
                         DialogResult result = MessageBox.Show("Erro - Não é possível Duplicar uma Conexão com o mesmo nome, deseja atualiza-la?", "Importante!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                         if (result.Equals(DialogResult.Yes))
                         {
-
                             AtualizarBase();
-
                         }
 
                     }
@@ -544,14 +452,9 @@ namespace GraficosFullWMS
                         string DataBase = NomeDataBase.Text;
                         string Usuario = NomeUsuario.Text;
                         string UsuarioSenha = Senha.Text;
-
                         ConnectionSave connectionJSON = new ConnectionSave(NomeConexao, Server, Porta, DataBase, Usuario, UsuarioSenha);
                         this.connectionsSave.connections.Add(connectionJSON);
-
                         string json2 = JsonConvert.SerializeObject(this.connectionsSave.connections, Formatting.Indented);
-
-                        // Abre arquivo JSON
-
                         string connectionString = $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={Server})(PORT={Porta}))(CONNECT_DATA=(SERVICE_NAME={DataBase})));User Id={Usuario};Password={UsuarioSenha};";
 
                         try
@@ -559,24 +462,19 @@ namespace GraficosFullWMS
 
                             using (OracleConnection connection2 = new OracleConnection(connectionString))
                             {
-
                                 connection2.Open();
                                 MessageBox.Show("Conexão duplicada com sucesso!");
                                 ConnectionStringResult = connectionString;
                                 connection2.Close();
-
                                 mensagemLabel = $"Conectado a Base: {NomeConexao.ToUpper()}";
                                 Close();
-
                             }
 
                         }
                         catch (Exception ex)
                         {
-
                             MessageBox.Show($"{ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             return;
-
                         }
 
                         //Lê primeiramente o ComboBox.
