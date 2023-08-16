@@ -45,7 +45,7 @@
 ![image](https://github.com/felipec-almeida/GraficoLogados/assets/122905385/46aa7cd2-89ee-4b70-b2fb-bd363053366f)
 
 #### Tipos de Retorno
-> São possíveis 4 tipos de retorno para a geração dos Gráficos. Após o gráfico ser gerado, ao passar o mouse sobre uma parte do mesmo, irá mostrar informações relevantes, como por exemplo a data e a quantidade de logados nesta data. Quando pressionado em um dado específico gerado pelo gráfico, irá mostrar uma nova tela, detalhando os usuários logados naquela data.
+> São possíveis 5 tipos de retorno para a geração dos Gráficos. Após o gráfico ser gerado, ao passar o mouse sobre uma parte do mesmo, irá mostrar informações relevantes, como por exemplo a data e a quantidade de logados nesta data. Quando pressionado em um dado específico gerado pelo gráfico, irá mostrar uma nova tela, detalhando os usuários logados naquela data.
 
 1. O Tipo 1 retorna o total de **Usuários** logados durante a data fornecida.
 2. O Tipo 2 retorna o total de **Colaboradores** logados durante a data fornecida.
