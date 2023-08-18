@@ -18,13 +18,30 @@ namespace GraficosFullWMS
         private string p_data;
         private string connectionString;
         private int tipo;
+        private double total;
 
-        public Form5(string p_data, string connectionString, int tipo)
+        public Form5(string p_data, string connectionString, int tipo, double total)
         {
             InitializeComponent();
             this.p_data = p_data;
             this.connectionString = connectionString;
             this.tipo = tipo;
+            this.total = total;
+            label1.Text += $": {p_data}";
+
+            switch (this.tipo)
+            {
+                case 1:
+                    label2.Text += $" de Usuários Logados: {this.total}";
+                    break;
+                case 2:
+                    label2.Text += $" de Colaboradores Logados: {this.total}";
+                    break;
+                case 3:
+                    label2.Text += $" de Logados: {this.total}";
+                    break;
+            }
+
             LoadData();
         }
 
@@ -99,6 +116,13 @@ select 'C' as tipo,
                     OracleDataAdapter adapter = new OracleDataAdapter(command);
                     adapter.Fill(resultados);
                     DataGridLogados.DataSource = resultados;
+                    DataGridLogados.AllowUserToResizeColumns = true;
+                    DataGridLogados.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+                    DataGridLogados.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+                    //DataGridLogados.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                    //DataGridLogados.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                    //DataGridLogados.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+                    //DataGridLogados.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
                 }
                 catch (Exception ex)
                 {
@@ -107,6 +131,14 @@ select 'C' as tipo,
                 }
             }
 
+        }
+
+        private void Form_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode.Equals(Keys.Escape))
+            {
+                this.Close();
+            }
         }
     }
 }

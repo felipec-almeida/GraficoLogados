@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form5));
             this.DataGridLogados = new System.Windows.Forms.DataGridView();
             this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridLogados)).BeginInit();
             this.SuspendLayout();
             // 
@@ -46,7 +47,6 @@
             this.DataGridLogados.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.DataGridLogados.BackgroundColor = System.Drawing.Color.White;
             this.DataGridLogados.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.DataGridLogados.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.SingleHorizontal;
             this.DataGridLogados.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Sunken;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.White;
@@ -67,6 +67,7 @@
             this.DataGridLogados.ShowEditingIcon = false;
             this.DataGridLogados.Size = new System.Drawing.Size(797, 399);
             this.DataGridLogados.TabIndex = 0;
+            this.DataGridLogados.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form_KeyDown);
             // 
             // label1
             // 
@@ -78,14 +79,27 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(797, 37);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Detalhes dos Logados";
+            this.label1.Text = "Detalhes de Logados";
+            // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(10)))), ((int)(((byte)(14)))));
+            this.label2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.ForeColor = System.Drawing.Color.White;
+            this.label2.Location = new System.Drawing.Point(-3, 431);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(797, 44);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "Total";
             // 
             // Form5
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(10)))), ((int)(((byte)(14)))));
-            this.ClientSize = new System.Drawing.Size(792, 442);
+            this.ClientSize = new System.Drawing.Size(790, 466);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.DataGridLogados);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -104,5 +118,6 @@
 
         private System.Windows.Forms.DataGridView DataGridLogados;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
     }
 }

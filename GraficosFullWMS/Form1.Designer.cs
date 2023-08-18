@@ -33,14 +33,12 @@ namespace GraficosFullWMS
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.label1 = new System.Windows.Forms.Label();
-            this.elementHost1 = new System.Windows.Forms.Integration.ElementHost();
-            this.cartesianChart1 = new LiveCharts.Wpf.CartesianChart();
-            this.cartesianChart1.DataClick += new LiveCharts.Events.DataClickHandler(this.elementHost1_ChartOnDataClick);
             this.label2 = new System.Windows.Forms.Label();
             this.button2 = new GraficosFullWMS.Custom.CustomButtons();
             this.button3 = new GraficosFullWMS.Custom.CustomButtons();
             this.button1 = new GraficosFullWMS.Custom.CustomButtons();
             this.progressBar1 = new GraficosFullWMS.Custom.CustomProgressBar();
+            this.cartesianChart1 = new LiveChartsCore.SkiaSharpView.WinForms.CartesianChart();
             this.SuspendLayout();
             // 
             // label1
@@ -52,18 +50,6 @@ namespace GraficosFullWMS
             this.label1.Size = new System.Drawing.Size(475, 22);
             this.label1.TabIndex = 2;
             this.label1.Text = "Conecte-se ao banco de dados para gerar o Gráfico";
-            // 
-            // elementHost1
-            // 
-            this.elementHost1.Location = new System.Drawing.Point(13, 113);
-            this.elementHost1.Margin = new System.Windows.Forms.Padding(4);
-            this.elementHost1.Name = "elementHost1";
-            this.elementHost1.Size = new System.Drawing.Size(1771, 769);
-            this.elementHost1.TabIndex = 3;
-            this.elementHost1.Text = "elementHost1";
-            this.elementHost1.Visible = false;
-            this.elementHost1.ChildChanged += new System.EventHandler<System.Windows.Forms.Integration.ChildChangedEventArgs>(this.elementHost1_ChildChanged);
-            this.elementHost1.Child = this.cartesianChart1;
             // 
             // label2
             // 
@@ -154,17 +140,26 @@ namespace GraficosFullWMS
             this.progressBar1.SymbolBefore = "";
             this.progressBar1.TabIndex = 12;
             // 
+            // cartesianChart1
+            // 
+            this.cartesianChart1.Location = new System.Drawing.Point(12, 112);
+            this.cartesianChart1.Name = "cartesianChart1";
+            this.cartesianChart1.Size = new System.Drawing.Size(1776, 773);
+            this.cartesianChart1.TabIndex = 13;
+            this.cartesianChart1.Visible = false;
+            this.cartesianChart1.DataPointerDown += new LiveChartsCore.Kernel.Events.ChartPointsHandler(this.OnPointerDown);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1800, 897);
+            this.Controls.Add(this.cartesianChart1);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.elementHost1);
             this.Controls.Add(this.label1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -180,13 +175,12 @@ namespace GraficosFullWMS
 
         #endregion
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Integration.ElementHost elementHost1;
-        private LiveCharts.Wpf.CartesianChart cartesianChart1;
         private System.Windows.Forms.Label label2;
         private Custom.CustomButtons button1;
         private Custom.CustomButtons button3;
         private Custom.CustomButtons button2;
         private Custom.CustomProgressBar progressBar1;
+        private LiveChartsCore.SkiaSharpView.WinForms.CartesianChart cartesianChart1;
     }
 }
 

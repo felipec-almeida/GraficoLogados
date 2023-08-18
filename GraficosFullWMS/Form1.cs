@@ -1,10 +1,19 @@
 ﻿using GraficosFullWMS.Classes;
 using GraficosFullWMS.Dominio.File;
-using LiveCharts;
-using LiveCharts.Wpf;
+using LiveCharts.Definitions.Charts;
+using LiveCharts.Helpers;
+using LiveChartsCore;
+using LiveChartsCore.Kernel;
+using LiveChartsCore.Kernel.Events;
+using LiveChartsCore.Kernel.Sketches;
+using LiveChartsCore.Measure;
+using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Painting;
+using LiveChartsCore.SkiaSharpView.VisualElements;
 using Newtonsoft.Json;
 using Oracle.ManagedDataAccess.Client;
 using Oracle.ManagedDataAccess.Types;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -46,11 +55,29 @@ namespace GraficosFullWMS
         {
             InitializeComponent();
             fileOperations = new FileOperations<List<ConnectionSave>>(Path.Combine(Directory.GetCurrentDirectory(), "Files", "stringConnection.json"));
-            elementHost1.Visible = false;
+        }
+
+        private void ConfigGrafico()
+        {
+
+            cartesianChart1.Visible = false;
             label2.Visible = false;
             progressBar1.Visible = false;
-            cartesianChart1.Pan = PanningOptions.None;
-            cartesianChart1.DisableAnimations = true;
+            cartesianChart1.HorizontalScroll.Enabled = true;
+            cartesianChart1.ZoomingSpeed = 0.5;
+            cartesianChart1.AnimationsSpeed = TimeSpan.FromMilliseconds(750);
+            cartesianChart1.ZoomMode = ZoomAndPanMode.ZoomX;
+            cartesianChart1.EasingFunction = EasingFunctions.CubicOut;
+            cartesianChart1.TooltipPosition = TooltipPosition.Top;
+            cartesianChart1.TooltipTextSize = 11;
+            cartesianChart1.TooltipBackgroundPaint = new SolidColorPaint(SKColors.WhiteSmoke);
+            cartesianChart1.TooltipTextPaint = new SolidColorPaint() { Color = SKColors.Black, FontFamily = "Arial" };
+            cartesianChart1.LegendPosition = LegendPosition.Bottom;
+            cartesianChart1.LegendTextPaint = new SolidColorPaint() { Color = SKColors.Black, FontFamily = "Arial" };
+            cartesianChart1.LegendTextSize = 13;
+            cartesianChart1.LegendBackgroundPaint = new SolidColorPaint(SKColors.WhiteSmoke);
+            cartesianChart1.TooltipFindingStrategy = TooltipFindingStrategy.Automatic;
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -73,7 +100,7 @@ namespace GraficosFullWMS
             this.connectionsString.Add(form2.ConnectionName);
             label1.Text = form2.mensagemLabel;
             labelTemp = form2.mensagemLabel;
-            elementHost1.Visible = false;
+            cartesianChart1.Visible = false;
 
         }
 
@@ -83,7 +110,7 @@ namespace GraficosFullWMS
 
         private async void OpenModalButton_Click(object sender, EventArgs e)
         {
-            elementHost1.Visible = false;
+            cartesianChart1.Visible = false;
             label2.Visible = true;
             progressBar1.Visible = true;
             progressBar1.Value = 0;
@@ -91,9 +118,6 @@ namespace GraficosFullWMS
             // Validação para ver se a conexão está OK
             if (!string.IsNullOrEmpty(this.connectionString))
             {
-                cartesianChart1.Series.Clear();
-                cartesianChart1.AxisX.Clear();
-                cartesianChart1.AxisY.Clear();
 
                 // Formulário para gerar o Gráfico
                 Form3 form3 = new Form3();
@@ -212,6 +236,7 @@ namespace GraficosFullWMS
                         connection.Close();
 
                         await Task.WhenAny(CriaGrafico("1 - Usuários Logados"));
+
                     }
                     else if (Tipo.Equals("2 - Colaboradores Logados"))
                     {
@@ -261,6 +286,7 @@ namespace GraficosFullWMS
                         connection.Close();
 
                         await Task.WhenAny(CriaGrafico("2 - Colaboradores Logados"));
+
                     }
                     else if (Tipo.Equals("3 - Total Logados"))
                     {
@@ -309,10 +335,6 @@ namespace GraficosFullWMS
                         connection.Close();
 
                         await Task.WhenAny(CriaGrafico("3 - Total Logados"));
-
-                        GC.Collect();
-                        GC.WaitForPendingFinalizers();
-                        GC.Collect();
 
                     }
                     else if (Tipo.Equals("4 - Usuários/Colaboradores"))
@@ -365,6 +387,7 @@ namespace GraficosFullWMS
                         }
 
                         connection.Close();
+
                         await Task.WhenAny(CriaGrafico("4 - Usuários/Colaboradores"));
                     }
                     else if (Tipo.Equals("5 - Junta Gráficos"))
@@ -405,6 +428,10 @@ namespace GraficosFullWMS
                                 temp.LogadosTemp.Add(tempColuna2);
                                 temp.ColaboradoresTemp.Add(tempColuna3);
                                 temp.TotalLogadosTemp.Add(tempColuna2 + tempColuna3);
+
+                                if (isAdded.Equals(false))
+                                    DataHora.Add(coluna1);
+
                             }
 
                             connectionsDB.Add(temp);
@@ -527,6 +554,8 @@ namespace GraficosFullWMS
         public async Task CriaGrafico(string tipo)
         {
 
+            ConfigGrafico();
+
             var progressoAtual = new Progress<int>(valorProgresso =>
             {
                 progressBar1.Value = valorProgresso;
@@ -544,319 +573,305 @@ namespace GraficosFullWMS
 
             if (tipo.Equals("1 - Usuários Logados"))
             {
-
-                cartesianChart1.ChartLegend = null;
-                label2.Visible = false;
-                progressBar1.Visible = false;
-
-                var DataPoints = new ChartValues<double>(Logados);
-
-                LineSeries series = new LineSeries
+                cartesianChart1.Series = new ISeries[]
                 {
-                    Title = "Usuários Logados",
-                    Values = DataPoints,
-                    PointGeometry = null,
-                    LineSmoothness = 0.2,
-                    Stroke = System.Windows.Media.Brushes.CornflowerBlue,
-                    StrokeThickness = 1.5,
+                    new LineSeries<double>
+                    {
+                        Name = "Usuários Logados",
+                        Values = Logados,
+                        GeometryFill = null,
+                        GeometryStroke = null,
+                        Fill = new SolidColorPaint() { Color = SKColors.Maroon.WithAlpha(25), StrokeThickness = 1.5F },
+                        Stroke = new SolidColorPaint() { Color = SKColors.Maroon },
+                        LineSmoothness = 1
+                    }
                 };
 
-
-                cartesianChart1.AxisX.Add(new Axis
+                cartesianChart1.XAxes = new Axis[]
                 {
-                    Title = "Data de Entrada",
-                    Labels = DataHora.Select(data => data.ToString("dd/MM/yyyy HH:mm:ss")).ToList(),
-                });
+                    new Axis
+                    {
+                        Name = "Data de Entrada",
+                        NamePaint = new SolidColorPaint(SKColors.Gray),
+                        Labels = DataHora.Select(data => data.ToString("dd/MM/yyyy HH:mm:ss")).ToList(),
+                        TextSize = 8.5,
+                        NameTextSize = 11,
+                        LabelsRotation = 15
+                    }
+                };
 
                 DataHora.Clear();
 
-                cartesianChart1.AxisY.Add(new Axis
+                cartesianChart1.YAxes = new Axis[]
                 {
-                    Title = "Usuários Logados"
-                });
+                    new Axis
+                    {
+                        Name = "Usuários Logados",
+                        NameTextSize = 10,
+                        TextSize = 10.5,
+                        NamePaint = new SolidColorPaint(SKColors.Gray)
+                    }
+                };
 
-                elementHost1.Visible = true;
+                cartesianChart1.BackColor = System.Drawing.Color.White;
+                cartesianChart1.Visible = true;
+                label2.Visible = false;
+                progressBar1.Visible = false;
 
-                System.Windows.Media.Brush backgroundColor = new SolidColorBrush(Colors.White);
-                cartesianChart1.Background = backgroundColor;
-
-                cartesianChart1.Series.Add(series);
-
-                Controls.Add(elementHost1);
-
-                clearData();
-
-                await Task.Delay(50);
-
+                Controls.Add(cartesianChart1);
+                clearData(false);
             }
             else if (tipo.Equals("2 - Colaboradores Logados"))
             {
-
-                cartesianChart1.ChartLegend = null;
-                label2.Visible = false;
-                progressBar1.Visible = false;
-
-                var DataPoints = new ChartValues<double>(Colaboradores);
-
-                Colaboradores.Clear();
-
-                LineSeries series = new LineSeries
+                cartesianChart1.Series = new ISeries[]
                 {
-                    Title = "Colaboradores Logados",
-                    Values = DataPoints,
-                    PointGeometry = null,
-                    LineSmoothness = 0.2,
-                    Stroke = System.Windows.Media.Brushes.CornflowerBlue,
-                    StrokeThickness = 1
+                    new LineSeries<double>
+                    {
+                        Name = "Colaboradores Logados",
+                        Values = Colaboradores,
+                        GeometryFill = null,
+                        GeometryStroke = null,
+                        Fill = new SolidColorPaint() { Color = SKColors.Maroon.WithAlpha(25), StrokeThickness = 1.5F },
+                        Stroke = new SolidColorPaint() { Color = SKColors.Maroon },
+                        LineSmoothness = 1
+                    }
                 };
 
-                cartesianChart1.AxisX.Add(new Axis
+                cartesianChart1.XAxes = new Axis[]
                 {
-                    Title = "Data de Entrada",
-                    Labels = DataHora.Select(data => data.ToString("dd/MM/yyyy HH:mm:ss")).ToList(),
-                });
+                    new Axis
+                    {
+                        Name = "Data de Entrada",
+                        NamePaint = new SolidColorPaint(SKColors.Gray),
+                        Labels = DataHora.Select(data => data.ToString("dd/MM/yyyy HH:mm:ss")).ToList(),
+                        TextSize = 8.5,
+                        NameTextSize = 11,
+                        LabelsRotation = 15
+                    }
+                };
 
                 DataHora.Clear();
 
-                cartesianChart1.AxisY.Add(new Axis
+                cartesianChart1.YAxes = new Axis[]
                 {
-                    Title = "Colaboradores Logados"
-                });
+                    new Axis
+                    {
+                        Name = "Colaboradores Logados",
+                        NameTextSize = 10,
+                        TextSize = 10.5,
+                        NamePaint = new SolidColorPaint(SKColors.Gray)
+                    }
+                };
 
-                elementHost1.Visible = true;
+                cartesianChart1.BackColor = System.Drawing.Color.White;
+                cartesianChart1.Visible = true;
+                label2.Visible = false;
+                progressBar1.Visible = false;
 
-                System.Windows.Media.Brush backgroundColor = new SolidColorBrush(Colors.White);
-                cartesianChart1.Background = backgroundColor;
-
-                cartesianChart1.Series.Add(series);
-
-                Controls.Add(elementHost1);
-
-                clearData();
-
-                await Task.Delay(50);
-
+                Controls.Add(cartesianChart1);
+                clearData(false);
             }
             else if (tipo.Equals("3 - Total Logados"))
             {
-
-                cartesianChart1.ChartLegend = null;
-                label2.Visible = false;
-                progressBar1.Visible = false;
-                var DataPoints = new ChartValues<double>(TotalLogados);
-                TotalLogados.Clear();
-
-                LineSeries series = new LineSeries
+                cartesianChart1.Series = new ISeries[]
                 {
-                    Title = "Total de Logados",
-                    Values = DataPoints,
-                    PointGeometry = null, //,
-                    Stroke = System.Windows.Media.Brushes.CornflowerBlue,
-                    StrokeThickness = 1.5,
-                    DataLabels = false
+                    new LineSeries<double>
+                    {
+                        Name = "Total Logados",
+                        Values = TotalLogados,
+                        GeometryFill = null,
+                        GeometryStroke = null,
+                        Fill = new SolidColorPaint() { Color = SKColors.Maroon.WithAlpha(25), StrokeThickness = 1.5F },
+                        Stroke = new SolidColorPaint() { Color = SKColors.Maroon },
+                        LineSmoothness = 1,
+                    }
                 };
 
-                cartesianChart1.AxisX.Add(new Axis
+                cartesianChart1.XAxes = new Axis[]
                 {
-                    Title = "Data de Entrada",
-                    Labels = DataHora.Select(data => data.ToString("dd/MM/yyyy HH:mm:ss")).ToList(),
-                });
+                    new Axis
+                    {
+                        Name = "Data de Entrada",
+                        NamePaint = new SolidColorPaint(SKColors.Gray),
+                        Labels = DataHora.Select(data => data.ToString("dd/MM/yyyy HH:mm:ss")).ToList(),
+                        TextSize = 8.5,
+                        NameTextSize = 11,
+                        LabelsRotation = 15
+                    }
+                };
 
                 DataHora.Clear();
 
-                cartesianChart1.AxisY.Add(new Axis
+                cartesianChart1.YAxes = new Axis[]
                 {
-                    Title = "Total de Logados"
-                });
+                    new Axis
+                    {
+                        Name = "Total Logados",
+                        NameTextSize = 10,
+                        TextSize = 10.5,
+                        NamePaint = new SolidColorPaint(SKColors.Gray)
+                    }
+                };
 
-                elementHost1.Visible = true;
+                cartesianChart1.BackColor = System.Drawing.Color.White;
+                cartesianChart1.Visible = true;
+                label2.Visible = false;
+                progressBar1.Visible = false;
 
-                System.Windows.Media.Brush backgroundColor = new SolidColorBrush(Colors.White);
-                cartesianChart1.Background = backgroundColor;
-
-                cartesianChart1.Series.Add(series);
-
-                Controls.Add(elementHost1);
-
-                clearData();
-
-                await Task.Delay(50);
-
+                Controls.Add(cartesianChart1);
+                clearData(false);
             }
             else if (tipo.Equals("4 - Usuários/Colaboradores"))
             {
+                cartesianChart1.ZoomMode = ZoomAndPanMode.X;
 
-                cartesianChart1.ChartLegend = null;
+                cartesianChart1.Series = new ISeries[]
+                {
+                    new StackedColumnSeries<double>
+                    {
+                        Name = "Usuários",
+                        Values = Logados,
+                        Fill = new SolidColorPaint() { Color = SKColors.CornflowerBlue, StrokeThickness = 4.5F },
+                        Stroke = new SolidColorPaint() { Color = SKColors.DodgerBlue },
+                        MaxBarWidth = 95,
+                        DataLabelsSize = 7.5,
+                        Padding = 7.5,
+                        IsHoverable = true
+                    },
+                    new StackedColumnSeries<double>
+                    {
+                        Name = "Colaboradores",
+                        Values = Colaboradores,
+                        Fill = new SolidColorPaint() { Color = SKColors.PaleVioletRed, StrokeThickness = 4.5F },
+                        Stroke = new SolidColorPaint() { Color = SKColors.IndianRed },
+                        Padding = 7.5,
+                        DataLabelsSize = 7.5,
+                        MaxBarWidth = 95,
+                        IsHoverable = true
+                    },
+                    new LineSeries<double>
+                    {
+                        Name = "Total de Logados",
+                        Values = TotalLogados,
+                        GeometryFill = new SolidColorPaint() { Color = SKColors.WhiteSmoke },
+                        GeometryStroke = new SolidColorPaint() { Color = SKColors.Black, StrokeThickness = 1F },
+                        GeometrySize = 8.5,
+                        Fill = null,
+                        LineSmoothness = 0.5,
+                        Stroke = new SolidColorPaint() { Color = SKColors.Black, StrokeThickness = 1.25F }
+                    }
+                };
+
+                cartesianChart1.XAxes = new Axis[]
+                {
+                    new Axis
+                    {
+                        Name = "Data de Entrada",
+                        NamePaint = new SolidColorPaint(SKColors.Gray),
+                        Labels = DataHora.Select(data => data.ToString("dd/MM/yyyy")).ToList(),
+                        TextSize = 8.5,
+                        NameTextSize = 11,
+                        LabelsRotation = 15
+                    }
+                };
+
+                cartesianChart1.YAxes = new Axis[]
+                {
+                    new Axis
+                    {
+                        Name = "Máximo de Usuários e Colaboradores Logados",
+                        NameTextSize = 10,
+                        TextSize = 10.5,
+                        NamePaint = new SolidColorPaint(SKColors.Gray)
+                    }
+                };
+
+                cartesianChart1.BackColor = System.Drawing.Color.White;
+                cartesianChart1.Visible = true;
                 label2.Visible = false;
                 progressBar1.Visible = false;
 
-                SeriesCollection seriesCollection = new SeriesCollection();
-
-                // Usuários
-                var DataPointsUsuarios = new ChartValues<double>(Logados);
-                Logados.Clear();
-
-                StackedColumnSeries series1 = new StackedColumnSeries
-                {
-                    Title = "Usuários",
-                    Values = DataPointsUsuarios,
-                    Stroke = System.Windows.Media.Brushes.CornflowerBlue,
-                    DataContext = true,
-                    StackMode = StackMode.Values
-                };
-
-                seriesCollection.Add(series1);
-
-                // Colaboradores
-                var DataPointsColaboradores = new ChartValues<double>(Colaboradores);
-
-                Colaboradores.Clear();
-
-                StackedColumnSeries series2 = new StackedColumnSeries
-                {
-                    Title = "Colaboradores",
-                    Values = DataPointsColaboradores,
-                    Stroke = System.Windows.Media.Brushes.DarkOrange,
-                    DataContext = true,
-                    StackMode = StackMode.Values,
-                };
-
-                seriesCollection.Add(series2);
-
-                // Linha Suave de Total de Logados
-                var DataPointsTotalLogados = new ChartValues<double>(TotalLogados);
-
-                TotalLogados.Clear();
-
-                LineSeries series3 = new LineSeries
-                {
-                    Title = "Total de Logados",
-                    Values = DataPointsTotalLogados,
-                    PointGeometry = DefaultGeometries.Circle,
-                    PointGeometrySize = 10,
-                    PointForeground = System.Windows.Media.Brushes.Black,
-                    Stroke = System.Windows.Media.Brushes.Black,
-                    StrokeThickness = 0,
-                    Fill = Brushes.Transparent,
-                    LineSmoothness = 0,
-                    DataContext = true
-                };
-
-                seriesCollection.Add(series3);
-
-                cartesianChart1.AxisX.Add(new Axis
-                {
-                    Title = "Data de Entrada",
-                    Labels = DataHora.Select(data => data.ToString("dd/MM/yyyy")).ToList(),
-                });
-
-                DataHora.Clear();
-
-                cartesianChart1.AxisY.Add(new Axis
-                {
-                    Title = "Máximo de Usuários e Colaboradores"
-                });
-
-                elementHost1.Visible = true;
-                elementHost1.Enabled = true;
-
-                cartesianChart1.Background = System.Windows.Media.Brushes.White;
-                cartesianChart1.DisableAnimations = false;
-                cartesianChart1.Series = seriesCollection;
-
-                Controls.Add(elementHost1);
-
-                clearData();
-
-                await Task.Delay(50);
-
+                Controls.Add(cartesianChart1);
+                clearData(false);
             }
             else if (tipo.Equals("5 - Junta Gráficos"))
             {
+                cartesianChart1.ZoomMode = ZoomAndPanMode.X;
 
-                cartesianChart1.ChartLegend = null;
+                cartesianChart1.Series = new ISeries[]
+                {
+                    new StackedColumnSeries<double>
+                    {
+                        Name = "Usuários",
+                        Values = JuntaGraficosLogados,
+                        Fill = new SolidColorPaint() { Color = SKColors.CornflowerBlue, StrokeThickness = 4.5F },
+                        Stroke = new SolidColorPaint() { Color = SKColors.DodgerBlue },
+                        MaxBarWidth = 95,
+                        DataLabelsSize = 7.5,
+                        Padding = 7.5,
+                        IsHoverable = true
+                    },
+                    new StackedColumnSeries<double>
+                    {
+                        Name = "Colaboradores",
+                        Values = JuntaGraficosColaboradores,
+                        Fill = new SolidColorPaint() { Color = SKColors.PaleVioletRed, StrokeThickness = 4.5F },
+                        Stroke = new SolidColorPaint() { Color = SKColors.IndianRed },
+                        Padding = 7.5,
+                        DataLabelsSize = 7.5,
+                        MaxBarWidth = 95,
+                        IsHoverable = true
+                    },
+                    new LineSeries<double>
+                    {
+                        Name = "Total de Logados",
+                        Values = JuntaGraficosTotalLogados,
+                        GeometryFill = new SolidColorPaint() { Color = SKColors.WhiteSmoke },
+                        GeometryStroke = new SolidColorPaint() { Color = SKColors.Black, StrokeThickness = 1F },
+                        GeometrySize = 8.5,
+                        Fill = null,
+                        LineSmoothness = 1,
+                        Stroke = new SolidColorPaint() { Color = SKColors.Black, StrokeThickness = 1.25F }
+                    }
+                };
+
+                cartesianChart1.XAxes = new Axis[]
+                {
+                    new Axis
+                    {
+                        Name = "Data de Entrada",
+                        NamePaint = new SolidColorPaint(SKColors.Gray),
+                        Labels = DataHora.Select(data => data.ToString("dd/MM/yyyy")).ToList(),
+                        TextSize = 8.5,
+                        NameTextSize = 11,
+                        LabelsRotation = 15
+                    }
+                };
+
+                cartesianChart1.YAxes = new Axis[]
+                {
+                    new Axis
+                    {
+                        Name = "Máximo de Usuários e Colaboradores Logados",
+                        NameTextSize = 10,
+                        TextSize = 10.5,
+                        NamePaint = new SolidColorPaint(SKColors.Gray)
+                    }
+                };
+
+                cartesianChart1.BackColor = System.Drawing.Color.White;
+                cartesianChart1.Visible = true;
                 label2.Visible = false;
                 progressBar1.Visible = false;
 
-                SeriesCollection seriesCollection = new SeriesCollection();
-
-                // Usuários
-
-                var DataPointsUsuarios = new ChartValues<double>(JuntaGraficosLogados);
-
-                StackedColumnSeries series1 = new StackedColumnSeries
-                {
-                    Title = "Usuários",
-                    Values = DataPointsUsuarios,
-                    Stroke = System.Windows.Media.Brushes.CornflowerBlue,
-                    DataContext = true,
-                    StackMode = StackMode.Values
-                };
-
-                seriesCollection.Add(series1);
-
-                //Colaboradores
-
-                var DataPointsColaboradores = new ChartValues<double>(JuntaGraficosColaboradores);
-                StackedColumnSeries series2 = new StackedColumnSeries
-                {
-                    Title = "Colaboradores",
-                    Values = DataPointsColaboradores,
-                    Stroke = System.Windows.Media.Brushes.DarkOrange,
-                    DataContext = true,
-                    StackMode = StackMode.Values,
-                };
-
-                seriesCollection.Add(series2);
-
-                // Linha Suave de Total de Logados
-
-                var DataPointsTotalLogados = new ChartValues<double>(JuntaGraficosTotalLogados);
-
-                LineSeries series3 = new LineSeries
-                {
-                    Title = "Total entre as Duas Bases",
-                    Values = DataPointsTotalLogados,
-                    PointGeometry = DefaultGeometries.Circle,
-                    PointGeometrySize = 10,
-                    PointForeground = System.Windows.Media.Brushes.Black,
-                    Stroke = System.Windows.Media.Brushes.Black,
-                    StrokeThickness = 0,
-                    Fill = Brushes.Transparent,
-                    LineSmoothness = 0,
-                    DataContext = true
-                };
-
-                seriesCollection.Add(series3);
-
-                cartesianChart1.AxisX.Add(new Axis
-                {
-                    Title = "Data de Entrada",
-                    Labels = DataHora.Select(data => data.ToString("dd/MM/yyyy")).ToList(),
-                });
-
-                cartesianChart1.AxisY.Add(new Axis
-                {
-                    Title = "Máximo de Usuários e Colaboradores"
-                });
-
-                elementHost1.Visible = true;
-                elementHost1.Enabled = true;
-                cartesianChart1.Background = System.Windows.Media.Brushes.White;
-                cartesianChart1.DisableAnimations = false;
-                cartesianChart1.Series = seriesCollection;
-
-                Controls.Add(elementHost1);
-
+                Controls.Add(cartesianChart1);
                 clearData(true);
-                await Task.Delay(50);
-
             }
 
+            await Task.Delay(50);
             ExecuteComponenets(false);
 
         }
-
         private void importaConfigs(object sender, EventArgs e)
         {
 
@@ -911,19 +926,26 @@ namespace GraficosFullWMS
             }
 
             connectionsDB.Clear();
-            JuntaGraficosColaboradores.Clear();
-            JuntaGraficosLogados.Clear();
-            JuntaGraficosTotalLogados.Clear();
         }
 
-        private void elementHost1_ChartOnDataClick(object sender, ChartPoint p)
+        private void OnPointerDown(LiveChartsCore.Kernel.Sketches.IChartView chart, IEnumerable<ChartPoint> points)
         {
 
             if (tipoRetorno != "4 - Usuários/Colaboradores" && tipoRetorno != "5 - Junta Gráficos")
             {
-                var dataClick = cartesianChart1.AxisX[0].Labels[(int)p.X];
+                var Axis = cartesianChart1.XAxes.FirstOrDefault();
+
+                if (points.FirstOrDefault().Equals(null))
+                {
+                    MessageBox.Show("Necessário selecionar um ponto válido", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return;
+                }
+
+                var dataClick = Axis.Labels[points.FirstOrDefault().Index];
                 var ConnectionString = this.connectionString;
+
                 int tipo = 3;
+                double total = points.FirstOrDefault().Coordinate.PrimaryValue;
 
                 switch (this.tipoRetorno)
                 {
@@ -939,7 +961,7 @@ namespace GraficosFullWMS
                         break;
                 }
 
-                Form5 form5 = new Form5(dataClick, ConnectionString, tipo);
+                Form5 form5 = new Form5(dataClick, ConnectionString, tipo, total);
                 DialogResult result = form5.ShowDialog();
 
                 if (result.Equals(DialogResult.Cancel))
@@ -954,6 +976,5 @@ namespace GraficosFullWMS
             }
 
         }
-
     }
 }

@@ -420,7 +420,6 @@ namespace GraficosFullWMS
             {
 
                 var connection = this.connectionsSave.connections.Find(x => x.nomeConexao.Equals(NomeConexao));
-
                 try
                 {
 
@@ -430,13 +429,11 @@ namespace GraficosFullWMS
                     }
                     else
                     {
-
                         DialogResult result = MessageBox.Show("Erro - Não é possível Duplicar uma Conexão com o mesmo nome, deseja atualiza-la?", "Importante!", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                         if (result.Equals(DialogResult.Yes))
                         {
                             AtualizarBase();
                         }
-
                     }
 
                 }

@@ -7,27 +7,19 @@ namespace GraficosFullWMS.Classes
 {
     public class ImportOrRemoveQuery
     {
-
         private string ConnectionString;
-
         public string connectionString { get { return ConnectionString; } set { ConnectionString = value; } }
-
         public ImportOrRemoveQuery(string connectionString)
         {
-
             this.connectionString = connectionString;
-
         }
 
         public void ImportQuery()
         {
-
             try
             {
-
                 using (OracleConnection connection = new OracleConnection(this.ConnectionString))
                 {
-
                     connection.Open();
                     int countTemp = 0;
 
@@ -38,13 +30,10 @@ namespace GraficosFullWMS.Classes
 
                     OracleCommand commandIndex = new OracleCommand(verifyIndex, connection);
                     commandIndex.CommandType = CommandType.Text;
-
                     using (OracleDataReader reader = commandIndex.ExecuteReader())
                     {
-
                         if (reader.Read())
                         {
-
                             int contador = reader.GetInt32(0);
 
                             if (contador.Equals(0))
@@ -56,9 +45,7 @@ namespace GraficosFullWMS.Classes
                                 OracleCommand createCommand1 = new OracleCommand(createIndex1, connection);
                                 createCommand1.ExecuteNonQuery();
                             }
-
                         }
-
                     }
 
                     // Segunda Verificação
@@ -68,13 +55,10 @@ namespace GraficosFullWMS.Classes
 
                     OracleCommand commandIndex2 = new OracleCommand(verifyIndex2, connection);
                     commandIndex2.CommandType = CommandType.Text;
-
                     using (OracleDataReader reader2 = commandIndex2.ExecuteReader())
                     {
-
                         if (reader2.Read())
                         {
-
                             int contador = reader2.GetInt32(0);
 
                             if (contador.Equals(0))
@@ -85,49 +69,35 @@ namespace GraficosFullWMS.Classes
                                 string createIndex2 = @"create index IX_GER_USUARIOS_LOGADOS_DATAS on GER_USUARIOS_LOGADOS (dthr, dthr_saida)";
                                 OracleCommand createCommand2 = new OracleCommand(createIndex2, connection);
                                 createCommand2.ExecuteNonQuery();
-
                             }
-
                         }
-
                     }
 
                     if (countTemp >= 1)
                         MessageBox.Show("Os Índices necessários foram criados com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-
                     //Verifica se a Procedure prc_full_wms_licencas existe na Base Conectada.
-
                     string procedureVerify = @"select count(1) from user_procedures o where upper(o.object_type) = 'PROCEDURE' and upper(o.object_name) = 'PRC_FULLWMS_LICENCAS'";
-
                     OracleCommand commandVerify = new OracleCommand(procedureVerify, connection);
                     commandVerify.CommandType = CommandType.Text;
-
                     using (OracleDataReader reader = commandVerify.ExecuteReader())
                     {
-
                         if (reader.Read())
                         {
-
                             int contador = reader.GetInt32(0);
 
                             if (contador.Equals(1))
                             {
-
                                 DialogResult result = MessageBox.Show("Importante - A procedure prc_fullwms_licencas já existe, deseja executar mesmo assim?", "Importante", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                                 if (result.Equals(DialogResult.Yes))
                                     contador = 0;
                                 else
                                     contador = 1;
-
-
                             }
 
                             if (contador < 1)
                             {
-
                                 Cursor.Current = Cursors.WaitCursor;
-
                                 string prcString = @"
 create or replace procedure prc_fullwms_licencas(p_tipo        in number,
                                                  p_data_inicio in varchar2,
@@ -240,27 +210,21 @@ end;
                                 commandPRC.CommandType = CommandType.Text;
                                 commandPRC.ExecuteNonQuery();
                                 MessageBox.Show($"A função prc_fullwms_licencas foi gerada com sucesso!", "Importate!", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
                             }
 
                             // Verifica a Existência da função fnc_usu_log
-
                             string procedureVerify2 = @"select count(1) from user_procedures o where upper(o.object_type) = 'FUNCTION' and upper(o.object_name) = 'FNC_USU_LOG3'";
-
                             OracleCommand commandVerify2 = new OracleCommand(procedureVerify2, connection);
                             commandVerify2.CommandType = CommandType.Text;
-
                             using (OracleDataReader reader2 = commandVerify2.ExecuteReader())
                             {
 
                                 if (reader2.Read())
                                 {
-
                                     int contador2 = reader2.GetInt32(0);
 
                                     if (contador2.Equals(1))
                                     {
-
                                         DialogResult result2 = MessageBox.Show("Importante - A function fnc_usu_log3 já existe, deseja executar mesmo assim?", "Importante", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
                                         if (result2.Equals(DialogResult.Yes))
                                         {
@@ -270,14 +234,11 @@ end;
                                         {
                                             contador2 = 1;
                                         }
-
                                     }
 
                                     if (contador2 < 1)
                                     {
-
                                         Cursor.Current = Cursors.WaitCursor;
-
                                         string fncString = @"
 create or replace function fnc_usu_log3(p_tipo   in char,
                                         p_codemp in number,
@@ -314,18 +275,14 @@ end;
                             }
                         }
                     }
-
                     connection.Close();
-
                 }
-
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Houve um erro ao gerar a Query, tente novamente! {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
         }
 
         public void RemoveQuery()
@@ -333,30 +290,23 @@ end;
 
             try
             {
-
                 using (OracleConnection connection = new OracleConnection(this.connectionString))
                 {
-
                     connection.Open();
                     string procedureVerify = "select count(1) from user_procedures o where upper(o.object_type) = 'PROCEDURE' and upper(o.object_name) = 'PRC_FULLWMS_LICENCAS'";
                     OracleCommand commandVerify = new OracleCommand(procedureVerify, connection);
                     commandVerify.CommandType = CommandType.Text;
-
                     using (OracleDataReader reader = commandVerify.ExecuteReader())
                     {
-
                         if (reader.Read())
                         {
-
                             int contador = reader.GetInt32(0);
-
                             if (contador == 0)
                             {
                                 MessageBox.Show("Não existe a procedure PRC_FULLWMS_LICENCAS nesta base.", "Importante!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             }
                             else
                             {
-
                                 DialogResult result = MessageBox.Show("Você tem certeza que deseja remover a procedure PRC_FULLWMS_LICENCAS nesta base?", "Importante!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                                 if (result.Equals(DialogResult.Yes))
                                 {
@@ -370,13 +320,10 @@ end;
                                 string procedureVerify2 = "select count(1) from user_procedures o where upper(o.object_type) = 'FUNCTION' and upper(o.object_name) = 'FNC_USU_LOG3'";
                                 OracleCommand commandVerify2 = new OracleCommand(procedureVerify2, connection);
                                 commandVerify2.CommandType = CommandType.Text;
-
                                 using (OracleDataReader reader2 = commandVerify2.ExecuteReader())
                                 {
-
                                     if (reader2.Read())
                                     {
-
                                         int contador2 = reader2.GetInt32(0);
 
                                         if (contador2 == 0)
@@ -386,7 +333,6 @@ end;
                                         }
                                         else
                                         {
-
                                             DialogResult result2 = MessageBox.Show("Você tem certeza que deseja remover a procedure FNC_USU_LOG3 nesta base?", "Importante!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                                             if (result2.Equals(DialogResult.Yes))
                                             {
@@ -396,33 +342,20 @@ end;
                                                 deleteCommand.ExecuteNonQuery();
                                                 MessageBox.Show("Procedure FNC_USU_LOG3 removida com sucesso desta base.", "Importante!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                             }
-
                                         }
-
                                     }
-
                                 }
-
                             }
-
                         }
-
                     }
-
                     connection.Close();
-
                 }
-
             }
             catch (Exception ex)
             {
-
                 MessageBox.Show($"Houve um erro ao remover a Query, tente novamente! {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
-
             }
-
         }
-
     }
 }

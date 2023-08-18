@@ -43,14 +43,26 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GraficosFullWMS.exe" size="594920">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="GraficosFullWMS.exe" size="597480">
       <assemblyIdentity name="GraficosFullWMS" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>LOSLS+JxbcbxqnN2MOsgmq6V9HFv0upxKIlKDOn0OhQ=</dsig:DigestValue>
+        <dsig:DigestValue>LGja3HvNFAogyKKelrba636Yjcnqqpbq22AB4b3fMWs=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="HarfBuzzSharp.dll" size="215960">
+      <assemblyIdentity name="HarfBuzzSharp" version="1.0.0.0" publicKeyToken="0738EB9F132ED756" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>MTVzit713OmoJ3vFNqyRIyEFRTIcgDq/luZpXneh9sQ=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -91,6 +103,42 @@
     </dependentAssembly>
   </dependency>
   <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LiveChartsCore.dll" size="590848">
+      <assemblyIdentity name="LiveChartsCore" version="2.0.0.0" publicKeyToken="CC92A3E13D40C573" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>DFFFJNwnSavk5L/Euo8b5VNpXIpshL1ukntAduh0+qQ=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LiveChartsCore.SkiaSharpView.dll" size="121856">
+      <assemblyIdentity name="LiveChartsCore.SkiaSharpView" version="2.0.0.0" publicKeyToken="CC92A3E13D40C573" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>nnpGF5GOcWD0pIcKZYLxWxDvQmXriGS2L41Sgf615hQ=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="LiveChartsCore.SkiaSharpView.WinForms.dll" size="41472">
+      <assemblyIdentity name="LiveChartsCore.SkiaSharpView.WinForms" version="2.0.0.0" publicKeyToken="CC92A3E13D40C573" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>iAhspeHElrpb9oPULV4HceMFQXJLn5AvN/GDJbKfydo=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="MessageManager.dll" size="4608">
       <assemblyIdentity name="MessageManager" version="1.1.1.0" language="neutral" processorArchitecture="msil" />
       <hash>
@@ -127,6 +175,30 @@
     </dependentAssembly>
   </dependency>
   <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="OpenTK.dll" size="5745152">
+      <assemblyIdentity name="OpenTK" version="3.1.0.0" publicKeyToken="BAD199FE84EB3DF4" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>zAKIQ+G62owe8yHZGSTsKYmcU16TzlOMjhxUjoVuJKQ=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="OpenTK.GLControl.dll" size="45056">
+      <assemblyIdentity name="OpenTK.GLControl" version="3.1.0.0" publicKeyToken="BAD199FE84EB3DF4" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>E3Y2BWVNxQuDhE3LI8RTDPjR9EOk2t46vEhcHMmpMxg=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="Oracle.ManagedDataAccess.dll" size="4712040">
       <assemblyIdentity name="Oracle.ManagedDataAccess" version="4.122.21.1" publicKeyToken="89B483F429C47342" language="neutral" processorArchitecture="msil" />
       <hash>
@@ -139,6 +211,54 @@
     </dependentAssembly>
   </dependency>
   <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="SkiaSharp.dll" size="800184">
+      <assemblyIdentity name="SkiaSharp" version="2.88.0.0" publicKeyToken="0738EB9F132ED756" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>0a/0gGhf28pjzCFmqKKh2wkdi3ipSPG3rRlACvN54b4=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="SkiaSharp.HarfBuzz.dll" size="23472">
+      <assemblyIdentity name="SkiaSharp.HarfBuzz" version="2.88.0.0" publicKeyToken="0738EB9F132ED756" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>PfkqIZHMfxjd6z1oZZXyYPBQB/gB7uKwG/lJXtr8y10=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="SkiaSharp.Views.Desktop.Common.dll" size="28608">
+      <assemblyIdentity name="SkiaSharp.Views.Desktop.Common" version="2.88.0.0" publicKeyToken="0738EB9F132ED756" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>/N2kF0ISn+wNJwqPCwNUN1zfVN5dQcGvG2MylEKS1eY=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="SkiaSharp.Views.WindowsForms.dll" size="22960">
+      <assemblyIdentity name="SkiaSharp.Views.WindowsForms" version="2.88.0.0" publicKeyToken="0738EB9F132ED756" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>nOOskD979ueIenf0ygf8ls5Xhi6fZF+0UifRnAq+NDk=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
     <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="System.Buffers.dll" size="20856">
       <assemblyIdentity name="System.Buffers" version="4.0.3.0" publicKeyToken="CC7B13FFCD2DDD51" language="neutral" processorArchitecture="msil" />
       <hash>
@@ -147,6 +267,18 @@
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
         <dsig:DigestValue>rMzPvkXZ8I/+7ZkW43sz6YxlvgEs//bn+ntnIQzh/vs=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="System.Drawing.Common.dll" size="44424">
+      <assemblyIdentity name="System.Drawing.Common" version="4.0.0.2" publicKeyToken="CC7B13FFCD2DDD51" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>Cx4jYD9JYTtiOoKisEJgZCq4sRjROHJt2mVWvq13uWY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -234,6 +366,24 @@
       </hash>
     </dependentAssembly>
   </dependency>
+  <file name="arm64\libHarfBuzzSharp.dll" size="977816">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>hjVRRIpTYJEe9HqOAx7ru1Mr+heAyv2IBYxD7GZsgbo=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="arm64\libSkiaSharp.dll" size="7947200">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>JcFUQiTTqUf3ah84qYITrOtjssYDzoPMWQzoSnqvHbQ=</dsig:DigestValue>
+    </hash>
+  </file>
   <file name="favicon.ico" size="81723">
     <hash>
       <dsig:Transforms>
@@ -243,13 +393,67 @@
       <dsig:DigestValue>72JnmWiUecykh+SYFgF6hiXi6YpjeewK/US79+5Urtw=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="GraficosFullWMS.exe.config" size="1720">
+  <file name="GraficosFullWMS.exe.config" size="1733">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>GmxBgXzqJlxq0bkB6tnPXq0QkvNblALne/eidc6cs2w=</dsig:DigestValue>
+      <dsig:DigestValue>DhSoa+J4CCLjBvwc8ECYddhuTWuD2znHo7SmB2aytlU=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="libHarfBuzzSharp.dylib" size="2098144">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>xZjWRfifHk4ylLSwI44McbPcXYQ5gV5uPCHc3KUeyKk=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="libSkiaSharp.dylib" size="15084320">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>Y2tUOybUw8+YDd+WRtpEYhfzYM5DG+5J54hOmUvssDk=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="x64\libHarfBuzzSharp.dll" size="914824">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>jJ5P984nHYaIp8ipLVbOQnTPzNLbznM5ZODIumCvm8s=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="x64\libSkiaSharp.dll" size="9412016">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>j+1oWeLR3G+jJIJVySSCCwUOPB6DpVQ7WtD28WWHtqQ=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="x86\libHarfBuzzSharp.dll" size="805784">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>7NmUbWD0VzYNxYgnRsfRo+aPNpddCqkxelSIef6YINs=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="x86\libSkiaSharp.dll" size="7978392">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>wpH2+YxPGeILEN7tJBSb77ag4U+wklzupQtdsnU7Sc4=</dsig:DigestValue>
     </hash>
   </file>
 </asmv1:assembly>
