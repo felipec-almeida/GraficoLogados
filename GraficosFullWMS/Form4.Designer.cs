@@ -38,7 +38,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.5F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(12, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(476, 18);
@@ -62,7 +62,7 @@
             this.customButtons1.Text = "Finalizar";
             this.customButtons1.TextColor = System.Drawing.Color.White;
             this.customButtons1.UseVisualStyleBackColor = false;
-            this.customButtons1.Click += new System.EventHandler(this.customButtons1_Click);
+            this.customButtons1.Click += new System.EventHandler(this.CustomButtons1_Click);
             // 
             // button1
             // 
@@ -81,7 +81,7 @@
             this.button1.Text = "Adicionar";
             this.button1.TextColor = System.Drawing.Color.White;
             this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
             // comboBoxConnections
             // 

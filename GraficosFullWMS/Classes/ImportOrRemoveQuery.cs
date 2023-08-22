@@ -7,11 +7,11 @@ namespace GraficosFullWMS.Classes
 {
     public class ImportOrRemoveQuery
     {
-        private string ConnectionString;
-        public string connectionString { get { return ConnectionString; } set { ConnectionString = value; } }
+        public string ConnectionString { get; }
+
         public ImportOrRemoveQuery(string connectionString)
         {
-            this.connectionString = connectionString;
+            this.ConnectionString = connectionString;
         }
 
         public void ImportQuery()
@@ -24,12 +24,16 @@ namespace GraficosFullWMS.Classes
                     int countTemp = 0;
 
                     // Verifica se existe os Índices necessários para a execução da Procedure.
-                    string verifyIndex = @"select count(1) as resultado
+                    const string verifyIndex = @"select count(1) as resultado
                                           from user_indexes i
                                          where i.INDEX_NAME = 'IX_WMS_COLABO_LOGADOS_DATAS'";
+                    OracleCommand commandIndex = new OracleCommand
+                    {
+                        CommandText = verifyIndex,
+                        Connection = connection,
+                        CommandType = CommandType.Text,
+                    };
 
-                    OracleCommand commandIndex = new OracleCommand(verifyIndex, connection);
-                    commandIndex.CommandType = CommandType.Text;
                     using (OracleDataReader reader = commandIndex.ExecuteReader())
                     {
                         if (reader.Read())
@@ -40,21 +44,30 @@ namespace GraficosFullWMS.Classes
                             {
                                 Cursor.Current = Cursors.WaitCursor;
                                 countTemp++;
-                                MessageBox.Show("Criando os Índices necessários para execução da aplicação...", "Criando os Índices", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                string createIndex1 = @"create index IX_WMS_COLABO_LOGADOS_DATAS on WMS_COLABORADORES_LOGADOS (dthr_ent, dthr_saida)";
-                                OracleCommand createCommand1 = new OracleCommand(createIndex1, connection);
+                                // MessageBox.Show("Criando os Índices necessários para execução da aplicação...", "Criando os Índices", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                const string createIndex1 = "create index IX_WMS_COLABO_LOGADOS_DATAS on WMS_COLABORADORES_LOGADOS (dthr_ent, dthr_saida)";
+                                OracleCommand createCommand1 = new OracleCommand
+                                {
+                                    CommandText = createIndex1,
+                                    Connection = connection,
+                                    CommandType = CommandType.Text,
+                                };
                                 createCommand1.ExecuteNonQuery();
                             }
                         }
                     }
 
                     // Segunda Verificação
-                    string verifyIndex2 = @"select count(1) as resultado
+                    const string verifyIndex2 = @"select count(1) as resultado
                                             from user_indexes i
                                             where i.INDEX_NAME = 'IX_GER_USUARIOS_LOGADOS_DATAS'";
+                    OracleCommand commandIndex2 = new OracleCommand
+                    {
+                        CommandText = verifyIndex2,
+                        Connection = connection,
+                        CommandType = CommandType.Text,
+                    };
 
-                    OracleCommand commandIndex2 = new OracleCommand(verifyIndex2, connection);
-                    commandIndex2.CommandType = CommandType.Text;
                     using (OracleDataReader reader2 = commandIndex2.ExecuteReader())
                     {
                         if (reader2.Read())
@@ -65,9 +78,14 @@ namespace GraficosFullWMS.Classes
                             {
                                 Cursor.Current = Cursors.WaitCursor;
                                 countTemp++;
-                                MessageBox.Show("Criando os Índices necessários para execução da aplicação...", "Criando os Índices", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                string createIndex2 = @"create index IX_GER_USUARIOS_LOGADOS_DATAS on GER_USUARIOS_LOGADOS (dthr, dthr_saida)";
-                                OracleCommand createCommand2 = new OracleCommand(createIndex2, connection);
+                                // MessageBox.Show("Criando os Índices necessários para execução da aplicação...", "Criando os Índices", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                const string createIndex2 = "create index IX_GER_USUARIOS_LOGADOS_DATAS on GER_USUARIOS_LOGADOS (dthr, dthr_saida)";
+                                OracleCommand createCommand2 = new OracleCommand
+                                {
+                                    CommandText = createIndex2,
+                                    Connection = connection,
+                                    CommandType = CommandType.Text,
+                                };
                                 createCommand2.ExecuteNonQuery();
                             }
                         }
@@ -76,10 +94,85 @@ namespace GraficosFullWMS.Classes
                     if (countTemp >= 1)
                         MessageBox.Show("Os Índices necessários foram criados com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
+                    // Verifica a Existência da função fnc_usu_log
+                    const string procedureVerify2 = "select count(1) from user_procedures o where upper(o.object_type) = 'FUNCTION' and upper(o.object_name) = 'FNC_USU_LOG3'";
+                    OracleCommand commandVerify2 = new OracleCommand
+                    {
+                        CommandText = procedureVerify2,
+                        Connection = connection,
+                        CommandType = CommandType.Text,
+                    };
+
+                    using (OracleDataReader reader2 = commandVerify2.ExecuteReader())
+                    {
+                        if (reader2.Read())
+                        {
+                            int contador2 = reader2.GetInt32(0);
+
+                            if (contador2.Equals(1))
+                            {
+                                DialogResult result2 = MessageBox.Show("Importante - A function fnc_usu_log3 já existe, deseja executar mesmo assim?", "Importante", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+                                if (result2.Equals(DialogResult.Yes))
+                                {
+                                    contador2 = 0;
+                                }
+                                else
+                                {
+                                    contador2 = 1;
+                                }
+                            }
+
+                            if (contador2 < 1)
+                            {
+                                Cursor.Current = Cursors.WaitCursor;
+                                const string fncString = @"
+create or replace function fnc_usu_log3(p_tipo   in char,
+                                        p_codemp in number,
+                                        p_data   in date) return number is
+   v_aux number := 0;
+begin
+   if p_tipo in ('U', 'T') then
+      select count(1) + v_aux
+        into v_aux
+        from ger_usuarios_logados l
+       where (p_codemp is null or l.empresa = p_codemp)
+         and p_data between l.dthr and nvl(l.dthr_saida - 1 / 24 / 60 / 60, sysdate + 1);
+   end if;
+   if p_tipo in ('C', 'T') then
+      select count(1) + v_aux
+        into v_aux
+        from wms_colaboradores_logados c
+       where (p_codemp is null or c.empr_codemp = p_codemp)
+         and p_data between c.dthr_ent and nvl(c.dthr_saida - 1 / 24 / 60 / 60, sysdate + 1);
+   end if;
+   return v_aux;
+exception
+   when no_data_found then
+      return 0;
+end;
+";
+
+                                OracleCommand commandFNC = new OracleCommand
+                                {
+                                    CommandText = fncString,
+                                    Connection = connection,
+                                    CommandType = CommandType.Text,
+                                };
+                                commandFNC.ExecuteNonQuery();
+                                MessageBox.Show("A função fnc_usu_log3 foi gerada com sucesso!", "Importate!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                        }
+                    }
+
                     //Verifica se a Procedure prc_full_wms_licencas existe na Base Conectada.
-                    string procedureVerify = @"select count(1) from user_procedures o where upper(o.object_type) = 'PROCEDURE' and upper(o.object_name) = 'PRC_FULLWMS_LICENCAS'";
-                    OracleCommand commandVerify = new OracleCommand(procedureVerify, connection);
-                    commandVerify.CommandType = CommandType.Text;
+                    const string procedureVerify = "select count(1) from user_procedures o where upper(o.object_type) = 'PROCEDURE' and upper(o.object_name) = 'PRC_FULLWMS_LICENCAS'";
+                    OracleCommand commandVerify = new OracleCommand
+                    {
+                        CommandText = procedureVerify,
+                        Connection = connection,
+                        CommandType = CommandType.Text,
+                    };
+
                     using (OracleDataReader reader = commandVerify.ExecuteReader())
                     {
                         if (reader.Read())
@@ -98,7 +191,7 @@ namespace GraficosFullWMS.Classes
                             if (contador < 1)
                             {
                                 Cursor.Current = Cursors.WaitCursor;
-                                string prcString = @"
+                                const string prcString = @"
 create or replace procedure prc_fullwms_licencas(p_tipo        in number,
                                                  p_data_inicio in varchar2,
                                                  p_data_fim    in varchar2,
@@ -206,72 +299,14 @@ begin
 end;
 ";
 
-                                OracleCommand commandPRC = new OracleCommand(prcString, connection);
-                                commandPRC.CommandType = CommandType.Text;
-                                commandPRC.ExecuteNonQuery();
-                                MessageBox.Show($"A função prc_fullwms_licencas foi gerada com sucesso!", "Importate!", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            }
-
-                            // Verifica a Existência da função fnc_usu_log
-                            string procedureVerify2 = @"select count(1) from user_procedures o where upper(o.object_type) = 'FUNCTION' and upper(o.object_name) = 'FNC_USU_LOG3'";
-                            OracleCommand commandVerify2 = new OracleCommand(procedureVerify2, connection);
-                            commandVerify2.CommandType = CommandType.Text;
-                            using (OracleDataReader reader2 = commandVerify2.ExecuteReader())
-                            {
-
-                                if (reader2.Read())
+                                OracleCommand commandPRC = new OracleCommand
                                 {
-                                    int contador2 = reader2.GetInt32(0);
-
-                                    if (contador2.Equals(1))
-                                    {
-                                        DialogResult result2 = MessageBox.Show("Importante - A function fnc_usu_log3 já existe, deseja executar mesmo assim?", "Importante", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-                                        if (result2.Equals(DialogResult.Yes))
-                                        {
-                                            contador2 = 0;
-                                        }
-                                        else
-                                        {
-                                            contador2 = 1;
-                                        }
-                                    }
-
-                                    if (contador2 < 1)
-                                    {
-                                        Cursor.Current = Cursors.WaitCursor;
-                                        string fncString = @"
-create or replace function fnc_usu_log3(p_tipo   in char,
-                                        p_codemp in number,
-                                        p_data   in date) return number is
-   v_aux number := 0;
-begin
-   if p_tipo in ('U', 'T') then
-      select count(1) + v_aux
-        into v_aux
-        from ger_usuarios_logados l
-       where (p_codemp is null or l.empresa = p_codemp)
-         and p_data between l.dthr and nvl(l.dthr_saida - 1 / 24 / 60 / 60, sysdate + 1);
-   end if;
-   if p_tipo in ('C', 'T') then
-      select count(1) + v_aux
-        into v_aux
-        from wms_colaboradores_logados c
-       where (p_codemp is null or c.empr_codemp = p_codemp)
-         and p_data between c.dthr_ent and nvl(c.dthr_saida - 1 / 24 / 60 / 60, sysdate + 1);
-   end if;
-   return v_aux;
-exception
-   when no_data_found then
-      return 0;
-end;
-";
-
-                                        OracleCommand commandFNC = new OracleCommand(fncString, connection);
-                                        commandFNC.CommandType = CommandType.Text;
-                                        commandFNC.ExecuteNonQuery();
-                                        MessageBox.Show($"A função fnc_usu_log3 foi gerada com sucesso!", "Importate!", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                    }
-                                }
+                                    CommandText = prcString,
+                                    Connection = connection,
+                                    CommandType = CommandType.Text
+                                };
+                                commandPRC.ExecuteNonQuery();
+                                MessageBox.Show("A função prc_fullwms_licencas foi gerada com sucesso!", "Importate!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             }
                         }
                     }
@@ -287,15 +322,19 @@ end;
 
         public void RemoveQuery()
         {
-
             try
             {
-                using (OracleConnection connection = new OracleConnection(this.connectionString))
+                using (OracleConnection connection = new OracleConnection(this.ConnectionString))
                 {
                     connection.Open();
-                    string procedureVerify = "select count(1) from user_procedures o where upper(o.object_type) = 'PROCEDURE' and upper(o.object_name) = 'PRC_FULLWMS_LICENCAS'";
-                    OracleCommand commandVerify = new OracleCommand(procedureVerify, connection);
-                    commandVerify.CommandType = CommandType.Text;
+                    const string procedureVerify = "select count(1) from user_procedures o where upper(o.object_type) = 'PROCEDURE' and upper(o.object_name) = 'PRC_FULLWMS_LICENCAS'";
+                    OracleCommand commandVerify = new OracleCommand
+                    {
+                        CommandText = procedureVerify,
+                        Connection = connection,
+                        CommandType = CommandType.Text
+                    };
+
                     using (OracleDataReader reader = commandVerify.ExecuteReader())
                     {
                         if (reader.Read())
@@ -304,22 +343,31 @@ end;
                             if (contador == 0)
                             {
                                 MessageBox.Show("Não existe a procedure PRC_FULLWMS_LICENCAS nesta base.", "Importante!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                return;
                             }
                             else
                             {
                                 DialogResult result = MessageBox.Show("Você tem certeza que deseja remover a procedure PRC_FULLWMS_LICENCAS nesta base?", "Importante!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                                 if (result.Equals(DialogResult.Yes))
                                 {
-                                    string removeProcedure = @"drop procedure PRC_FULLWMS_LICENCAS";
-                                    OracleCommand deleteCommand = new OracleCommand(removeProcedure, connection);
-                                    deleteCommand.CommandType = CommandType.Text;
+                                    const string removeProcedure = "drop procedure PRC_FULLWMS_LICENCAS";
+                                    OracleCommand deleteCommand = new OracleCommand
+                                    {
+                                        CommandText = removeProcedure,
+                                        Connection = connection,
+                                        CommandType = CommandType.Text
+                                    };
                                     deleteCommand.ExecuteNonQuery();
                                     MessageBox.Show("Procedure PRC_FULLWMS_LICENCAS removida com sucesso desta base.", "Importante!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                 }
 
-                                string procedureVerify2 = "select count(1) from user_procedures o where upper(o.object_type) = 'FUNCTION' and upper(o.object_name) = 'FNC_USU_LOG3'";
-                                OracleCommand commandVerify2 = new OracleCommand(procedureVerify2, connection);
-                                commandVerify2.CommandType = CommandType.Text;
+                                const string procedureVerify2 = "select count(1) from user_procedures o where upper(o.object_type) = 'FUNCTION' and upper(o.object_name) = 'FNC_USU_LOG3'";
+                                OracleCommand commandVerify2 = new OracleCommand
+                                {
+                                    CommandText = procedureVerify2,
+                                    Connection = connection,
+                                    CommandType = CommandType.Text
+                                };
                                 using (OracleDataReader reader2 = commandVerify2.ExecuteReader())
                                 {
                                     if (reader2.Read())
@@ -336,9 +384,13 @@ end;
                                             DialogResult result2 = MessageBox.Show("Você tem certeza que deseja remover a procedure FNC_USU_LOG3 nesta base?", "Importante!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                                             if (result2.Equals(DialogResult.Yes))
                                             {
-                                                string removeProcedure = @"drop function FNC_USU_LOG3";
-                                                OracleCommand deleteCommand = new OracleCommand(removeProcedure, connection);
-                                                deleteCommand.CommandType = CommandType.Text;
+                                                const string removeProcedure = "drop function FNC_USU_LOG3";
+                                                OracleCommand deleteCommand = new OracleCommand
+                                                {
+                                                    CommandText = removeProcedure,
+                                                    Connection = connection,
+                                                    CommandType = CommandType.Text
+                                                };
                                                 deleteCommand.ExecuteNonQuery();
                                                 MessageBox.Show("Procedure FNC_USU_LOG3 removida com sucesso desta base.", "Importante!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                             }

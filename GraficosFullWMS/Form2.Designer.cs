@@ -160,7 +160,7 @@
             this.comboBoxConnections.Size = new System.Drawing.Size(261, 33);
             this.comboBoxConnections.TabIndex = 25;
             this.comboBoxConnections.Texts = "Selecione uma Conexão";
-            this.comboBoxConnections.OnSelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboBoxConnections.OnSelectedIndexChanged += new System.EventHandler(this.ComboBox1_SelectedIndexChanged);
             // 
             // button3
             // 

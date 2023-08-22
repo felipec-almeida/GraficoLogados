@@ -15,10 +15,10 @@ namespace GraficosFullWMS
 {
     public partial class Form5 : Form
     {
-        private string p_data;
-        private string connectionString;
-        private int tipo;
-        private double total;
+        private readonly string p_data;
+        private readonly string connectionString;
+        private readonly int tipo;
+        private readonly double total;
 
         public Form5(string p_data, string connectionString, int tipo, double total)
         {
@@ -75,7 +75,7 @@ select count(c.colab_cod_colab) over() as logados,
        c.dthr_ent as entrada,
        c.dthr_saida as saida
   from wms_colaboradores_logados c
- where to_date('12/07/2023 17:06:30', 'DD/MM/YYYY HH24:MI:SS') between c.dthr_ent and
+ where to_date('{p_data}', 'DD/MM/YYYY HH24:MI:SS') between c.dthr_ent and
        nvl(c.dthr_saida - 1 / 24 / 60 / 60, sysdate + 1)
  order by entrada";
             }
@@ -110,8 +110,12 @@ select 'C' as tipo,
             {
                 try
                 {
-                    OracleCommand command = new OracleCommand(commandString, connection);
-                    command.CommandType = CommandType.Text;
+                    OracleCommand command = new OracleCommand
+                    {
+                        CommandText = commandString,
+                        Connection = connection,
+                        CommandType = CommandType.Text
+                    };
                     connection.Open();
                     OracleDataAdapter adapter = new OracleDataAdapter(command);
                     adapter.Fill(resultados);
@@ -130,7 +134,6 @@ select 'C' as tipo,
                     return;
                 }
             }
-
         }
 
         private void Form_KeyDown(object sender, KeyEventArgs e)

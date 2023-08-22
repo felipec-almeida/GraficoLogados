@@ -37,17 +37,17 @@ namespace GraficosFullWMS
         private int p_codemp;
 
         public List<ConnectionsDB> connectionsDB = new List<ConnectionsDB>();
-        private List<DateTime> DataHora = new List<DateTime>(100000);
-        private List<double> Logados = new List<double>(100000);
-        private List<double> Colaboradores = new List<double>(100000);
-        private List<double> TotalLogados = new List<double>(100000);
-        private List<string> connectionsString = new List<string>(100000);
-        private FileOperations<List<ConnectionSave>> fileOperations;
+        private readonly List<DateTime> DataHora = new List<DateTime>(100000);
+        private readonly List<double> Logados = new List<double>(100000);
+        private readonly List<double> Colaboradores = new List<double>(100000);
+        private readonly List<double> TotalLogados = new List<double>(100000);
+        private readonly List<string> connectionsString = new List<string>(100000);
+        private readonly FileOperations<List<ConnectionSave>> fileOperations;
 
         //Lista Junta Gráficos
-        private List<double> JuntaGraficosLogados = new List<double>(100000);
-        private List<double> JuntaGraficosColaboradores = new List<double>(100000);
-        private List<double> JuntaGraficosTotalLogados = new List<double>(100000);
+        private readonly List<double> JuntaGraficosLogados = new List<double>(100000);
+        private readonly List<double> JuntaGraficosColaboradores = new List<double>(100000);
+        private readonly List<double> JuntaGraficosTotalLogados = new List<double>(100000);
 
         private bool juntaGrafico;
 
@@ -59,7 +59,6 @@ namespace GraficosFullWMS
 
         private void ConfigGrafico()
         {
-
             cartesianChart1.Visible = false;
             label2.Visible = false;
             progressBar1.Visible = false;
@@ -77,16 +76,14 @@ namespace GraficosFullWMS
             cartesianChart1.LegendTextSize = 13;
             cartesianChart1.LegendBackgroundPaint = new SolidColorPaint(SKColors.WhiteSmoke);
             cartesianChart1.TooltipFindingStrategy = TooltipFindingStrategy.Automatic;
-
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
         }
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
-            clearData(true);
-
+            ClearData(true);
             Form2 form2 = new Form2();
             DialogResult result = form2.ShowDialog();
 
@@ -98,14 +95,9 @@ namespace GraficosFullWMS
 
             this.connectionString = form2.ConnectionStringResult;
             this.connectionsString.Add(form2.ConnectionName);
-            label1.Text = form2.mensagemLabel;
-            labelTemp = form2.mensagemLabel;
+            label1.Text = form2.MensagemLabel;
+            labelTemp = form2.MensagemLabel;
             cartesianChart1.Visible = false;
-
-        }
-
-        private void elementHost1_ChildChanged(object sender, System.Windows.Forms.Integration.ChildChangedEventArgs e)
-        {
         }
 
         private async void OpenModalButton_Click(object sender, EventArgs e)
@@ -118,7 +110,6 @@ namespace GraficosFullWMS
             // Validação para ver se a conexão está OK
             if (!string.IsNullOrEmpty(this.connectionString))
             {
-
                 // Formulário para gerar o Gráfico
                 Form3 form3 = new Form3();
                 DialogResult result = form3.ShowDialog();
@@ -137,24 +128,19 @@ namespace GraficosFullWMS
 
                 if (juntaGrafico.Equals(true))
                 {
-
-                    foreach (var item in form3.connectionsToDB)
-                    {
-                        connectionsString.Add(item);
-                    }
-
+                    connectionsString.AddRange(form3.connectionsToDB);
                     labelTemp = "Conectado às Bases: ";
                     foreach (var item in connectionsString)
                         labelTemp += $"{item}, ";
 
-                    string labelTemp2 = Regex.Replace(labelTemp, @",(?=[^,]*,[^,]*$)", " e");
-                    label1.Text = Regex.Replace(labelTemp2, @",(?=[^,]*$)", ".");
+                    string labelTemp2 = Regex.Replace(labelTemp, ",(?=[^,]*,[^,]*$)", " e");
+                    label1.Text = Regex.Replace(labelTemp2, ",(?=[^,]*$)", ".");
                     string json = fileOperations.Load();
                     var connectionObjects = JsonConvert.DeserializeObject<List<ConnectionSave>>(json);
 
-                    for (int i = 1; i <= connectionsString.Count(); i++)
+                    for (int i = 1; i <= connectionsString.Count; i++)
                     {
-                        var selectedConnection = connectionObjects.FirstOrDefault(con => con.nomeConexao.Equals(connectionsString[i - 1]));
+                        var selectedConnection = connectionObjects.SingleOrDefault(con => con.nomeConexao.Equals(connectionsString[i - 1]));
                         this.connectionString = $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={selectedConnection.server})(PORT={selectedConnection.porta}))(CONNECT_DATA=(SERVICE_NAME={selectedConnection.dataBase})));User Id={selectedConnection.usuario};Password={selectedConnection.senha};";
 
                         if (connectionsString[i - 1].Equals(connectionsString.Last()))
@@ -175,7 +161,6 @@ namespace GraficosFullWMS
                 label1.Text = "Conecte-se a uma Base para gerar o Gráfico";
                 return;
             }
-
         }
         public async Task ConnectionToDB(string connectionString, string dataInicio, string dataFim, string Tipo, int empr_codemp)
         {
@@ -185,21 +170,31 @@ namespace GraficosFullWMS
 
                 using (OracleConnection connection = new OracleConnection(connectionString))
                 {
-
                     Cursor.Current = Cursors.WaitCursor;
 
                     if (Tipo.Equals("1 - Usuários Logados"))
                     {
-                        // MessageBox.Show("O Gráfico está sendo gerado, esta ação pode demorar um pouco.", "Importante!", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-
                         connection.Open();
+                        OracleParameter cursorParameter = new OracleParameter
+                        {
+                            ParameterName = "cursorParameter",
+                            OracleDbType = OracleDbType.RefCursor,
+                            Direction = ParameterDirection.Output
+                        };
 
-                        OracleCommand command = new OracleCommand("prc_fullwms_licencas", connection);
-                        command.CommandType = CommandType.StoredProcedure;
-
-                        command.Parameters.Add("p_tipo", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = 1;
-                        command.Parameters.Add("p_data_inicio", OracleDbType.Varchar2, ParameterDirection.Input).Value = dataInicio;
-                        command.Parameters.Add("p_data_fim", OracleDbType.Varchar2, ParameterDirection.Input).Value = dataFim;
+                        OracleCommand command = new OracleCommand
+                        {
+                            CommandText = "prc_fullwms_licencas",
+                            Connection = connection,
+                            CommandType = CommandType.StoredProcedure,
+                            Parameters =
+                            {
+                                new OracleParameter("p_tipo", OracleDbType.BinaryFloat, ParameterDirection.Input) { Value = 1},
+                                new OracleParameter("p_data_inicio", OracleDbType.Varchar2, ParameterDirection.Input) { Value = dataInicio},
+                                new OracleParameter("p_data_fim", OracleDbType.Varchar2, ParameterDirection.Input) { Value = dataFim}
+                            }
+                        };
+                        command.Parameters.Add(cursorParameter);
 
                         if (empr_codemp.Equals(0))
                         {
@@ -210,10 +205,6 @@ namespace GraficosFullWMS
                             command.Parameters.Add("p_codemp", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = p_codemp;
                         }
 
-                        OracleParameter cursorParameter = new OracleParameter("cursorParameter", OracleDbType.RefCursor);
-                        cursorParameter.Direction = ParameterDirection.Output;
-                        command.Parameters.Add(cursorParameter);
-
                         command.ExecuteNonQuery();
 
                         using (OracleDataReader reader = ((OracleRefCursor)cursorParameter.Value).GetDataReader())
@@ -223,10 +214,7 @@ namespace GraficosFullWMS
 
                             while (reader.Read())
                             {
-                                // Retorna a DataInicio
                                 DateTime coluna1 = reader.GetDateTime(0);
-
-                                // Retorna quantidade de Logados
                                 int coluna4 = reader.GetInt32(4);
                                 DataHora.Add(coluna1);
                                 Logados.Add(coluna4);
@@ -234,22 +222,23 @@ namespace GraficosFullWMS
                         }
 
                         connection.Close();
-
                         await Task.WhenAny(CriaGrafico("1 - Usuários Logados"));
-
                     }
                     else if (Tipo.Equals("2 - Colaboradores Logados"))
                     {
-                        // MessageBox.Show("O Gráfico está sendo gerado, esta ação pode demorar um pouco.", "Importante!", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-
                         connection.Open();
-
-                        OracleCommand command = new OracleCommand("prc_fullwms_licencas", connection);
-                        command.CommandType = CommandType.StoredProcedure;
-
-                        command.Parameters.Add("p_tipo", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = 2;
-                        command.Parameters.Add("p_data_inicio", OracleDbType.Varchar2, ParameterDirection.Input).Value = dataInicio;
-                        command.Parameters.Add("p_data_fim", OracleDbType.Varchar2, ParameterDirection.Input).Value = dataFim;
+                        OracleCommand command = new OracleCommand
+                        {
+                            CommandText = "prc_fullwms_licencas",
+                            Connection = connection,
+                            CommandType = CommandType.StoredProcedure,
+                            Parameters =
+                            {
+                                new OracleParameter("p_tipo", OracleDbType.BinaryFloat, ParameterDirection.Input) { Value = 2},
+                                new OracleParameter("p_data_inicio", OracleDbType.Varchar2, ParameterDirection.Input) { Value = dataInicio},
+                                new OracleParameter("p_data_fim", OracleDbType.Varchar2, ParameterDirection.Input) { Value = dataFim}
+                            }
+                        };
 
                         if (empr_codemp.Equals(0))
                         {
@@ -260,10 +249,13 @@ namespace GraficosFullWMS
                             command.Parameters.Add("p_codemp", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = p_codemp;
                         }
 
-                        OracleParameter cursorParameter = new OracleParameter("cursorParameter", OracleDbType.RefCursor);
-                        cursorParameter.Direction = ParameterDirection.Output;
+                        OracleParameter cursorParameter = new OracleParameter
+                        {
+                            ParameterName = "cursorParameter",
+                            OracleDbType = OracleDbType.RefCursor,
+                            Direction = ParameterDirection.Output
+                        };
                         command.Parameters.Add(cursorParameter);
-
                         command.ExecuteNonQuery();
 
                         using (OracleDataReader reader = ((OracleRefCursor)cursorParameter.Value).GetDataReader())
@@ -273,10 +265,7 @@ namespace GraficosFullWMS
 
                             while (reader.Read())
                             {
-                                // Retorna a DataInicio
                                 DateTime coluna1 = reader.GetDateTime(0);
-
-                                // Retorna quantidade de Logados
                                 int coluna4 = reader.GetInt32(4);
                                 DataHora.Add(coluna1);
                                 Colaboradores.Add(coluna4);
@@ -284,21 +273,23 @@ namespace GraficosFullWMS
                         }
 
                         connection.Close();
-
                         await Task.WhenAny(CriaGrafico("2 - Colaboradores Logados"));
-
                     }
                     else if (Tipo.Equals("3 - Total Logados"))
                     {
-                        // MessageBox.Show("O Gráfico está sendo gerado, esta ação pode demorar um pouco.", "Importante!", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-
                         connection.Open();
-
-                        OracleCommand command = new OracleCommand("prc_fullwms_licencas", connection);
-                        command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.Add("p_tipo", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = 3;
-                        command.Parameters.Add("p_data_inicio", OracleDbType.Varchar2, ParameterDirection.Input).Value = dataInicio;
-                        command.Parameters.Add("p_data_fim", OracleDbType.Varchar2, ParameterDirection.Input).Value = dataFim;
+                        OracleCommand command = new OracleCommand
+                        {
+                            CommandText = "prc_fullwms_licencas",
+                            Connection = connection,
+                            CommandType = CommandType.StoredProcedure,
+                            Parameters =
+                            {
+                                new OracleParameter("p_tipo", OracleDbType.BinaryFloat, ParameterDirection.Input) { Value = 3},
+                                new OracleParameter("p_data_inicio", OracleDbType.Varchar2, ParameterDirection.Input) { Value = dataInicio},
+                                new OracleParameter("p_data_fim", OracleDbType.Varchar2, ParameterDirection.Input) { Value = dataFim}
+                            }
+                        };
 
                         if (empr_codemp.Equals(0))
                         {
@@ -309,10 +300,13 @@ namespace GraficosFullWMS
                             command.Parameters.Add("p_codemp", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = p_codemp;
                         }
 
-                        OracleParameter cursorParameter = new OracleParameter("cursorParameter", OracleDbType.RefCursor);
-                        cursorParameter.Direction = ParameterDirection.Output;
+                        OracleParameter cursorParameter = new OracleParameter
+                        {
+                            ParameterName = "cursorParameter",
+                            OracleDbType = OracleDbType.RefCursor,
+                            Direction = ParameterDirection.Output
+                        };
                         command.Parameters.Add(cursorParameter);
-
                         command.ExecuteNonQuery();
 
                         using (OracleDataReader reader = ((OracleRefCursor)cursorParameter.Value).GetDataReader())
@@ -322,10 +316,7 @@ namespace GraficosFullWMS
 
                             while (reader.Read())
                             {
-                                // Retorna a DataInicio
                                 DateTime coluna1 = reader.GetDateTime(0);
-
-                                // Retorna quantidade de Colaboradores
                                 int coluna5 = reader.GetInt32(5);
                                 DataHora.Add(coluna1);
                                 TotalLogados.Add(coluna5);
@@ -333,21 +324,23 @@ namespace GraficosFullWMS
                         }
 
                         connection.Close();
-
                         await Task.WhenAny(CriaGrafico("3 - Total Logados"));
-
                     }
                     else if (Tipo.Equals("4 - Usuários/Colaboradores"))
                     {
-                        // MessageBox.Show("O Gráfico está sendo gerado, esta ação pode demorar um pouco.", "Importante!", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-
                         connection.Open();
-
-                        OracleCommand command = new OracleCommand("prc_fullwms_licencas", connection);
-                        command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.Add("p_tipo", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = 4;
-                        command.Parameters.Add("p_data_inicio", OracleDbType.Varchar2, ParameterDirection.Input).Value = dataInicio;
-                        command.Parameters.Add("p_data_fim", OracleDbType.Varchar2, ParameterDirection.Input).Value = dataFim;
+                        OracleCommand command = new OracleCommand
+                        {
+                            CommandText = "prc_fullwms_licencas",
+                            Connection = connection,
+                            CommandType = CommandType.StoredProcedure,
+                            Parameters =
+                            {
+                                new OracleParameter("p_tipo", OracleDbType.BinaryFloat, ParameterDirection.Input) { Value = 4},
+                                new OracleParameter("p_data_inicio", OracleDbType.Varchar2, ParameterDirection.Input) { Value = dataInicio},
+                                new OracleParameter("p_data_fim", OracleDbType.Varchar2, ParameterDirection.Input) { Value = dataFim}
+                            }
+                        };
 
                         if (empr_codemp.Equals(0))
                         {
@@ -358,8 +351,12 @@ namespace GraficosFullWMS
                             command.Parameters.Add("p_codemp", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = p_codemp;
                         }
 
-                        OracleParameter cursorParameter = new OracleParameter("cursorParameter", OracleDbType.RefCursor);
-                        cursorParameter.Direction = ParameterDirection.Output;
+                        OracleParameter cursorParameter = new OracleParameter
+                        {
+                            ParameterName = "cursorParameter",
+                            OracleDbType = OracleDbType.RefCursor,
+                            Direction = ParameterDirection.Output
+                        };
                         command.Parameters.Add(cursorParameter);
                         command.ExecuteNonQuery();
 
@@ -372,8 +369,6 @@ namespace GraficosFullWMS
 
                             while (reader.Read())
                             {
-                                // Retorna todas as colunas
-                                // (DataInicio, Colaboradores, Usuários)
                                 DateTime coluna1 = reader.GetDateTime(0);
                                 string coluna2 = reader.GetString(1);
                                 string coluna3 = reader.GetString(2);
@@ -382,24 +377,28 @@ namespace GraficosFullWMS
                                 DataHora.Add(coluna1);
                                 Logados.Add(tempColuna2);
                                 Colaboradores.Add(tempColuna3);
-                                TotalLogados.Add((tempColuna2 + tempColuna3));
+                                TotalLogados.Add(tempColuna2 + tempColuna3);
                             }
                         }
 
                         connection.Close();
-
                         await Task.WhenAny(CriaGrafico("4 - Usuários/Colaboradores"));
                     }
                     else if (Tipo.Equals("5 - Junta Gráficos"))
                     {
-
-                        //Abre Duas Conexões
                         connection.Open();
-                        OracleCommand command = new OracleCommand("prc_fullwms_licencas", connection);
-                        command.CommandType = CommandType.StoredProcedure;
-                        command.Parameters.Add("p_tipo", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = 4;
-                        command.Parameters.Add("p_data_inicio", OracleDbType.Varchar2, ParameterDirection.Input).Value = dataInicio;
-                        command.Parameters.Add("p_data_fim", OracleDbType.Varchar2, ParameterDirection.Input).Value = dataFim;
+                        OracleCommand command = new OracleCommand
+                        {
+                            CommandText = "prc_fullwms_licencas",
+                            Connection = connection,
+                            CommandType = CommandType.StoredProcedure,
+                            Parameters =
+                            {
+                                new OracleParameter("p_tipo", OracleDbType.BinaryFloat, ParameterDirection.Input) { Value = 4},
+                                new OracleParameter("p_data_inicio", OracleDbType.Varchar2, ParameterDirection.Input) { Value = dataInicio},
+                                new OracleParameter("p_data_fim", OracleDbType.Varchar2, ParameterDirection.Input) { Value = dataFim}
+                            }
+                        };
 
                         if (empr_codemp.Equals(0))
                         {
@@ -410,10 +409,15 @@ namespace GraficosFullWMS
                             command.Parameters.Add("p_codemp", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = p_codemp;
                         }
 
-                        OracleParameter cursorParameter = new OracleParameter("cursorParameter", OracleDbType.RefCursor);
-                        cursorParameter.Direction = ParameterDirection.Output;
+                        OracleParameter cursorParameter = new OracleParameter
+                        {
+                            ParameterName = "cursorParameter",
+                            OracleDbType = OracleDbType.RefCursor,
+                            Direction = ParameterDirection.Output
+                        };
                         command.Parameters.Add(cursorParameter);
                         command.ExecuteNonQuery();
+
                         using (OracleDataReader reader = ((OracleRefCursor)cursorParameter.Value).GetDataReader())
                         {
                             var temp = new ConnectionsDB();
@@ -431,30 +435,24 @@ namespace GraficosFullWMS
 
                                 if (isAdded.Equals(false))
                                     DataHora.Add(coluna1);
-
                             }
 
                             connectionsDB.Add(temp);
                             if (isAdded.Equals(true))
                             {
-
-                                //Usuarios
                                 try
                                 {
-                                    for (int i = 1; i <= connectionsDB.Count(); i++)
+                                    for (int i = 1; i <= connectionsDB.Count; i++)
                                     {
                                         if (!JuntaGraficosLogados.Any())
                                         {
-                                            foreach (var item in connectionsDB[i - 1].LogadosTemp)
-                                            {
-                                                JuntaGraficosLogados.Add(item);
-                                            }
+                                            JuntaGraficosLogados.AddRange(connectionsDB[i - 1].LogadosTemp);
                                         }
                                         else
                                         {
-                                            if (JuntaGraficosLogados.Count().Equals(connectionsDB[i - 1].LogadosTemp.Count()))
+                                            if (JuntaGraficosLogados.Count.Equals(connectionsDB[i - 1].LogadosTemp.Count))
                                             {
-                                                for (int j = 0; j < JuntaGraficosLogados.Count(); j++)
+                                                for (int j = 0; j < JuntaGraficosLogados.Count; j++)
                                                 {
                                                     JuntaGraficosLogados[j] += connectionsDB[i - 1].LogadosTemp[j];
                                                 }
@@ -467,23 +465,19 @@ namespace GraficosFullWMS
                                     MessageBox.Show("Erro, índice de usuários fora do limite.", "Erro", MessageBoxButtons.OK);
                                 }
 
-                                // Colaboradores
                                 try
                                 {
-                                    for (int i = 1; i <= connectionsDB.Count(); i++)
+                                    for (int i = 1; i <= connectionsDB.Count; i++)
                                     {
                                         if (!JuntaGraficosColaboradores.Any())
                                         {
-                                            foreach (var item in connectionsDB[i - 1].ColaboradoresTemp)
-                                            {
-                                                JuntaGraficosColaboradores.Add(item);
-                                            }
+                                            JuntaGraficosColaboradores.AddRange(connectionsDB[i - 1].ColaboradoresTemp);
                                         }
                                         else
                                         {
-                                            if (JuntaGraficosColaboradores.Count().Equals(connectionsDB[i - 1].ColaboradoresTemp.Count()))
+                                            if (JuntaGraficosColaboradores.Count.Equals(connectionsDB[i - 1].ColaboradoresTemp.Count))
                                             {
-                                                for (int j = 0; j < JuntaGraficosColaboradores.Count(); j++)
+                                                for (int j = 0; j < JuntaGraficosColaboradores.Count; j++)
                                                 {
                                                     JuntaGraficosColaboradores[j] += connectionsDB[i - 1].ColaboradoresTemp[j];
                                                 }
@@ -496,25 +490,19 @@ namespace GraficosFullWMS
                                     MessageBox.Show("Erro, índice de usuários fora do limite.", "Erro", MessageBoxButtons.OK);
                                 }
 
-                                // Linha Suave de Total de Logados
-
                                 try
                                 {
-                                    for (int i = 1; i <= connectionsDB.Count(); i++)
+                                    for (int i = 1; i <= connectionsDB.Count; i++)
                                     {
-
                                         if (!JuntaGraficosTotalLogados.Any())
                                         {
-                                            foreach (var item in connectionsDB[i - 1].TotalLogadosTemp)
-                                            {
-                                                JuntaGraficosTotalLogados.Add(item);
-                                            }
+                                            JuntaGraficosTotalLogados.AddRange(connectionsDB[i - 1].TotalLogadosTemp);
                                         }
                                         else
                                         {
-                                            if (JuntaGraficosTotalLogados.Count().Equals(connectionsDB[i - 1].TotalLogadosTemp.Count()))
+                                            if (JuntaGraficosTotalLogados.Count.Equals(connectionsDB[i - 1].TotalLogadosTemp.Count))
                                             {
-                                                for (int j = 0; j < JuntaGraficosTotalLogados.Count(); j++)
+                                                for (int j = 0; j < JuntaGraficosTotalLogados.Count; j++)
                                                 {
                                                     JuntaGraficosTotalLogados[j] += connectionsDB[i - 1].TotalLogadosTemp[j];
                                                 }
@@ -540,7 +528,6 @@ namespace GraficosFullWMS
                     }
                     ExecuteComponenets(false);
                 }
-
             }
             catch (Exception ex)
             {
@@ -548,21 +535,15 @@ namespace GraficosFullWMS
                 ExecuteComponenets(false);
                 return;
             }
-
         }
 
         public async Task CriaGrafico(string tipo)
         {
-
+            const string DateTimeFormat1 = "dd/MM/yyyy HH:mm:ss";
+            const string DateTimeFormat2 = "dd/MM/yyyy";
             ConfigGrafico();
-
-            var progressoAtual = new Progress<int>(valorProgresso =>
-            {
-                progressBar1.Value = valorProgresso;
-            });
-
+            var progressoAtual = new Progress<int>(valorProgresso => progressBar1.Value = valorProgresso);
             BarraProgresso progressBar = new BarraProgresso();
-
             await progressBar.ExibirBarraProgresso(100, progressoAtual, progressBar1);
 
             if (tipo.Equals(null))
@@ -593,7 +574,7 @@ namespace GraficosFullWMS
                     {
                         Name = "Data de Entrada",
                         NamePaint = new SolidColorPaint(SKColors.Gray),
-                        Labels = DataHora.Select(data => data.ToString("dd/MM/yyyy HH:mm:ss")).ToList(),
+                        Labels = DataHora?.Select(data => data.ToString(DateTimeFormat1)).ToList(),
                         TextSize = 8.5,
                         NameTextSize = 11,
                         LabelsRotation = 15
@@ -619,7 +600,7 @@ namespace GraficosFullWMS
                 progressBar1.Visible = false;
 
                 Controls.Add(cartesianChart1);
-                clearData(false);
+                ClearData(false);
             }
             else if (tipo.Equals("2 - Colaboradores Logados"))
             {
@@ -643,7 +624,7 @@ namespace GraficosFullWMS
                     {
                         Name = "Data de Entrada",
                         NamePaint = new SolidColorPaint(SKColors.Gray),
-                        Labels = DataHora.Select(data => data.ToString("dd/MM/yyyy HH:mm:ss")).ToList(),
+                        Labels = DataHora?.Select(data => data.ToString(DateTimeFormat1)).ToList(),
                         TextSize = 8.5,
                         NameTextSize = 11,
                         LabelsRotation = 15
@@ -669,7 +650,7 @@ namespace GraficosFullWMS
                 progressBar1.Visible = false;
 
                 Controls.Add(cartesianChart1);
-                clearData(false);
+                ClearData(false);
             }
             else if (tipo.Equals("3 - Total Logados"))
             {
@@ -693,7 +674,7 @@ namespace GraficosFullWMS
                     {
                         Name = "Data de Entrada",
                         NamePaint = new SolidColorPaint(SKColors.Gray),
-                        Labels = DataHora.Select(data => data.ToString("dd/MM/yyyy HH:mm:ss")).ToList(),
+                        Labels = DataHora?.Select(data => data.ToString(DateTimeFormat1)).ToList(),
                         TextSize = 8.5,
                         NameTextSize = 11,
                         LabelsRotation = 15
@@ -717,14 +698,12 @@ namespace GraficosFullWMS
                 cartesianChart1.Visible = true;
                 label2.Visible = false;
                 progressBar1.Visible = false;
-
                 Controls.Add(cartesianChart1);
-                clearData(false);
+                ClearData(false);
             }
             else if (tipo.Equals("4 - Usuários/Colaboradores"))
             {
                 cartesianChart1.ZoomMode = ZoomAndPanMode.X;
-
                 cartesianChart1.Series = new ISeries[]
                 {
                     new StackedColumnSeries<double>
@@ -768,7 +747,7 @@ namespace GraficosFullWMS
                     {
                         Name = "Data de Entrada",
                         NamePaint = new SolidColorPaint(SKColors.Gray),
-                        Labels = DataHora.Select(data => data.ToString("dd/MM/yyyy")).ToList(),
+                        Labels = DataHora?.Select(data => data.ToString(DateTimeFormat2)).ToList(),
                         TextSize = 8.5,
                         NameTextSize = 11,
                         LabelsRotation = 15
@@ -790,14 +769,12 @@ namespace GraficosFullWMS
                 cartesianChart1.Visible = true;
                 label2.Visible = false;
                 progressBar1.Visible = false;
-
                 Controls.Add(cartesianChart1);
-                clearData(false);
+                ClearData(false);
             }
             else if (tipo.Equals("5 - Junta Gráficos"))
             {
                 cartesianChart1.ZoomMode = ZoomAndPanMode.X;
-
                 cartesianChart1.Series = new ISeries[]
                 {
                     new StackedColumnSeries<double>
@@ -841,7 +818,7 @@ namespace GraficosFullWMS
                     {
                         Name = "Data de Entrada",
                         NamePaint = new SolidColorPaint(SKColors.Gray),
-                        Labels = DataHora.Select(data => data.ToString("dd/MM/yyyy")).ToList(),
+                        Labels = DataHora?.Select(data => data.ToString(DateTimeFormat2)).ToList(),
                         TextSize = 8.5,
                         NameTextSize = 11,
                         LabelsRotation = 15
@@ -863,21 +840,17 @@ namespace GraficosFullWMS
                 cartesianChart1.Visible = true;
                 label2.Visible = false;
                 progressBar1.Visible = false;
-
                 Controls.Add(cartesianChart1);
-                clearData(true);
+                ClearData(true);
             }
 
             await Task.Delay(50);
             ExecuteComponenets(false);
-
         }
-        private void importaConfigs(object sender, EventArgs e)
+        private void ImportaConfigs(object sender, EventArgs e)
         {
-
             if (!string.IsNullOrEmpty(this.connectionString))
             {
-
                 // Classe que irá Gerar ou Remover as Querys
                 ImportOrRemoveQuery IRQ = new ImportOrRemoveQuery(this.connectionString);
                 MessageBoxManager.Yes = "Importar";
@@ -899,14 +872,12 @@ namespace GraficosFullWMS
                 {
                     IRQ.RemoveQuery();
                 }
-
             }
             else
             {
                 MessageBox.Show("Você precisa primeiro se conectar ao banco de dados!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
         }
 
         private void ExecuteComponenets(bool lockComponenets = true)
@@ -916,9 +887,8 @@ namespace GraficosFullWMS
             this.button3.Enabled = !lockComponenets;
         }
 
-        private void clearData(bool clearConnections = false)
+        private void ClearData(bool clearConnections = false)
         {
-
             if (clearConnections.Equals(true))
             {
                 this.connectionString = "";
@@ -928,14 +898,14 @@ namespace GraficosFullWMS
             connectionsDB.Clear();
         }
 
+#pragma warning disable RCS1163
         private void OnPointerDown(LiveChartsCore.Kernel.Sketches.IChartView chart, IEnumerable<ChartPoint> points)
         {
-
             if (tipoRetorno != "4 - Usuários/Colaboradores" && tipoRetorno != "5 - Junta Gráficos")
             {
                 var Axis = cartesianChart1.XAxes.FirstOrDefault();
 
-                if (points.FirstOrDefault().Equals(null))
+                if (points.FirstOrDefault() == null)
                 {
                     MessageBox.Show("Necessário selecionar um ponto válido", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     return;
@@ -943,13 +913,11 @@ namespace GraficosFullWMS
 
                 var dataClick = Axis.Labels[points.FirstOrDefault().Index];
                 var ConnectionString = this.connectionString;
-
                 int tipo = 3;
                 double total = points.FirstOrDefault().Coordinate.PrimaryValue;
 
                 switch (this.tipoRetorno)
                 {
-
                     case "1 - Usuários Logados":
                         tipo = 1;
                         break;
@@ -974,7 +942,7 @@ namespace GraficosFullWMS
             {
                 return;
             }
-
         }
+#pragma warning restore RCS1163
     }
 }

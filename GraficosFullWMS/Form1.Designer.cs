@@ -38,16 +38,18 @@ namespace GraficosFullWMS
             this.button3 = new GraficosFullWMS.Custom.CustomButtons();
             this.button1 = new GraficosFullWMS.Custom.CustomButtons();
             this.progressBar1 = new GraficosFullWMS.Custom.CustomProgressBar();
+            this.customButtons1 = new GraficosFullWMS.Custom.CustomButtons();
             this.cartesianChart1 = new LiveChartsCore.SkiaSharpView.WinForms.CartesianChart();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
+            this.label1.BackColor = System.Drawing.SystemColors.Control;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(12, 15);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(475, 22);
+            this.label1.Size = new System.Drawing.Size(594, 28);
             this.label1.TabIndex = 2;
             this.label1.Text = "Conecte-se ao banco de dados para gerar o Gráfico";
             // 
@@ -99,7 +101,7 @@ namespace GraficosFullWMS
             this.button3.Text = "Importar ou Remover";
             this.button3.TextColor = System.Drawing.Color.White;
             this.button3.UseVisualStyleBackColor = false;
-            this.button3.Click += new System.EventHandler(this.importaConfigs);
+            this.button3.Click += new System.EventHandler(this.ImportaConfigs);
             // 
             // button1
             // 
@@ -119,7 +121,7 @@ namespace GraficosFullWMS
             this.button1.Text = "Conectar ao Banco";
             this.button1.TextColor = System.Drawing.Color.White;
             this.button1.UseVisualStyleBackColor = false;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
             // progressBar1
             // 
@@ -140,8 +142,28 @@ namespace GraficosFullWMS
             this.progressBar1.SymbolBefore = "";
             this.progressBar1.TabIndex = 12;
             // 
+            // customButtons1
+            // 
+            this.customButtons1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(10)))), ((int)(((byte)(14)))));
+            this.customButtons1.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(10)))), ((int)(((byte)(14)))));
+            this.customButtons1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.customButtons1.BorderColor = System.Drawing.Color.CornflowerBlue;
+            this.customButtons1.BorderRadius = 20;
+            this.customButtons1.BorderSize = 0;
+            this.customButtons1.FlatAppearance.BorderSize = 0;
+            this.customButtons1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.customButtons1.ForeColor = System.Drawing.Color.White;
+            this.customButtons1.Image = global::GraficosFullWMS.Properties.Resources.icons8_help_40;
+            this.customButtons1.Location = new System.Drawing.Point(1740, 60);
+            this.customButtons1.Name = "customButtons1";
+            this.customButtons1.Size = new System.Drawing.Size(48, 46);
+            this.customButtons1.TabIndex = 14;
+            this.customButtons1.TextColor = System.Drawing.Color.White;
+            this.customButtons1.UseVisualStyleBackColor = false;
+            // 
             // cartesianChart1
             // 
+            this.cartesianChart1.BackColor = System.Drawing.SystemColors.ControlLight;
             this.cartesianChart1.Location = new System.Drawing.Point(12, 112);
             this.cartesianChart1.Name = "cartesianChart1";
             this.cartesianChart1.Size = new System.Drawing.Size(1776, 773);
@@ -153,7 +175,8 @@ namespace GraficosFullWMS
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1800, 897);
+            this.ClientSize = new System.Drawing.Size(1805, 908);
+            this.Controls.Add(this.customButtons1);
             this.Controls.Add(this.cartesianChart1);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.button2);
@@ -181,6 +204,7 @@ namespace GraficosFullWMS
         private Custom.CustomButtons button2;
         private Custom.CustomProgressBar progressBar1;
         private LiveChartsCore.SkiaSharpView.WinForms.CartesianChart cartesianChart1;
+        private Custom.CustomButtons customButtons1;
     }
 }
 
