@@ -1,5 +1,6 @@
 ﻿using GraficosFullWMS.Classes;
 using GraficosFullWMS.Dominio.File;
+using GraficosFullWMS.Properties;
 using LiveCharts.Definitions.Charts;
 using LiveCharts.Helpers;
 using LiveChartsCore;
@@ -17,8 +18,10 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Resources;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -35,6 +38,8 @@ namespace GraficosFullWMS
         private string dataFim;
         private string tipoRetorno;
         private int p_codemp;
+        private Grafico grafico;
+        private ConnectionToDB connectionToDB;
 
         public List<ConnectionsDB> connectionsDB = new List<ConnectionsDB>();
         private readonly List<DateTime> DataHora = new List<DateTime>(100000);
@@ -55,27 +60,6 @@ namespace GraficosFullWMS
         {
             InitializeComponent();
             fileOperations = new FileOperations<List<ConnectionSave>>(Path.Combine(Directory.GetCurrentDirectory(), "Files", "stringConnection.json"));
-        }
-
-        private void ConfigGrafico()
-        {
-            cartesianChart1.Visible = false;
-            label2.Visible = false;
-            progressBar1.Visible = false;
-            cartesianChart1.HorizontalScroll.Enabled = true;
-            cartesianChart1.ZoomingSpeed = 0.5;
-            cartesianChart1.AnimationsSpeed = TimeSpan.FromMilliseconds(750);
-            cartesianChart1.ZoomMode = ZoomAndPanMode.ZoomX;
-            cartesianChart1.EasingFunction = EasingFunctions.CubicOut;
-            cartesianChart1.TooltipPosition = TooltipPosition.Top;
-            cartesianChart1.TooltipTextSize = 11;
-            cartesianChart1.TooltipBackgroundPaint = new SolidColorPaint(SKColors.WhiteSmoke);
-            cartesianChart1.TooltipTextPaint = new SolidColorPaint() { Color = SKColors.Black, FontFamily = "Arial" };
-            cartesianChart1.LegendPosition = LegendPosition.Bottom;
-            cartesianChart1.LegendTextPaint = new SolidColorPaint() { Color = SKColors.Black, FontFamily = "Arial" };
-            cartesianChart1.LegendTextSize = 13;
-            cartesianChart1.LegendBackgroundPaint = new SolidColorPaint(SKColors.WhiteSmoke);
-            cartesianChart1.TooltipFindingStrategy = TooltipFindingStrategy.Automatic;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -147,12 +131,12 @@ namespace GraficosFullWMS
                         {
                             isAdded = true;
                         }
-                        await Task.WhenAny(ConnectionToDB(this.connectionString, this.dataInicio, this.dataFim, "5 - Junta Gráficos", this.p_codemp));
+                        await Task.WhenAny(ConnectionToDB("5 - Junta Gráficos"));
                     }
                 }
                 else
                 {
-                    await Task.WhenAny(ConnectionToDB(this.connectionString, this.dataInicio, this.dataFim, this.tipoRetorno, this.p_codemp));
+                    await Task.WhenAny(ConnectionToDB(this.tipoRetorno));
                 }
             }
             else
@@ -162,7 +146,7 @@ namespace GraficosFullWMS
                 return;
             }
         }
-        public async Task ConnectionToDB(string connectionString, string dataInicio, string dataFim, string Tipo, int empr_codemp)
+        public async Task ConnectionToDB(string Tipo)
         {
             try
             {
@@ -174,355 +158,43 @@ namespace GraficosFullWMS
 
                     if (Tipo.Equals("1 - Usuários Logados"))
                     {
-                        connection.Open();
-                        OracleParameter cursorParameter = new OracleParameter
-                        {
-                            ParameterName = "cursorParameter",
-                            OracleDbType = OracleDbType.RefCursor,
-                            Direction = ParameterDirection.Output
-                        };
-
-                        OracleCommand command = new OracleCommand
-                        {
-                            CommandText = "prc_fullwms_licencas",
-                            Connection = connection,
-                            CommandType = CommandType.StoredProcedure,
-                            Parameters =
-                            {
-                                new OracleParameter("p_tipo", OracleDbType.BinaryFloat, ParameterDirection.Input) { Value = 1},
-                                new OracleParameter("p_data_inicio", OracleDbType.Varchar2, ParameterDirection.Input) { Value = dataInicio},
-                                new OracleParameter("p_data_fim", OracleDbType.Varchar2, ParameterDirection.Input) { Value = dataFim}
-                            }
-                        };
-                        command.Parameters.Add(cursorParameter);
-
-                        if (empr_codemp.Equals(0))
-                        {
-                            command.Parameters.Add("p_codemp", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = null;
-                        }
-                        else
-                        {
-                            command.Parameters.Add("p_codemp", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = p_codemp;
-                        }
-
-                        command.ExecuteNonQuery();
-
-                        using (OracleDataReader reader = ((OracleRefCursor)cursorParameter.Value).GetDataReader())
-                        {
-                            DataHora.Clear();
-                            Logados.Clear();
-
-                            while (reader.Read())
-                            {
-                                DateTime coluna1 = reader.GetDateTime(0);
-                                int coluna4 = reader.GetInt32(4);
-                                DataHora.Add(coluna1);
-                                Logados.Add(coluna4);
-                            }
-                        }
-
-                        connection.Close();
-                        await Task.WhenAny(CriaGrafico("1 - Usuários Logados"));
+                        connectionToDB = new ConnectionToDB(connectionString, dataInicio, dataFim, Tipo, p_codemp, DataHora, Logados, Colaboradores, TotalLogados);
+                        await Task.WhenAny(connectionToDB.Connect());
+                        grafico = new Grafico(cartesianChart1, "1 - Usuários Logados", DataHora, Logados);
+                        await Task.WhenAny(CriaGrafico());
                     }
                     else if (Tipo.Equals("2 - Colaboradores Logados"))
                     {
-                        connection.Open();
-                        OracleCommand command = new OracleCommand
-                        {
-                            CommandText = "prc_fullwms_licencas",
-                            Connection = connection,
-                            CommandType = CommandType.StoredProcedure,
-                            Parameters =
-                            {
-                                new OracleParameter("p_tipo", OracleDbType.BinaryFloat, ParameterDirection.Input) { Value = 2},
-                                new OracleParameter("p_data_inicio", OracleDbType.Varchar2, ParameterDirection.Input) { Value = dataInicio},
-                                new OracleParameter("p_data_fim", OracleDbType.Varchar2, ParameterDirection.Input) { Value = dataFim}
-                            }
-                        };
-
-                        if (empr_codemp.Equals(0))
-                        {
-                            command.Parameters.Add("p_codemp", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = null;
-                        }
-                        else
-                        {
-                            command.Parameters.Add("p_codemp", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = p_codemp;
-                        }
-
-                        OracleParameter cursorParameter = new OracleParameter
-                        {
-                            ParameterName = "cursorParameter",
-                            OracleDbType = OracleDbType.RefCursor,
-                            Direction = ParameterDirection.Output
-                        };
-                        command.Parameters.Add(cursorParameter);
-                        command.ExecuteNonQuery();
-
-                        using (OracleDataReader reader = ((OracleRefCursor)cursorParameter.Value).GetDataReader())
-                        {
-                            DataHora.Clear();
-                            Colaboradores.Clear();
-
-                            while (reader.Read())
-                            {
-                                DateTime coluna1 = reader.GetDateTime(0);
-                                int coluna4 = reader.GetInt32(4);
-                                DataHora.Add(coluna1);
-                                Colaboradores.Add(coluna4);
-                            }
-                        }
-
-                        connection.Close();
-                        await Task.WhenAny(CriaGrafico("2 - Colaboradores Logados"));
+                        connectionToDB = new ConnectionToDB(connectionString, dataInicio, dataFim, Tipo, p_codemp, DataHora, Logados, Colaboradores, TotalLogados);
+                        await Task.WhenAny(connectionToDB.Connect());
+                        grafico = new Grafico(cartesianChart1, "2 - Colaboradores Logados", DataHora, Colaboradores);
+                        await Task.WhenAny(CriaGrafico());
                     }
                     else if (Tipo.Equals("3 - Total Logados"))
                     {
-                        connection.Open();
-                        OracleCommand command = new OracleCommand
-                        {
-                            CommandText = "prc_fullwms_licencas",
-                            Connection = connection,
-                            CommandType = CommandType.StoredProcedure,
-                            Parameters =
-                            {
-                                new OracleParameter("p_tipo", OracleDbType.BinaryFloat, ParameterDirection.Input) { Value = 3},
-                                new OracleParameter("p_data_inicio", OracleDbType.Varchar2, ParameterDirection.Input) { Value = dataInicio},
-                                new OracleParameter("p_data_fim", OracleDbType.Varchar2, ParameterDirection.Input) { Value = dataFim}
-                            }
-                        };
-
-                        if (empr_codemp.Equals(0))
-                        {
-                            command.Parameters.Add("p_codemp", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = null;
-                        }
-                        else
-                        {
-                            command.Parameters.Add("p_codemp", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = p_codemp;
-                        }
-
-                        OracleParameter cursorParameter = new OracleParameter
-                        {
-                            ParameterName = "cursorParameter",
-                            OracleDbType = OracleDbType.RefCursor,
-                            Direction = ParameterDirection.Output
-                        };
-                        command.Parameters.Add(cursorParameter);
-                        command.ExecuteNonQuery();
-
-                        using (OracleDataReader reader = ((OracleRefCursor)cursorParameter.Value).GetDataReader())
-                        {
-                            DataHora.Clear();
-                            TotalLogados.Clear();
-
-                            while (reader.Read())
-                            {
-                                DateTime coluna1 = reader.GetDateTime(0);
-                                int coluna5 = reader.GetInt32(5);
-                                DataHora.Add(coluna1);
-                                TotalLogados.Add(coluna5);
-                            }
-                        }
-
-                        connection.Close();
-                        await Task.WhenAny(CriaGrafico("3 - Total Logados"));
+                        connectionToDB = new ConnectionToDB(connectionString, dataInicio, dataFim, Tipo, p_codemp, DataHora, Logados, Colaboradores, TotalLogados);
+                        await Task.WhenAny(connectionToDB.Connect());
+                        grafico = new Grafico(cartesianChart1, "3 - Total Logados", DataHora, TotalLogados);
+                        await Task.WhenAny(CriaGrafico());
                     }
                     else if (Tipo.Equals("4 - Usuários/Colaboradores"))
                     {
-                        connection.Open();
-                        OracleCommand command = new OracleCommand
-                        {
-                            CommandText = "prc_fullwms_licencas",
-                            Connection = connection,
-                            CommandType = CommandType.StoredProcedure,
-                            Parameters =
-                            {
-                                new OracleParameter("p_tipo", OracleDbType.BinaryFloat, ParameterDirection.Input) { Value = 4},
-                                new OracleParameter("p_data_inicio", OracleDbType.Varchar2, ParameterDirection.Input) { Value = dataInicio},
-                                new OracleParameter("p_data_fim", OracleDbType.Varchar2, ParameterDirection.Input) { Value = dataFim}
-                            }
-                        };
-
-                        if (empr_codemp.Equals(0))
-                        {
-                            command.Parameters.Add("p_codemp", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = null;
-                        }
-                        else
-                        {
-                            command.Parameters.Add("p_codemp", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = p_codemp;
-                        }
-
-                        OracleParameter cursorParameter = new OracleParameter
-                        {
-                            ParameterName = "cursorParameter",
-                            OracleDbType = OracleDbType.RefCursor,
-                            Direction = ParameterDirection.Output
-                        };
-                        command.Parameters.Add(cursorParameter);
-                        command.ExecuteNonQuery();
-
-                        using (OracleDataReader reader = ((OracleRefCursor)cursorParameter.Value).GetDataReader())
-                        {
-                            DataHora.Clear();
-                            Logados.Clear();
-                            Colaboradores.Clear();
-                            TotalLogados.Clear();
-
-                            while (reader.Read())
-                            {
-                                DateTime coluna1 = reader.GetDateTime(0);
-                                string coluna2 = reader.GetString(1);
-                                string coluna3 = reader.GetString(2);
-                                double tempColuna2 = Convert.ToDouble(coluna2);
-                                double tempColuna3 = Convert.ToDouble(coluna3);
-                                DataHora.Add(coluna1);
-                                Logados.Add(tempColuna2);
-                                Colaboradores.Add(tempColuna3);
-                                TotalLogados.Add(tempColuna2 + tempColuna3);
-                            }
-                        }
-
-                        connection.Close();
-                        await Task.WhenAny(CriaGrafico("4 - Usuários/Colaboradores"));
+                        connectionToDB = new ConnectionToDB(connectionString, dataInicio, dataFim, Tipo, p_codemp, DataHora, Logados, Colaboradores, TotalLogados);
+                        await Task.WhenAny(connectionToDB.Connect());
+                        grafico = new Grafico(cartesianChart1, "4 - Usuários/Colaboradores", DataHora, Logados, Colaboradores, TotalLogados);
+                        await Task.WhenAny(CriaGrafico());
                     }
                     else if (Tipo.Equals("5 - Junta Gráficos"))
                     {
-                        connection.Open();
-                        OracleCommand command = new OracleCommand
-                        {
-                            CommandText = "prc_fullwms_licencas",
-                            Connection = connection,
-                            CommandType = CommandType.StoredProcedure,
-                            Parameters =
-                            {
-                                new OracleParameter("p_tipo", OracleDbType.BinaryFloat, ParameterDirection.Input) { Value = 4},
-                                new OracleParameter("p_data_inicio", OracleDbType.Varchar2, ParameterDirection.Input) { Value = dataInicio},
-                                new OracleParameter("p_data_fim", OracleDbType.Varchar2, ParameterDirection.Input) { Value = dataFim}
-                            }
-                        };
-
-                        if (empr_codemp.Equals(0))
-                        {
-                            command.Parameters.Add("p_codemp", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = null;
-                        }
-                        else
-                        {
-                            command.Parameters.Add("p_codemp", OracleDbType.BinaryFloat, ParameterDirection.Input).Value = p_codemp;
-                        }
-
-                        OracleParameter cursorParameter = new OracleParameter
-                        {
-                            ParameterName = "cursorParameter",
-                            OracleDbType = OracleDbType.RefCursor,
-                            Direction = ParameterDirection.Output
-                        };
-                        command.Parameters.Add(cursorParameter);
-                        command.ExecuteNonQuery();
-
-                        using (OracleDataReader reader = ((OracleRefCursor)cursorParameter.Value).GetDataReader())
-                        {
-                            var temp = new ConnectionsDB();
-                            while (reader.Read())
-                            {
-                                DateTime coluna1 = reader.GetDateTime(0);
-                                string coluna2 = reader.GetString(1);
-                                string coluna3 = reader.GetString(2);
-                                double tempColuna2 = Convert.ToDouble(coluna2);
-                                double tempColuna3 = Convert.ToDouble(coluna3);
-                                temp.DataHoraTemp.Add(coluna1);
-                                temp.LogadosTemp.Add(tempColuna2);
-                                temp.ColaboradoresTemp.Add(tempColuna3);
-                                temp.TotalLogadosTemp.Add(tempColuna2 + tempColuna3);
-
-                                if (isAdded.Equals(false))
-                                    DataHora.Add(coluna1);
-                            }
-
-                            connectionsDB.Add(temp);
-                            if (isAdded.Equals(true))
-                            {
-                                try
-                                {
-                                    for (int i = 1; i <= connectionsDB.Count; i++)
-                                    {
-                                        if (!JuntaGraficosLogados.Any())
-                                        {
-                                            JuntaGraficosLogados.AddRange(connectionsDB[i - 1].LogadosTemp);
-                                        }
-                                        else
-                                        {
-                                            if (JuntaGraficosLogados.Count.Equals(connectionsDB[i - 1].LogadosTemp.Count))
-                                            {
-                                                for (int j = 0; j < JuntaGraficosLogados.Count; j++)
-                                                {
-                                                    JuntaGraficosLogados[j] += connectionsDB[i - 1].LogadosTemp[j];
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                catch (ArgumentOutOfRangeException)
-                                {
-                                    MessageBox.Show("Erro, índice de usuários fora do limite.", "Erro", MessageBoxButtons.OK);
-                                }
-
-                                try
-                                {
-                                    for (int i = 1; i <= connectionsDB.Count; i++)
-                                    {
-                                        if (!JuntaGraficosColaboradores.Any())
-                                        {
-                                            JuntaGraficosColaboradores.AddRange(connectionsDB[i - 1].ColaboradoresTemp);
-                                        }
-                                        else
-                                        {
-                                            if (JuntaGraficosColaboradores.Count.Equals(connectionsDB[i - 1].ColaboradoresTemp.Count))
-                                            {
-                                                for (int j = 0; j < JuntaGraficosColaboradores.Count; j++)
-                                                {
-                                                    JuntaGraficosColaboradores[j] += connectionsDB[i - 1].ColaboradoresTemp[j];
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                catch (ArgumentOutOfRangeException)
-                                {
-                                    MessageBox.Show("Erro, índice de usuários fora do limite.", "Erro", MessageBoxButtons.OK);
-                                }
-
-                                try
-                                {
-                                    for (int i = 1; i <= connectionsDB.Count; i++)
-                                    {
-                                        if (!JuntaGraficosTotalLogados.Any())
-                                        {
-                                            JuntaGraficosTotalLogados.AddRange(connectionsDB[i - 1].TotalLogadosTemp);
-                                        }
-                                        else
-                                        {
-                                            if (JuntaGraficosTotalLogados.Count.Equals(connectionsDB[i - 1].TotalLogadosTemp.Count))
-                                            {
-                                                for (int j = 0; j < JuntaGraficosTotalLogados.Count; j++)
-                                                {
-                                                    JuntaGraficosTotalLogados[j] += connectionsDB[i - 1].TotalLogadosTemp[j];
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                catch (ArgumentOutOfRangeException)
-                                {
-                                    MessageBox.Show("Erro, índice de usuários fora do limite.", "Erro", MessageBoxButtons.OK);
-                                }
-                            }
-                        }
-
-                        connection.Close();
+                        connectionToDB = new ConnectionToDB(connectionString, dataInicio, dataFim, Tipo, p_codemp, DataHora, Logados, Colaboradores, TotalLogados, JuntaGraficosLogados, JuntaGraficosColaboradores, JuntaGraficosTotalLogados, connectionsDB, isAdded);
+                        await Task.WhenAny(connectionToDB.Connect());
 
                         if (isAdded.Equals(true))
                         {
-                            await Task.WhenAny(CriaGrafico("5 - Junta Gráficos"));
+                            grafico = new Grafico(cartesianChart1, "5 - Junta Gráficos", DataHora, JuntaGraficosLogados, JuntaGraficosColaboradores, JuntaGraficosTotalLogados);
+                            await Task.WhenAny(CriaGrafico());
                             isAdded = false;
+                            ClearData(true);
                             return;
                         }
                     }
@@ -537,315 +209,17 @@ namespace GraficosFullWMS
             }
         }
 
-        public async Task CriaGrafico(string tipo)
+        public async Task CriaGrafico()
         {
-            const string DateTimeFormat1 = "dd/MM/yyyy HH:mm:ss";
-            const string DateTimeFormat2 = "dd/MM/yyyy";
-            ConfigGrafico();
             var progressoAtual = new Progress<int>(valorProgresso => progressBar1.Value = valorProgresso);
             BarraProgresso progressBar = new BarraProgresso();
             await progressBar.ExibirBarraProgresso(100, progressoAtual, progressBar1);
-
-            if (tipo.Equals(null))
-            {
-                MessageBox.Show("Houve um erro ao gerar o gráfico, verifique os campos preenchidos e tente novamente!", "Erro!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            if (tipo.Equals("1 - Usuários Logados"))
-            {
-                cartesianChart1.Series = new ISeries[]
-                {
-                    new LineSeries<double>
-                    {
-                        Name = "Usuários Logados",
-                        Values = Logados,
-                        GeometryFill = null,
-                        GeometryStroke = null,
-                        Fill = new SolidColorPaint() { Color = SKColors.Maroon.WithAlpha(25), StrokeThickness = 1.5F },
-                        Stroke = new SolidColorPaint() { Color = SKColors.Maroon },
-                        LineSmoothness = 1
-                    }
-                };
-
-                cartesianChart1.XAxes = new Axis[]
-                {
-                    new Axis
-                    {
-                        Name = "Data de Entrada",
-                        NamePaint = new SolidColorPaint(SKColors.Gray),
-                        Labels = DataHora?.Select(data => data.ToString(DateTimeFormat1)).ToList(),
-                        TextSize = 8.5,
-                        NameTextSize = 11,
-                        LabelsRotation = 15
-                    }
-                };
-
-                DataHora.Clear();
-
-                cartesianChart1.YAxes = new Axis[]
-                {
-                    new Axis
-                    {
-                        Name = "Usuários Logados",
-                        NameTextSize = 10,
-                        TextSize = 10.5,
-                        NamePaint = new SolidColorPaint(SKColors.Gray)
-                    }
-                };
-
-                cartesianChart1.BackColor = System.Drawing.Color.White;
-                cartesianChart1.Visible = true;
-                label2.Visible = false;
-                progressBar1.Visible = false;
-
-                Controls.Add(cartesianChart1);
-                ClearData(false);
-            }
-            else if (tipo.Equals("2 - Colaboradores Logados"))
-            {
-                cartesianChart1.Series = new ISeries[]
-                {
-                    new LineSeries<double>
-                    {
-                        Name = "Colaboradores Logados",
-                        Values = Colaboradores,
-                        GeometryFill = null,
-                        GeometryStroke = null,
-                        Fill = new SolidColorPaint() { Color = SKColors.Maroon.WithAlpha(25), StrokeThickness = 1.5F },
-                        Stroke = new SolidColorPaint() { Color = SKColors.Maroon },
-                        LineSmoothness = 1
-                    }
-                };
-
-                cartesianChart1.XAxes = new Axis[]
-                {
-                    new Axis
-                    {
-                        Name = "Data de Entrada",
-                        NamePaint = new SolidColorPaint(SKColors.Gray),
-                        Labels = DataHora?.Select(data => data.ToString(DateTimeFormat1)).ToList(),
-                        TextSize = 8.5,
-                        NameTextSize = 11,
-                        LabelsRotation = 15
-                    }
-                };
-
-                DataHora.Clear();
-
-                cartesianChart1.YAxes = new Axis[]
-                {
-                    new Axis
-                    {
-                        Name = "Colaboradores Logados",
-                        NameTextSize = 10,
-                        TextSize = 10.5,
-                        NamePaint = new SolidColorPaint(SKColors.Gray)
-                    }
-                };
-
-                cartesianChart1.BackColor = System.Drawing.Color.White;
-                cartesianChart1.Visible = true;
-                label2.Visible = false;
-                progressBar1.Visible = false;
-
-                Controls.Add(cartesianChart1);
-                ClearData(false);
-            }
-            else if (tipo.Equals("3 - Total Logados"))
-            {
-                cartesianChart1.Series = new ISeries[]
-                {
-                    new LineSeries<double>
-                    {
-                        Name = "Total Logados",
-                        Values = TotalLogados,
-                        GeometryFill = null,
-                        GeometryStroke = null,
-                        Fill = new SolidColorPaint() { Color = SKColors.Maroon.WithAlpha(25), StrokeThickness = 1.5F },
-                        Stroke = new SolidColorPaint() { Color = SKColors.Maroon },
-                        LineSmoothness = 1,
-                    }
-                };
-
-                cartesianChart1.XAxes = new Axis[]
-                {
-                    new Axis
-                    {
-                        Name = "Data de Entrada",
-                        NamePaint = new SolidColorPaint(SKColors.Gray),
-                        Labels = DataHora?.Select(data => data.ToString(DateTimeFormat1)).ToList(),
-                        TextSize = 8.5,
-                        NameTextSize = 11,
-                        LabelsRotation = 15
-                    }
-                };
-
-                DataHora.Clear();
-
-                cartesianChart1.YAxes = new Axis[]
-                {
-                    new Axis
-                    {
-                        Name = "Total Logados",
-                        NameTextSize = 10,
-                        TextSize = 10.5,
-                        NamePaint = new SolidColorPaint(SKColors.Gray)
-                    }
-                };
-
-                cartesianChart1.BackColor = System.Drawing.Color.White;
-                cartesianChart1.Visible = true;
-                label2.Visible = false;
-                progressBar1.Visible = false;
-                Controls.Add(cartesianChart1);
-                ClearData(false);
-            }
-            else if (tipo.Equals("4 - Usuários/Colaboradores"))
-            {
-                cartesianChart1.ZoomMode = ZoomAndPanMode.X;
-                cartesianChart1.Series = new ISeries[]
-                {
-                    new StackedColumnSeries<double>
-                    {
-                        Name = "Usuários",
-                        Values = Logados,
-                        Fill = new SolidColorPaint() { Color = SKColors.CornflowerBlue, StrokeThickness = 4.5F },
-                        Stroke = new SolidColorPaint() { Color = SKColors.DodgerBlue },
-                        MaxBarWidth = 95,
-                        DataLabelsSize = 7.5,
-                        Padding = 7.5,
-                        IsHoverable = true
-                    },
-                    new StackedColumnSeries<double>
-                    {
-                        Name = "Colaboradores",
-                        Values = Colaboradores,
-                        Fill = new SolidColorPaint() { Color = SKColors.PaleVioletRed, StrokeThickness = 4.5F },
-                        Stroke = new SolidColorPaint() { Color = SKColors.IndianRed },
-                        Padding = 7.5,
-                        DataLabelsSize = 7.5,
-                        MaxBarWidth = 95,
-                        IsHoverable = true
-                    },
-                    new LineSeries<double>
-                    {
-                        Name = "Total de Logados",
-                        Values = TotalLogados,
-                        GeometryFill = new SolidColorPaint() { Color = SKColors.WhiteSmoke },
-                        GeometryStroke = new SolidColorPaint() { Color = SKColors.Black, StrokeThickness = 1F },
-                        GeometrySize = 8.5,
-                        Fill = null,
-                        LineSmoothness = 0.5,
-                        Stroke = new SolidColorPaint() { Color = SKColors.Black, StrokeThickness = 1.25F }
-                    }
-                };
-
-                cartesianChart1.XAxes = new Axis[]
-                {
-                    new Axis
-                    {
-                        Name = "Data de Entrada",
-                        NamePaint = new SolidColorPaint(SKColors.Gray),
-                        Labels = DataHora?.Select(data => data.ToString(DateTimeFormat2)).ToList(),
-                        TextSize = 8.5,
-                        NameTextSize = 11,
-                        LabelsRotation = 15
-                    }
-                };
-
-                cartesianChart1.YAxes = new Axis[]
-                {
-                    new Axis
-                    {
-                        Name = "Máximo de Usuários e Colaboradores Logados",
-                        NameTextSize = 10,
-                        TextSize = 10.5,
-                        NamePaint = new SolidColorPaint(SKColors.Gray)
-                    }
-                };
-
-                cartesianChart1.BackColor = System.Drawing.Color.White;
-                cartesianChart1.Visible = true;
-                label2.Visible = false;
-                progressBar1.Visible = false;
-                Controls.Add(cartesianChart1);
-                ClearData(false);
-            }
-            else if (tipo.Equals("5 - Junta Gráficos"))
-            {
-                cartesianChart1.ZoomMode = ZoomAndPanMode.X;
-                cartesianChart1.Series = new ISeries[]
-                {
-                    new StackedColumnSeries<double>
-                    {
-                        Name = "Usuários",
-                        Values = JuntaGraficosLogados,
-                        Fill = new SolidColorPaint() { Color = SKColors.CornflowerBlue, StrokeThickness = 4.5F },
-                        Stroke = new SolidColorPaint() { Color = SKColors.DodgerBlue },
-                        MaxBarWidth = 95,
-                        DataLabelsSize = 7.5,
-                        Padding = 7.5,
-                        IsHoverable = true
-                    },
-                    new StackedColumnSeries<double>
-                    {
-                        Name = "Colaboradores",
-                        Values = JuntaGraficosColaboradores,
-                        Fill = new SolidColorPaint() { Color = SKColors.PaleVioletRed, StrokeThickness = 4.5F },
-                        Stroke = new SolidColorPaint() { Color = SKColors.IndianRed },
-                        Padding = 7.5,
-                        DataLabelsSize = 7.5,
-                        MaxBarWidth = 95,
-                        IsHoverable = true
-                    },
-                    new LineSeries<double>
-                    {
-                        Name = "Total de Logados",
-                        Values = JuntaGraficosTotalLogados,
-                        GeometryFill = new SolidColorPaint() { Color = SKColors.WhiteSmoke },
-                        GeometryStroke = new SolidColorPaint() { Color = SKColors.Black, StrokeThickness = 1F },
-                        GeometrySize = 8.5,
-                        Fill = null,
-                        LineSmoothness = 1,
-                        Stroke = new SolidColorPaint() { Color = SKColors.Black, StrokeThickness = 1.25F }
-                    }
-                };
-
-                cartesianChart1.XAxes = new Axis[]
-                {
-                    new Axis
-                    {
-                        Name = "Data de Entrada",
-                        NamePaint = new SolidColorPaint(SKColors.Gray),
-                        Labels = DataHora?.Select(data => data.ToString(DateTimeFormat2)).ToList(),
-                        TextSize = 8.5,
-                        NameTextSize = 11,
-                        LabelsRotation = 15
-                    }
-                };
-
-                cartesianChart1.YAxes = new Axis[]
-                {
-                    new Axis
-                    {
-                        Name = "Máximo de Usuários e Colaboradores Logados",
-                        NameTextSize = 10,
-                        TextSize = 10.5,
-                        NamePaint = new SolidColorPaint(SKColors.Gray)
-                    }
-                };
-
-                cartesianChart1.BackColor = System.Drawing.Color.White;
-                cartesianChart1.Visible = true;
-                label2.Visible = false;
-                progressBar1.Visible = false;
-                Controls.Add(cartesianChart1);
-                ClearData(true);
-            }
-
-            await Task.Delay(50);
+            grafico.GeraGrafico();
             ExecuteComponenets(false);
+            label2.Visible = false;
+            progressBar1.Visible = false;
+            Controls.Add(cartesianChart1);
+            ClearData(false);
         }
         private void ImportaConfigs(object sender, EventArgs e)
         {
@@ -944,5 +318,24 @@ namespace GraficosFullWMS
             }
         }
 #pragma warning restore RCS1163
+
+        private void CustomButtons1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                byte[] PDF = Resources.Manual_FullWMS;
+                MemoryStream memoryStream = new MemoryStream(PDF);
+                FileStream fileStream = new FileStream("Manual_FullWMS.pdf", FileMode.OpenOrCreate);
+                memoryStream.WriteTo(fileStream);
+                fileStream.Close();
+                memoryStream.Close();
+                Process.Start("Manual_FullWMS.pdf");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{ex.Message}", "Erro ao abrir Documentação", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+        }
     }
 }

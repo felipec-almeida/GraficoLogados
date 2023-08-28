@@ -89,5 +89,15 @@ namespace GraficosFullWMS.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Byte[].
+        /// </summary>
+        internal static byte[] Manual_FullWMS {
+            get {
+                object obj = ResourceManager.GetObject("Manual_FullWMS", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

@@ -12,8 +12,6 @@ namespace GraficosFullWMS.Dominio.File
             this.Path = path;
         }
 
-
-
         public string Load()
         {
             if (!System.IO.File.Exists(this.Path))
@@ -32,7 +30,6 @@ namespace GraficosFullWMS.Dominio.File
 
         public void Save(string text)
         {
-
             using (StreamWriter sw = new StreamWriter(this.Path))
             {
                 sw.Write(text);
@@ -43,16 +40,11 @@ namespace GraficosFullWMS.Dominio.File
 
         public void Override(string text)
         {
-
             using (StreamWriter sw = new StreamWriter(this.Path))
             {
-
                 sw.Write(text);
                 sw.Flush();
-
             }
-
         }
-
     }
 }

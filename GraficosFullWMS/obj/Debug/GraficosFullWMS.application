@@ -7,14 +7,14 @@
     <framework targetVersion="4.7.2" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="GraficosFullWMS.exe.manifest" size="25215">
+    <dependentAssembly dependencyType="install" codebase="GraficosFullWMS.exe.manifest" size="25216">
       <assemblyIdentity name="GraficosFullWMS.exe" version="1.0.0.2" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>rOZ/SZpm+/3PCw+dXKLCOvMvnMMZYswgQJog0/oU0jw=</dsig:DigestValue>
+        <dsig:DigestValue>4+KDAZplzlOCNq0bCNLCO4CknuiTqaspE1LZpiSRJH8=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

@@ -15,6 +15,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
     <PublishUrl>C:\Users\Felipe\Desktop\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -31,7 +32,6 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -50,7 +50,10 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <WarningLevel>0</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>C1E0345F603FA8BF07F4ADDF157DD8DD1FDCA629</ManifestCertificateThumbprint>
@@ -170,6 +173,8 @@
     <Compile Include="Classes\Connections.cs" />
     <Compile Include="Classes\ConnectionSave.cs" />
     <Compile Include="Classes\ConnectionsDB.cs" />
+    <Compile Include="Classes\ConnectionToDB.cs" />
+    <Compile Include="Classes\Grafico.cs" />
     <Compile Include="Classes\ImportOrRemoveQuery.cs" />
     <Compile Include="Classes\MessageBoxManager.cs" />
     <Compile Include="Classes\BarraProgresso.cs" />
@@ -252,6 +257,7 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="bin\Debug\Files\Manual_FullWMS.pdf" />
     <None Include="GraficosFullWMS_TemporaryKey.pfx" />
     <None Include="OpenTK.dll.config" />
     <None Include="Oracle.DataAccess.Common.Configuration.Section.xsd">
@@ -275,6 +281,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\Manual_FullWMS.pdf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
