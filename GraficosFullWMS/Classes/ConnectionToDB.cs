@@ -329,7 +329,7 @@ namespace GraficosFullWMS.Classes
                                 temp.TotalLogadosTemp.Add(tempColuna2 + tempColuna3);
                             }
 
-                            if(IsAdded.Equals(true))
+                            if (IsAdded.Equals(true))
                                 DataHora.AddRange(temp.DataHoraTemp);
 
                             ConnectionsDB.Add(temp);

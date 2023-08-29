@@ -11,16 +11,5 @@ namespace GraficosFullWMS.Classes
         public List<double> TotalLogadosTemp { get; } = new List<double>();
 
         public ConnectionsDB() { }
-
-        //public ConnectionsDB(List<DateTime> dataHora, List<double> logados, List<double> colaboradores, List<double> totalLogados)
-        //{
-
-        //    this.DataHoraTemp = dataHora;
-        //    this.LogadosTemp = logados;
-        //    this.ColaboradoresTemp = colaboradores;
-        //    this.TotalLogadosTemp = totalLogados;
-
-        //}
-
     }
 }

@@ -8,7 +8,6 @@ namespace GraficosFullWMS.Custom
 {
     public class CustomButtons : Button
     {
-
         private int borderSize = 0;
         private int borderRadius = 20;
         private Color borderColor = Color.CornflowerBlue;
@@ -133,7 +132,6 @@ namespace GraficosFullWMS.Custom
                 }
             }
         }
-
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
@@ -144,7 +142,5 @@ namespace GraficosFullWMS.Custom
         {
             this.Invalidate();
         }
-
     }
-
 }

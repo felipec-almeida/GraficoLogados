@@ -123,10 +123,6 @@ select 'C' as tipo,
                     DataGridLogados.AllowUserToResizeColumns = true;
                     DataGridLogados.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
                     DataGridLogados.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-                    //DataGridLogados.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-                    //DataGridLogados.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-                    //DataGridLogados.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-                    //DataGridLogados.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
                 }
                 catch (Exception ex)
                 {
