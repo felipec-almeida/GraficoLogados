@@ -223,7 +223,6 @@ namespace GraficosFullWMS
         {
             if (!string.IsNullOrEmpty(this.connectionString))
             {
-                // Classe que irá Gerar ou Remover as Querys
                 ImportOrRemoveQuery IRQ = new ImportOrRemoveQuery(this.connectionString);
                 MessageBoxManager.Yes = "Importar";
                 MessageBoxManager.No = "Remover";
