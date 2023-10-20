@@ -75,7 +75,7 @@ namespace GraficosFullWMS.Classes
 
                         OracleCommand command = new OracleCommand
                         {
-                            CommandText = "prc_fullwms_licencas",
+                            CommandText = "pkg_wms_full_lic.prc_fullwms_licencas",
                             Connection = connection,
                             CommandType = CommandType.StoredProcedure,
                             Parameters =
@@ -113,9 +113,9 @@ namespace GraficosFullWMS.Classes
                             while (reader.Read())
                             {
                                 DateTime coluna1 = reader.GetDateTime(0);
-                                int coluna4 = reader.GetInt32(4);
+                                int coluna2 = reader.GetInt32(1);
                                 DataHora.Add(coluna1);
-                                Logados.Add(coluna4);
+                                Logados.Add(coluna2);
                             }
                         }
 
@@ -126,7 +126,7 @@ namespace GraficosFullWMS.Classes
                         connection.Open();
                         OracleCommand command = new OracleCommand
                         {
-                            CommandText = "prc_fullwms_licencas",
+                            CommandText = "pkg_wms_full_lic.prc_fullwms_licencas",
                             Connection = connection,
                             CommandType = CommandType.StoredProcedure,
                             Parameters =
@@ -163,9 +163,9 @@ namespace GraficosFullWMS.Classes
                             while (reader.Read())
                             {
                                 DateTime coluna1 = reader.GetDateTime(0);
-                                int coluna4 = reader.GetInt32(4);
+                                int coluna2 = reader.GetInt32(1);
                                 DataHora.Add(coluna1);
-                                Colaboradores.Add(coluna4);
+                                Colaboradores.Add(coluna2);
                             }
                         }
 
@@ -176,7 +176,7 @@ namespace GraficosFullWMS.Classes
                         connection.Open();
                         OracleCommand command = new OracleCommand
                         {
-                            CommandText = "prc_fullwms_licencas",
+                            CommandText = "pkg_wms_full_lic.prc_fullwms_licencas",
                             Connection = connection,
                             CommandType = CommandType.StoredProcedure,
                             Parameters =
@@ -213,9 +213,9 @@ namespace GraficosFullWMS.Classes
                             while (reader.Read())
                             {
                                 DateTime coluna1 = reader.GetDateTime(0);
-                                int coluna5 = reader.GetInt32(5);
+                                int coluna3 = reader.GetInt32(2);
                                 DataHora.Add(coluna1);
-                                TotalLogados.Add(coluna5);
+                                TotalLogados.Add((coluna3));
                             }
                         }
 
@@ -226,7 +226,7 @@ namespace GraficosFullWMS.Classes
                         connection.Open();
                         OracleCommand command = new OracleCommand
                         {
-                            CommandText = "prc_fullwms_licencas",
+                            CommandText = "pkg_wms_full_lic.prc_fullwms_licencas",
                             Connection = connection,
                             CommandType = CommandType.StoredProcedure,
                             Parameters =
@@ -265,14 +265,16 @@ namespace GraficosFullWMS.Classes
                             while (reader.Read())
                             {
                                 DateTime coluna1 = reader.GetDateTime(0);
-                                string coluna2 = reader.GetString(1);
-                                string coluna3 = reader.GetString(2);
-                                double tempColuna2 = Convert.ToDouble(coluna2);
-                                double tempColuna3 = Convert.ToDouble(coluna3);
+                                string colunaUsu = reader.GetString(1);
+                                string colunaColab = reader.GetString(2);
+                                string colunaTotal = reader.GetString(3);
+                                double tempColunaUsu = Convert.ToDouble(colunaUsu);
+                                double tempColunaColab = Convert.ToDouble(colunaColab);
+                                double tempColunaTotal = Convert.ToDouble(colunaTotal);
                                 DataHora.Add(coluna1);
-                                Logados.Add(tempColuna2);
-                                Colaboradores.Add(tempColuna3);
-                                TotalLogados.Add(tempColuna2 + tempColuna3);
+                                Logados.Add(tempColunaUsu);
+                                Colaboradores.Add(tempColunaColab);
+                                TotalLogados.Add(tempColunaTotal);
                             }
                         }
 
@@ -283,7 +285,7 @@ namespace GraficosFullWMS.Classes
                         connection.Open();
                         OracleCommand command = new OracleCommand
                         {
-                            CommandText = "prc_fullwms_licencas",
+                            CommandText = "pkg_wms_full_lic.prc_fullwms_licencas",
                             Connection = connection,
                             CommandType = CommandType.StoredProcedure,
                             Parameters =
@@ -314,19 +316,24 @@ namespace GraficosFullWMS.Classes
 
                         using (OracleDataReader reader = ((OracleRefCursor)cursorParameter.Value).GetDataReader())
                         {
+                            // Aumentando o Fetch do Reader
+                            reader.FetchSize *= 3;
+
                             DataHora.Clear();
                             var temp = new ConnectionsDB();
                             while (reader.Read())
                             {
                                 DateTime coluna1 = reader.GetDateTime(0);
-                                string coluna2 = reader.GetString(1);
+                                string coluna4 = reader.GetString(3);
+                                string coluna5 = reader.GetString(4);
                                 string coluna3 = reader.GetString(2);
-                                double tempColuna2 = Convert.ToDouble(coluna2);
+                                double tempColuna4 = Convert.ToDouble(coluna4);
+                                double tempColuna5 = Convert.ToDouble(coluna5);
                                 double tempColuna3 = Convert.ToDouble(coluna3);
                                 temp.DataHoraTemp.Add(coluna1);
-                                temp.LogadosTemp.Add(tempColuna2);
-                                temp.ColaboradoresTemp.Add(tempColuna3);
-                                temp.TotalLogadosTemp.Add(tempColuna2 + tempColuna3);
+                                temp.LogadosTemp.Add(tempColuna4);
+                                temp.ColaboradoresTemp.Add(tempColuna5);
+                                temp.TotalLogadosTemp.Add(tempColuna3);
                             }
 
                             if (IsAdded.Equals(true))
@@ -357,7 +364,7 @@ namespace GraficosFullWMS.Classes
                                 }
                                 catch (ArgumentOutOfRangeException)
                                 {
-                                    MessageBox.Show("Erro, índice de usuários fora do limite.", "Erro", MessageBoxButtons.OK);
+                                    throw new ArgumentOutOfRangeException("Erro, índice de usuários fora do limite.");
                                 }
 
                                 try
@@ -382,7 +389,7 @@ namespace GraficosFullWMS.Classes
                                 }
                                 catch (ArgumentOutOfRangeException)
                                 {
-                                    MessageBox.Show("Erro, índice de usuários fora do limite.", "Erro", MessageBoxButtons.OK);
+                                    throw new ArgumentOutOfRangeException("Erro, índice de usuários fora do limite.");
                                 }
 
                                 try
@@ -407,7 +414,7 @@ namespace GraficosFullWMS.Classes
                                 }
                                 catch (ArgumentOutOfRangeException)
                                 {
-                                    MessageBox.Show("Erro, índice de usuários fora do limite.", "Erro", MessageBoxButtons.OK);
+                                    throw new ArgumentOutOfRangeException("Erro, índice de usuários fora do limite.");
                                 }
                             }
                         }
@@ -415,13 +422,12 @@ namespace GraficosFullWMS.Classes
                         connection.Close();
                     }
 
-                    await Task.Delay(50);
+                    await Task.Delay(15);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erro ao gerar o gráfico, tente novamente! {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                throw new Exception(ex.Message, ex.InnerException);
             }
         }
     }

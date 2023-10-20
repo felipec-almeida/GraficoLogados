@@ -73,8 +73,8 @@ namespace GraficosFullWMS
                 return;
             }
 
-            this.connectionString = form2.ConnectionStringResult;
-            this.connectionsString.Add(form2.ConnectionName);
+            connectionString = form2.ConnectionStringResult;
+            connectionsString.Add(form2.ConnectionName);
             label1.Text = form2.MensagemLabel;
             labelTemp = form2.MensagemLabel;
             cartesianChart1.Visible = false;
@@ -82,13 +82,14 @@ namespace GraficosFullWMS
 
         private async void OpenModalButton_Click(object sender, EventArgs e)
         {
+            string tempOriginalMessage = label1.Text;
             cartesianChart1.Visible = false;
             label2.Visible = true;
             progressBar1.Visible = true;
             progressBar1.Value = 0;
 
             // Validação para ver se a conexão está OK
-            if (!string.IsNullOrEmpty(this.connectionString))
+            if (!string.IsNullOrEmpty(connectionString))
             {
                 // Formulário para gerar o Gráfico
                 Form3 form3 = new Form3();
@@ -100,11 +101,11 @@ namespace GraficosFullWMS
                     return;
                 }
 
-                this.dataInicio = form3.DataInicial;
-                this.dataFim = form3.DataFinal;
-                this.tipoRetorno = form3.TipoRetorno;
-                this.p_codemp = form3.EmpCodemp;
-                this.juntaGrafico = form3.JuntaDadosGraficos;
+                dataInicio = form3.DataInicial;
+                dataFim = form3.DataFinal;
+                tipoRetorno = form3.TipoRetorno;
+                p_codemp = form3.EmpCodemp;
+                juntaGrafico = form3.JuntaDadosGraficos;
 
                 if (juntaGrafico.Equals(true))
                 {
@@ -121,19 +122,24 @@ namespace GraficosFullWMS
                     for (int i = 1; i <= connectionsString.Count; i++)
                     {
                         var selectedConnection = connectionObjects.SingleOrDefault(con => con.nomeConexao.Equals(connectionsString[i - 1]));
-                        this.connectionString = $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={selectedConnection.server})(PORT={selectedConnection.porta}))(CONNECT_DATA=(SERVICE_NAME={selectedConnection.dataBase})));User Id={selectedConnection.usuario};Password={selectedConnection.senha};";
+                        connectionString = $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={selectedConnection.server})(PORT={selectedConnection.porta}))(CONNECT_DATA=(SERVICE_NAME={selectedConnection.dataBase})));User Id={selectedConnection.usuario};Password={selectedConnection.senha};";
 
                         if (connectionsString[i - 1].Equals(connectionsString.Last()))
                         {
                             isAdded = true;
                         }
+                        label1.Text = "Aguarde, o gráfico está sendo gerado...";
                         await Task.WhenAny(ConnectionToDB("5 - Junta Gráficos"));
                     }
                 }
                 else
                 {
-                    await Task.WhenAny(ConnectionToDB(this.tipoRetorno));
+                    label1.Text = "Aguarde, o gráfico está sendo gerado...";
+                    await Task.Delay(25);
+                    await Task.WhenAny(ConnectionToDB(tipoRetorno));
                 }
+
+                label1.Text = tempOriginalMessage;
             }
             else
             {
@@ -148,60 +154,53 @@ namespace GraficosFullWMS
             {
                 ExecuteComponenets();
 
-                using (OracleConnection connection = new OracleConnection(connectionString))
+                if (Tipo.Equals("1 - Usuários Logados"))
                 {
-                    BarraProgresso bar = new BarraProgresso();
-                    var progressoAtual = new Progress<int>(valorProgresso => progressBar1.Value = valorProgresso);
-                    Cursor.Current = Cursors.WaitCursor;
-
-                    if (Tipo.Equals("1 - Usuários Logados"))
-                    {
-                        connectionToDB = new ConnectionToDB(connectionString, dataInicio, dataFim, Tipo, p_codemp, DataHora, Logados, Colaboradores, TotalLogados);
-                        await Task.WhenAll(connectionToDB.Connect());
-                        grafico = new Grafico(cartesianChart1, "1 - Usuários Logados", DataHora, Logados);
-                        await Task.WhenAny(CriaGrafico());
-                    }
-                    else if (Tipo.Equals("2 - Colaboradores Logados"))
-                    {
-                        connectionToDB = new ConnectionToDB(connectionString, dataInicio, dataFim, Tipo, p_codemp, DataHora, Logados, Colaboradores, TotalLogados);
-                        await Task.WhenAll(connectionToDB.Connect());
-                        grafico = new Grafico(cartesianChart1, "2 - Colaboradores Logados", DataHora, Colaboradores);
-                        await Task.WhenAny(CriaGrafico());
-                    }
-                    else if (Tipo.Equals("3 - Total Logados"))
-                    {
-                        connectionToDB = new ConnectionToDB(connectionString, dataInicio, dataFim, Tipo, p_codemp, DataHora, Logados, Colaboradores, TotalLogados);
-                        await Task.WhenAll(connectionToDB.Connect());
-                        grafico = new Grafico(cartesianChart1, "3 - Total Logados", DataHora, TotalLogados);
-                        await Task.WhenAny(CriaGrafico());
-                    }
-                    else if (Tipo.Equals("4 - Usuários/Colaboradores"))
-                    {
-                        connectionToDB = new ConnectionToDB(connectionString, dataInicio, dataFim, Tipo, p_codemp, DataHora, Logados, Colaboradores, TotalLogados);
-                        await Task.WhenAll(connectionToDB.Connect());
-                        grafico = new Grafico(cartesianChart1, "4 - Usuários/Colaboradores", DataHora, Logados, Colaboradores, TotalLogados);
-                        await Task.WhenAny(CriaGrafico());
-                    }
-                    else if (Tipo.Equals("5 - Junta Gráficos"))
-                    {
-                        connectionToDB = new ConnectionToDB(connectionString, dataInicio, dataFim, Tipo, p_codemp, DataHora, Logados, Colaboradores, TotalLogados, JuntaGraficosLogados, JuntaGraficosColaboradores, JuntaGraficosTotalLogados, connectionsDB, isAdded);
-                        await Task.WhenAll(connectionToDB.Connect());
-
-                        if (isAdded.Equals(true))
-                        {
-                            grafico = new Grafico(cartesianChart1, "5 - Junta Gráficos", DataHora, JuntaGraficosLogados, JuntaGraficosColaboradores, JuntaGraficosTotalLogados);
-                            await Task.WhenAny(CriaGrafico());
-                            isAdded = false;
-                            ClearData(true);
-                            return;
-                        }
-                    }
-                    ExecuteComponenets(false);
+                    connectionToDB = new ConnectionToDB(connectionString, dataInicio, dataFim, Tipo, p_codemp, DataHora, Logados, Colaboradores, TotalLogados);
+                    grafico = new Grafico(cartesianChart1, "1 - Usuários Logados", DataHora, Logados);
+                    await connectionToDB.Connect();
+                    await CriaGrafico();
                 }
+                else if (Tipo.Equals("2 - Colaboradores Logados"))
+                {
+                    connectionToDB = new ConnectionToDB(connectionString, dataInicio, dataFim, Tipo, p_codemp, DataHora, Logados, Colaboradores, TotalLogados);
+                    grafico = new Grafico(cartesianChart1, "2 - Colaboradores Logados", DataHora, Colaboradores);
+                    await connectionToDB.Connect();
+                    await CriaGrafico();
+                }
+                else if (Tipo.Equals("3 - Total Logados"))
+                {
+                    connectionToDB = new ConnectionToDB(connectionString, dataInicio, dataFim, Tipo, p_codemp, DataHora, Logados, Colaboradores, TotalLogados);
+                    grafico = new Grafico(cartesianChart1, "3 - Total Logados", DataHora, TotalLogados);
+                    await connectionToDB.Connect();
+                    await CriaGrafico();
+                }
+                else if (Tipo.Equals("4 - Usuários/Colaboradores"))
+                {
+                    connectionToDB = new ConnectionToDB(connectionString, dataInicio, dataFim, Tipo, p_codemp, DataHora, Logados, Colaboradores, TotalLogados);
+                    grafico = new Grafico(cartesianChart1, "4 - Usuários/Colaboradores", DataHora, Logados, Colaboradores, TotalLogados);
+                    await connectionToDB.Connect();
+                    await CriaGrafico();
+                }
+                else if (Tipo.Equals("5 - Junta Gráficos"))
+                {
+                    connectionToDB = new ConnectionToDB(connectionString, dataInicio, dataFim, Tipo, p_codemp, DataHora, Logados, Colaboradores, TotalLogados, JuntaGraficosLogados, JuntaGraficosColaboradores, JuntaGraficosTotalLogados, connectionsDB, isAdded);
+                    await connectionToDB.Connect();
+
+                    if (isAdded.Equals(true))
+                    {
+                        grafico = new Grafico(cartesianChart1, "5 - Junta Gráficos", DataHora, JuntaGraficosLogados, JuntaGraficosColaboradores, JuntaGraficosTotalLogados);
+                        await CriaGrafico();
+                        isAdded = false;
+                        ClearData(true);
+                        return;
+                    }
+                }
+                ExecuteComponenets(false);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erro ao gerar o gráfico, tente novamente! {ex.Message}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Erro ao gerar o gráfico, tente novamente! {ex.Message} - {ex.InnerException} - {ex.StackTrace}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ExecuteComponenets(false);
                 return;
             }
@@ -221,9 +220,9 @@ namespace GraficosFullWMS
         }
         private void ImportaConfigs(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(this.connectionString))
+            if (!string.IsNullOrEmpty(connectionString))
             {
-                ImportOrRemoveQuery IRQ = new ImportOrRemoveQuery(this.connectionString);
+                ImportOrRemoveQuery IRQ = new ImportOrRemoveQuery(connectionString);
                 MessageBoxManager.Yes = "Importar";
                 MessageBoxManager.No = "Remover";
                 MessageBoxManager.Cancel = "Cancelar";
@@ -247,16 +246,16 @@ namespace GraficosFullWMS
 
         private void ExecuteComponenets(bool lockComponenets = true)
         {
-            this.button1.Enabled = !lockComponenets;
-            this.button2.Enabled = !lockComponenets;
-            this.button3.Enabled = !lockComponenets;
+            button1.Enabled = !lockComponenets;
+            button2.Enabled = !lockComponenets;
+            button3.Enabled = !lockComponenets;
         }
 
         private void ClearData(bool clearConnections = false)
         {
             if (clearConnections.Equals(true))
             {
-                this.connectionString = "";
+                connectionString = "";
                 connectionsString.Clear();
             }
 
@@ -277,11 +276,11 @@ namespace GraficosFullWMS
                 }
 
                 var dataClick = Axis.Labels[points.FirstOrDefault().Index];
-                var ConnectionString = this.connectionString;
+                var ConnectionString = connectionString;
                 int tipo = 3;
                 double total = points.FirstOrDefault().Coordinate.PrimaryValue;
 
-                switch (this.tipoRetorno)
+                switch (tipoRetorno)
                 {
                     case "1 - Usuários Logados":
                         tipo = 1;
