@@ -112,10 +112,10 @@ namespace GraficosFullWMS.Classes
 
                             while (reader.Read())
                             {
-                                DateTime coluna1 = reader.GetDateTime(0);
-                                int coluna2 = reader.GetInt32(1);
-                                DataHora.Add(coluna1);
-                                Logados.Add(coluna2);
+                                DateTime colunaTotal = reader.GetDateTime(0);
+                                int colunaUsu = reader.GetInt32(1);
+                                DataHora.Add(colunaTotal);
+                                Logados.Add(colunaUsu);
                             }
                         }
 
@@ -162,10 +162,10 @@ namespace GraficosFullWMS.Classes
 
                             while (reader.Read())
                             {
-                                DateTime coluna1 = reader.GetDateTime(0);
-                                int coluna2 = reader.GetInt32(1);
-                                DataHora.Add(coluna1);
-                                Colaboradores.Add(coluna2);
+                                DateTime colunaData = reader.GetDateTime(0);
+                                int colunaColab = reader.GetInt32(1);
+                                DataHora.Add(colunaData);
+                                Colaboradores.Add(colunaColab);
                             }
                         }
 
@@ -212,10 +212,10 @@ namespace GraficosFullWMS.Classes
 
                             while (reader.Read())
                             {
-                                DateTime coluna1 = reader.GetDateTime(0);
-                                int coluna3 = reader.GetInt32(2);
-                                DataHora.Add(coluna1);
-                                TotalLogados.Add((coluna3));
+                                DateTime colunaData = reader.GetDateTime(0);
+                                int colunaTotal = reader.GetInt32(4);
+                                DataHora.Add(colunaData);
+                                TotalLogados.Add((colunaTotal));
                             }
                         }
 
@@ -264,17 +264,14 @@ namespace GraficosFullWMS.Classes
 
                             while (reader.Read())
                             {
-                                DateTime coluna1 = reader.GetDateTime(0);
-                                string colunaUsu = reader.GetString(1);
-                                string colunaColab = reader.GetString(2);
-                                string colunaTotal = reader.GetString(3);
-                                double tempColunaUsu = Convert.ToDouble(colunaUsu);
-                                double tempColunaColab = Convert.ToDouble(colunaColab);
-                                double tempColunaTotal = Convert.ToDouble(colunaTotal);
-                                DataHora.Add(coluna1);
-                                Logados.Add(tempColunaUsu);
-                                Colaboradores.Add(tempColunaColab);
-                                TotalLogados.Add(tempColunaTotal);
+                                DateTime colunaData = reader.GetDateTime(0);
+                                double colunaUsu = Convert.ToDouble(reader.GetString(1));
+                                double colunaColab = Convert.ToDouble(reader.GetString(2));
+                                double colunaTotal = Convert.ToDouble(reader.GetString(3));
+                                DataHora.Add(colunaData);
+                                Logados.Add(colunaUsu);
+                                Colaboradores.Add(colunaColab);
+                                TotalLogados.Add(colunaTotal);
                             }
                         }
 
@@ -316,24 +313,18 @@ namespace GraficosFullWMS.Classes
 
                         using (OracleDataReader reader = ((OracleRefCursor)cursorParameter.Value).GetDataReader())
                         {
-                            // Aumentando o Fetch do Reader
-                            reader.FetchSize *= 3;
-
                             DataHora.Clear();
                             var temp = new ConnectionsDB();
                             while (reader.Read())
                             {
-                                DateTime coluna1 = reader.GetDateTime(0);
-                                string coluna4 = reader.GetString(3);
-                                string coluna5 = reader.GetString(4);
-                                string coluna3 = reader.GetString(2);
-                                double tempColuna4 = Convert.ToDouble(coluna4);
-                                double tempColuna5 = Convert.ToDouble(coluna5);
-                                double tempColuna3 = Convert.ToDouble(coluna3);
-                                temp.DataHoraTemp.Add(coluna1);
-                                temp.LogadosTemp.Add(tempColuna4);
-                                temp.ColaboradoresTemp.Add(tempColuna5);
-                                temp.TotalLogadosTemp.Add(tempColuna3);
+                                DateTime colunaData = reader.GetDateTime(0);
+                                double colunaUsu = Convert.ToDouble(reader.GetString(1));
+                                double colunaColab = Convert.ToDouble(reader.GetString(2));
+                                double colunaTotal = Convert.ToDouble(reader.GetString(3));
+                                temp.DataHoraTemp.Add(colunaData);
+                                temp.LogadosTemp.Add(colunaUsu);
+                                temp.ColaboradoresTemp.Add(colunaColab);
+                                temp.TotalLogadosTemp.Add(colunaTotal);
                             }
 
                             if (IsAdded.Equals(true))

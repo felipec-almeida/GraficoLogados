@@ -55,12 +55,13 @@ namespace GraficosFullWMS
         public Form1()
         {
             InitializeComponent();
-            fileOperations = new FileOperations<List<ConnectionSave>>(Path.Combine(Directory.GetCurrentDirectory(), "Files", "stringConnection.json"));
+            fileOperations = new FileOperations<List<ConnectionSave>>(
+                Path.Combine(Directory.GetCurrentDirectory(), "Files", "stringConnection.json")
+            );
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-        }
+        private void Form1_Load(object sender, EventArgs e) { }
+
         private void Button1_Click(object sender, EventArgs e)
         {
             ClearData(true);
@@ -117,12 +118,17 @@ namespace GraficosFullWMS
                     string labelTemp2 = Regex.Replace(labelTemp, ",(?=[^,]*,[^,]*$)", " e");
                     label1.Text = Regex.Replace(labelTemp2, ",(?=[^,]*$)", ".");
                     string json = fileOperations.Load();
-                    var connectionObjects = JsonConvert.DeserializeObject<List<ConnectionSave>>(json);
+                    var connectionObjects = JsonConvert.DeserializeObject<List<ConnectionSave>>(
+                        json
+                    );
 
                     for (int i = 1; i <= connectionsString.Count; i++)
                     {
-                        var selectedConnection = connectionObjects.SingleOrDefault(con => con.nomeConexao.Equals(connectionsString[i - 1]));
-                        connectionString = $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={selectedConnection.server})(PORT={selectedConnection.porta}))(CONNECT_DATA=(SERVICE_NAME={selectedConnection.dataBase})));User Id={selectedConnection.usuario};Password={selectedConnection.senha};";
+                        var selectedConnection = connectionObjects.SingleOrDefault(
+                            con => con.nomeConexao.Equals(connectionsString[i - 1])
+                        );
+                        connectionString =
+                            $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={selectedConnection.server})(PORT={selectedConnection.porta}))(CONNECT_DATA=(SERVICE_NAME={selectedConnection.dataBase})));User Id={selectedConnection.usuario};Password={selectedConnection.senha};";
 
                         if (connectionsString[i - 1].Equals(connectionsString.Last()))
                         {
@@ -143,11 +149,17 @@ namespace GraficosFullWMS
             }
             else
             {
-                MessageBox.Show("Você precisa primeiro se conectar ao banco de dados!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    "Você precisa primeiro se conectar ao banco de dados!",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
                 label1.Text = "Conecte-se a uma Base para gerar o Gráfico";
                 return;
             }
         }
+
         public async Task ConnectionToDB(string Tipo)
         {
             try
@@ -156,40 +168,124 @@ namespace GraficosFullWMS
 
                 if (Tipo.Equals("1 - Usuários Logados"))
                 {
-                    connectionToDB = new ConnectionToDB(connectionString, dataInicio, dataFim, Tipo, p_codemp, DataHora, Logados, Colaboradores, TotalLogados);
-                    grafico = new Grafico(cartesianChart1, "1 - Usuários Logados", DataHora, Logados);
+                    connectionToDB = new ConnectionToDB(
+                        connectionString,
+                        dataInicio,
+                        dataFim,
+                        Tipo,
+                        p_codemp,
+                        DataHora,
+                        Logados,
+                        Colaboradores,
+                        TotalLogados
+                    );
+                    grafico = new Grafico(
+                        cartesianChart1,
+                        "1 - Usuários Logados",
+                        DataHora,
+                        Logados
+                    );
                     await connectionToDB.Connect();
                     await CriaGrafico();
                 }
                 else if (Tipo.Equals("2 - Colaboradores Logados"))
                 {
-                    connectionToDB = new ConnectionToDB(connectionString, dataInicio, dataFim, Tipo, p_codemp, DataHora, Logados, Colaboradores, TotalLogados);
-                    grafico = new Grafico(cartesianChart1, "2 - Colaboradores Logados", DataHora, Colaboradores);
+                    connectionToDB = new ConnectionToDB(
+                        connectionString,
+                        dataInicio,
+                        dataFim,
+                        Tipo,
+                        p_codemp,
+                        DataHora,
+                        Logados,
+                        Colaboradores,
+                        TotalLogados
+                    );
+                    grafico = new Grafico(
+                        cartesianChart1,
+                        "2 - Colaboradores Logados",
+                        DataHora,
+                        Colaboradores
+                    );
                     await connectionToDB.Connect();
                     await CriaGrafico();
                 }
                 else if (Tipo.Equals("3 - Total Logados"))
                 {
-                    connectionToDB = new ConnectionToDB(connectionString, dataInicio, dataFim, Tipo, p_codemp, DataHora, Logados, Colaboradores, TotalLogados);
-                    grafico = new Grafico(cartesianChart1, "3 - Total Logados", DataHora, TotalLogados);
+                    connectionToDB = new ConnectionToDB(
+                        connectionString,
+                        dataInicio,
+                        dataFim,
+                        Tipo,
+                        p_codemp,
+                        DataHora,
+                        Logados,
+                        Colaboradores,
+                        TotalLogados
+                    );
+                    grafico = new Grafico(
+                        cartesianChart1,
+                        "3 - Total Logados",
+                        DataHora,
+                        TotalLogados
+                    );
                     await connectionToDB.Connect();
                     await CriaGrafico();
                 }
                 else if (Tipo.Equals("4 - Usuários/Colaboradores"))
                 {
-                    connectionToDB = new ConnectionToDB(connectionString, dataInicio, dataFim, Tipo, p_codemp, DataHora, Logados, Colaboradores, TotalLogados);
-                    grafico = new Grafico(cartesianChart1, "4 - Usuários/Colaboradores", DataHora, Logados, Colaboradores, TotalLogados);
+                    connectionToDB = new ConnectionToDB(
+                        connectionString,
+                        dataInicio,
+                        dataFim,
+                        Tipo,
+                        p_codemp,
+                        DataHora,
+                        Logados,
+                        Colaboradores,
+                        TotalLogados
+                    );
+                    grafico = new Grafico(
+                        cartesianChart1,
+                        "4 - Usuários/Colaboradores",
+                        DataHora,
+                        Logados,
+                        Colaboradores,
+                        TotalLogados
+                    );
                     await connectionToDB.Connect();
                     await CriaGrafico();
                 }
                 else if (Tipo.Equals("5 - Junta Gráficos"))
                 {
-                    connectionToDB = new ConnectionToDB(connectionString, dataInicio, dataFim, Tipo, p_codemp, DataHora, Logados, Colaboradores, TotalLogados, JuntaGraficosLogados, JuntaGraficosColaboradores, JuntaGraficosTotalLogados, connectionsDB, isAdded);
+                    connectionToDB = new ConnectionToDB(
+                        connectionString,
+                        dataInicio,
+                        dataFim,
+                        Tipo,
+                        p_codemp,
+                        DataHora,
+                        Logados,
+                        Colaboradores,
+                        TotalLogados,
+                        JuntaGraficosLogados,
+                        JuntaGraficosColaboradores,
+                        JuntaGraficosTotalLogados,
+                        connectionsDB,
+                        isAdded
+                    );
                     await connectionToDB.Connect();
 
                     if (isAdded.Equals(true))
                     {
-                        grafico = new Grafico(cartesianChart1, "5 - Junta Gráficos", DataHora, JuntaGraficosLogados, JuntaGraficosColaboradores, JuntaGraficosTotalLogados);
+                        grafico = new Grafico(
+                            cartesianChart1,
+                            "5 - Junta Gráficos",
+                            DataHora,
+                            JuntaGraficosLogados,
+                            JuntaGraficosColaboradores,
+                            JuntaGraficosTotalLogados
+                        );
                         await CriaGrafico();
                         isAdded = false;
                         ClearData(true);
@@ -200,7 +296,12 @@ namespace GraficosFullWMS
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erro ao gerar o gráfico, tente novamente! {ex.Message} - {ex.InnerException} - {ex.StackTrace}", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    $"Erro ao gerar o gráfico, tente novamente! {ex.Message} - {ex.InnerException} - {ex.StackTrace}",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
                 ExecuteComponenets(false);
                 return;
             }
@@ -208,7 +309,9 @@ namespace GraficosFullWMS
 
         public async Task CriaGrafico()
         {
-            var progressoAtual = new Progress<int>(valorProgresso => progressBar1.Value = valorProgresso);
+            var progressoAtual = new Progress<int>(
+                valorProgresso => progressBar1.Value = valorProgresso
+            );
             BarraProgresso progressBar = new BarraProgresso();
             await progressBar.ExibirBarraProgresso(100, progressoAtual, progressBar1);
             grafico.GeraGrafico();
@@ -218,6 +321,7 @@ namespace GraficosFullWMS
             Controls.Add(cartesianChart1);
             ClearData(false);
         }
+
         private void ImportaConfigs(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(connectionString))
@@ -227,7 +331,12 @@ namespace GraficosFullWMS
                 MessageBoxManager.No = "Remover";
                 MessageBoxManager.Cancel = "Cancelar";
                 MessageBoxManager.Register();
-                DialogResult result = MessageBox.Show("Deseja importar ou remover as querys da Base Conectada?", "Importante!", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
+                DialogResult result = MessageBox.Show(
+                    "Deseja importar ou remover as querys da Base Conectada?",
+                    "Importante!",
+                    MessageBoxButtons.YesNoCancel,
+                    MessageBoxIcon.Information
+                );
                 MessageBoxManager.Unregister();
 
                 if (result.Equals(DialogResult.Yes))
@@ -239,7 +348,53 @@ namespace GraficosFullWMS
             }
             else
             {
-                MessageBox.Show("Você precisa primeiro se conectar ao banco de dados!", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    "Você precisa primeiro se conectar ao banco de dados!",
+                    "Erro",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return;
+            }
+        }
+
+        private void ImportaDados(object sender, EventArgs e)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(connectionString))
+                {
+                    throw new Exception();
+                }
+
+                using (OracleConnection connection = new OracleConnection(connectionString))
+                {
+                    DialogResult result = MessageBox.Show(
+                        $"Deseja copiar o Comando para Executar em uma Aba Teste na base {connection.InstanceName}?",
+                        "Importante!",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Warning
+                    );
+                    if (result.Equals(DialogResult.Yes))
+                    {
+                        string commandCopy =
+                            @"
+pkg_wms_full_lic.prc_aud_ger_logados(p_tipo => 'T',
+                                     p_data_inicio => null);
+";
+                        Clipboard.SetText(commandCopy);
+                        MessageBox.Show("Comando copiado com sucesso!", "Comando Copiado!");
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show(
+                    $"Houve um Erro ao tentar se conectar a base, tente novamente!",
+                    "Erro Inesperado!",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
                 return;
             }
         }
@@ -249,6 +404,7 @@ namespace GraficosFullWMS
             button1.Enabled = !lockComponenets;
             button2.Enabled = !lockComponenets;
             button3.Enabled = !lockComponenets;
+            customButtons2.Enabled = !lockComponenets;
         }
 
         private void ClearData(bool clearConnections = false)
@@ -263,7 +419,10 @@ namespace GraficosFullWMS
         }
 
 #pragma warning disable RCS1163
-        private void OnPointerDown(LiveChartsCore.Kernel.Sketches.IChartView chart, IEnumerable<ChartPoint> points)
+        private void OnPointerDown(
+            LiveChartsCore.Kernel.Sketches.IChartView chart,
+            IEnumerable<ChartPoint> points
+        )
         {
             if (tipoRetorno != "4 - Usuários/Colaboradores" && tipoRetorno != "5 - Junta Gráficos")
             {
@@ -271,7 +430,12 @@ namespace GraficosFullWMS
 
                 if (points.FirstOrDefault() == null)
                 {
-                    MessageBox.Show("Necessário selecionar um ponto válido", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBox.Show(
+                        "Necessário selecionar um ponto válido",
+                        "Erro",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Exclamation
+                    );
                     return;
                 }
 
@@ -323,7 +487,12 @@ namespace GraficosFullWMS
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"{ex.Message}!", "Erro ao abrir Documentação", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    $"{ex.Message}!",
+                    "Erro ao abrir Documentação",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
                 return;
             }
         }

@@ -33,6 +33,7 @@
             this.DataGridLogados = new System.Windows.Forms.DataGridView();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.customButtons1 = new GraficosFullWMS.Custom.CustomButtons();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridLogados)).BeginInit();
             this.SuspendLayout();
             // 
@@ -65,7 +66,7 @@
             this.DataGridLogados.RowHeadersWidth = 51;
             this.DataGridLogados.RowTemplate.Height = 24;
             this.DataGridLogados.ShowEditingIcon = false;
-            this.DataGridLogados.Size = new System.Drawing.Size(797, 399);
+            this.DataGridLogados.Size = new System.Drawing.Size(797, 404);
             this.DataGridLogados.TabIndex = 0;
             this.DataGridLogados.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form_KeyDown);
             // 
@@ -87,18 +88,37 @@
             this.label2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.Color.White;
-            this.label2.Location = new System.Drawing.Point(-3, 431);
+            this.label2.Location = new System.Drawing.Point(-3, 438);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(797, 44);
+            this.label2.Size = new System.Drawing.Size(797, 54);
             this.label2.TabIndex = 2;
             this.label2.Text = "Total";
+            // 
+            // customButtons1
+            // 
+            this.customButtons1.BackColor = System.Drawing.Color.White;
+            this.customButtons1.BackgroundColor = System.Drawing.Color.White;
+            this.customButtons1.BorderColor = System.Drawing.Color.Black;
+            this.customButtons1.BorderRadius = 20;
+            this.customButtons1.BorderSize = 0;
+            this.customButtons1.FlatAppearance.BorderSize = 0;
+            this.customButtons1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.customButtons1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(10)))), ((int)(((byte)(14)))));
+            this.customButtons1.Location = new System.Drawing.Point(638, 446);
+            this.customButtons1.Name = "customButtons1";
+            this.customButtons1.Size = new System.Drawing.Size(143, 37);
+            this.customButtons1.TabIndex = 3;
+            this.customButtons1.Text = "Exportar para Excel";
+            this.customButtons1.TextColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(10)))), ((int)(((byte)(14)))));
+            this.customButtons1.UseVisualStyleBackColor = false;
             // 
             // Form5
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(10)))), ((int)(((byte)(14)))));
-            this.ClientSize = new System.Drawing.Size(790, 466);
+            this.ClientSize = new System.Drawing.Size(793, 490);
+            this.Controls.Add(this.customButtons1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.DataGridLogados);
@@ -119,5 +139,6 @@
         private System.Windows.Forms.DataGridView DataGridLogados;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private Custom.CustomButtons customButtons1;
     }
 }

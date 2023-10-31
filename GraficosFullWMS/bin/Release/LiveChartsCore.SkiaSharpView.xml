@@ -7,6 +7,51 @@
         <member name="T:LiveChartsCore.SkiaSharpView.Axis">
             <inheritdoc cref="T:LiveChartsCore.Kernel.Sketches.ICartesianAxis" />
         </member>
+        <member name="T:LiveChartsCore.SkiaSharpView.BoxSeries`1">
+            <summary>
+            Defines a box serries series in the user interface.
+            </summary>
+            <typeparam name="TModel">
+            The type of the points, you can use any type, the library already knows how to handle the most common numeric types,
+            to use a custom type, you must register the type globally 
+            (<see cref="M:LiveChartsCore.Kernel.LiveChartsSettings.HasMap``1(System.Action{``0,LiveChartsCore.Kernel.ChartPoint})"/>)
+            or at the series level 
+            (<see cref="P:LiveChartsCore.Series`4.Mapping"/>).
+            </typeparam>
+        </member>
+        <member name="T:LiveChartsCore.SkiaSharpView.BoxSeries`2">
+            <summary>
+            Defines a box serries series in the user interface.
+            </summary>
+            <typeparam name="TModel">
+            The type of the points, you can use any type, the library already knows how to handle the most common numeric types,
+            to use a custom type, you must register the type globally 
+            (<see cref="M:LiveChartsCore.Kernel.LiveChartsSettings.HasMap``1(System.Action{``0,LiveChartsCore.Kernel.ChartPoint})"/>)
+            or at the series level 
+            (<see cref="P:LiveChartsCore.Series`4.Mapping"/>).
+            </typeparam>
+            <typeparam name="TVisual">
+            The type of the geometry of every point of the series.
+            </typeparam>
+        </member>
+        <member name="T:LiveChartsCore.SkiaSharpView.BoxSeries`3">
+            <summary>
+            Defines a box serries series in the user interface.
+            </summary>
+            <typeparam name="TModel">
+            The type of the points, you can use any type, the library already knows how to handle the most common numeric types,
+            to use a custom type, you must register the type globally 
+            (<see cref="M:LiveChartsCore.Kernel.LiveChartsSettings.HasMap``1(System.Action{``0,LiveChartsCore.Kernel.ChartPoint})"/>)
+            or at the series level 
+            (<see cref="P:LiveChartsCore.Series`4.Mapping"/>).
+            </typeparam>
+            <typeparam name="TVisual">
+            The type of the geometry of every point of the series.
+            </typeparam>
+            <typeparam name="TLabel">
+            The type of the data label of every point.
+            </typeparam>
+        </member>
         <member name="T:LiveChartsCore.SkiaSharpView.CandlesticksSeries`1">
             <summary>
             Defines a candlesticks series in the user interface.
@@ -97,11 +142,81 @@
             The type of the data label of every point.
             </typeparam>
         </member>
+        <member name="T:LiveChartsCore.SkiaSharpView.DateTimeAxis">
+            <summary>
+            Defines a DateTime axis.
+            </summary>
+        </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.DateTimeAxis.#ctor(System.TimeSpan,System.Func{System.DateTime,System.String})">
+            <summary>
+            Initializes a new instance of the <see cref="T:LiveChartsCore.SkiaSharpView.DateTimeAxis"/> class.
+            </summary>
+            <param name="unit">The unit of the axis (hours, days, months, years).</param>
+            <param name="formatter">The labels formatter.</param>
+        </member>
         <member name="T:LiveChartsCore.SkiaSharpView.Drawing.Drawable">
             <inheritdoc cref="T:LiveChartsCore.Drawing.IDrawable`1" />
         </member>
         <member name="M:LiveChartsCore.SkiaSharpView.Drawing.Drawable.Draw(LiveChartsCore.SkiaSharpView.Drawing.SkiaSharpDrawingContext)">
             <inheritdoc cref="M:LiveChartsCore.Drawing.IDrawable`1.Draw(`0)" />
+        </member>
+        <member name="T:LiveChartsCore.SkiaSharpView.Drawing.Geometries.ArcGeometry">
+            <inheritdoc cref="T:LiveChartsCore.Drawing.IArcGeometry`1" />
+        </member>
+        <member name="P:LiveChartsCore.SkiaSharpView.Drawing.Geometries.ArcGeometry.CenterX">
+            <inheritdoc cref="P:LiveChartsCore.Drawing.IArcGeometry`1.CenterX"/>
+        </member>
+        <member name="P:LiveChartsCore.SkiaSharpView.Drawing.Geometries.ArcGeometry.CenterY">
+            <inheritdoc cref="P:LiveChartsCore.Drawing.IArcGeometry`1.CenterY"/>
+        </member>
+        <member name="P:LiveChartsCore.SkiaSharpView.Drawing.Geometries.ArcGeometry.Width">
+            <inheritdoc cref="P:LiveChartsCore.Drawing.IArcGeometry`1.Width"/>
+        </member>
+        <member name="P:LiveChartsCore.SkiaSharpView.Drawing.Geometries.ArcGeometry.Height">
+            <inheritdoc cref="P:LiveChartsCore.Drawing.IArcGeometry`1.Height"/>
+        </member>
+        <member name="P:LiveChartsCore.SkiaSharpView.Drawing.Geometries.ArcGeometry.StartAngle">
+            <inheritdoc cref="P:LiveChartsCore.Drawing.IArcGeometry`1.StartAngle"/>
+        </member>
+        <member name="P:LiveChartsCore.SkiaSharpView.Drawing.Geometries.ArcGeometry.SweepAngle">
+            <inheritdoc cref="P:LiveChartsCore.Drawing.IArcGeometry`1.SweepAngle"/>
+        </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.Drawing.Geometries.ArcGeometry.OnDraw(LiveChartsCore.SkiaSharpView.Drawing.SkiaSharpDrawingContext,SkiaSharp.SKPaint)">
+            <inheritdoc cref="M:LiveChartsCore.SkiaSharpView.Drawing.Geometries.Geometry.OnDraw(LiveChartsCore.SkiaSharpView.Drawing.SkiaSharpDrawingContext,SkiaSharp.SKPaint)"/>
+        </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.Drawing.Geometries.ArcGeometry.OnMeasure(LiveChartsCore.Drawing.IPaint{LiveChartsCore.SkiaSharpView.Drawing.SkiaSharpDrawingContext})">
+            <inheritdoc cref="M:LiveChartsCore.SkiaSharpView.Drawing.Geometries.Geometry.OnMeasure(LiveChartsCore.Drawing.IPaint{LiveChartsCore.SkiaSharpView.Drawing.SkiaSharpDrawingContext})"/>
+        </member>
+        <member name="T:LiveChartsCore.SkiaSharpView.Drawing.Geometries.BoxGeometry">
+            <summary>
+            Defines a box geometry.
+            </summary>
+        </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.Drawing.Geometries.BoxGeometry.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:LiveChartsCore.SkiaSharpView.Drawing.Geometries.BoxGeometry"/> class.
+            </summary>
+        </member>
+        <member name="P:LiveChartsCore.SkiaSharpView.Drawing.Geometries.BoxGeometry.Width">
+            <inheritdoc cref="P:LiveChartsCore.Drawing.IBoxGeometry`1.Width" />
+        </member>
+        <member name="P:LiveChartsCore.SkiaSharpView.Drawing.Geometries.BoxGeometry.Third">
+            <inheritdoc cref="P:LiveChartsCore.Drawing.IBoxGeometry`1.Third" />
+        </member>
+        <member name="P:LiveChartsCore.SkiaSharpView.Drawing.Geometries.BoxGeometry.First">
+            <inheritdoc cref="P:LiveChartsCore.Drawing.IBoxGeometry`1.First" />
+        </member>
+        <member name="P:LiveChartsCore.SkiaSharpView.Drawing.Geometries.BoxGeometry.Min">
+            <inheritdoc cref="P:LiveChartsCore.Drawing.IBoxGeometry`1.Min" />
+        </member>
+        <member name="P:LiveChartsCore.SkiaSharpView.Drawing.Geometries.BoxGeometry.Median">
+            <inheritdoc cref="P:LiveChartsCore.Drawing.IBoxGeometry`1.Median" />
+        </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.Drawing.Geometries.BoxGeometry.OnDraw(LiveChartsCore.SkiaSharpView.Drawing.SkiaSharpDrawingContext,SkiaSharp.SKPaint)">
+            <inheritdoc cref="M:LiveChartsCore.SkiaSharpView.Drawing.Geometries.Geometry.OnDraw(LiveChartsCore.SkiaSharpView.Drawing.SkiaSharpDrawingContext,SkiaSharp.SKPaint)" />
+        </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.Drawing.Geometries.BoxGeometry.OnMeasure(LiveChartsCore.Drawing.IPaint{LiveChartsCore.SkiaSharpView.Drawing.SkiaSharpDrawingContext})">
+            <inheritdoc cref="M:LiveChartsCore.SkiaSharpView.Drawing.Geometries.Geometry.OnMeasure(LiveChartsCore.Drawing.IPaint{LiveChartsCore.SkiaSharpView.Drawing.SkiaSharpDrawingContext})" />
         </member>
         <member name="T:LiveChartsCore.SkiaSharpView.Drawing.Geometries.CandlestickGeometry">
             <summary>
@@ -446,6 +561,9 @@
         <member name="P:LiveChartsCore.SkiaSharpView.Drawing.Geometries.LabelGeometry.LineHeight">
             <inheritdoc cref="P:LiveChartsCore.Drawing.ILabelGeometry`1.LineHeight" />
         </member>
+        <member name="P:LiveChartsCore.SkiaSharpView.Drawing.Geometries.LabelGeometry.MaxWidth">
+            <inheritdoc cref="P:LiveChartsCore.Drawing.ILabelGeometry`1.MaxWidth" />
+        </member>
         <member name="M:LiveChartsCore.SkiaSharpView.Drawing.Geometries.LabelGeometry.OnDraw(LiveChartsCore.SkiaSharpView.Drawing.SkiaSharpDrawingContext,SkiaSharp.SKPaint)">
             <inheritdoc cref="M:LiveChartsCore.SkiaSharpView.Drawing.Geometries.Geometry.OnDraw(LiveChartsCore.SkiaSharpView.Drawing.SkiaSharpDrawingContext,SkiaSharp.SKPaint)" />
         </member>
@@ -471,6 +589,18 @@
         </member>
         <member name="M:LiveChartsCore.SkiaSharpView.Drawing.Geometries.LineGeometry.OnMeasure(LiveChartsCore.Drawing.IPaint{LiveChartsCore.SkiaSharpView.Drawing.SkiaSharpDrawingContext})">
             <inheritdoc cref="M:LiveChartsCore.SkiaSharpView.Drawing.Geometries.Geometry.OnMeasure(LiveChartsCore.Drawing.IPaint{LiveChartsCore.SkiaSharpView.Drawing.SkiaSharpDrawingContext})" />
+        </member>
+        <member name="T:LiveChartsCore.SkiaSharpView.Drawing.Geometries.NeedleGeometry">
+            <inheritdoc cref="T:LiveChartsCore.Drawing.INeedleGeometry`1"/>
+        </member>
+        <member name="P:LiveChartsCore.SkiaSharpView.Drawing.Geometries.NeedleGeometry.Radius">
+            <inheritdoc cref="P:LiveChartsCore.Drawing.INeedleGeometry`1.Radius"/>
+        </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.Drawing.Geometries.NeedleGeometry.OnDraw(LiveChartsCore.SkiaSharpView.Drawing.SkiaSharpDrawingContext,SkiaSharp.SKPaint)">
+            <inheritdoc cref="M:LiveChartsCore.SkiaSharpView.Drawing.Geometries.Geometry.OnDraw(LiveChartsCore.SkiaSharpView.Drawing.SkiaSharpDrawingContext,SkiaSharp.SKPaint)"/>
+        </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.Drawing.Geometries.NeedleGeometry.OnMeasure(LiveChartsCore.Drawing.IPaint{LiveChartsCore.SkiaSharpView.Drawing.SkiaSharpDrawingContext})">
+            <inheritdoc cref="M:LiveChartsCore.SkiaSharpView.Drawing.Geometries.Geometry.OnMeasure(LiveChartsCore.Drawing.IPaint{LiveChartsCore.SkiaSharpView.Drawing.SkiaSharpDrawingContext})"/>
         </member>
         <member name="T:LiveChartsCore.SkiaSharpView.Drawing.Geometries.OvalGeometry">
             <summary>
@@ -841,6 +971,146 @@
             <summary>
             Defines a visual frame in the draw margin of the chart.
             </summary>
+        </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.Extensions.BaseGaugeItem`1.#ctor(LiveChartsCore.Defaults.ObservableValue,System.Action{`0})">
+            <summary>
+            Initializes a new instance of the <see cref="T:LiveChartsCore.SkiaSharpView.Extensions.GaugeItem"/> class.
+            </summary>
+            <param name="value">The value.</param>
+            <param name="builder">The builder.</param>
+        </member>
+        <member name="P:LiveChartsCore.SkiaSharpView.Extensions.BaseGaugeItem`1.Value">
+            <summary>
+            Gets or sets the value.
+            </summary>
+        </member>
+        <member name="P:LiveChartsCore.SkiaSharpView.Extensions.BaseGaugeItem`1.Builder">
+            <summary>
+            Gets or sets the series builder.
+            </summary>
+        </member>
+        <member name="P:LiveChartsCore.SkiaSharpView.Extensions.BaseGaugeItem`1.IsFillSeriesBuilder">
+            <summary>
+            Gets a value indicating whether this instance is specific to the fill series.
+            </summary>
+        </member>
+        <member name="P:LiveChartsCore.SkiaSharpView.Extensions.BaseGaugeItem`1.Background">
+            <summary>
+            Gets a constant value that represents the background series.
+            </summary>
+        </member>
+        <member name="T:LiveChartsCore.SkiaSharpView.Extensions.GaugeGenerator">
+            <summary>
+            The gauge generator class.
+            </summary>
+        </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.Extensions.GaugeGenerator.BuildSolidGauge(LiveChartsCore.SkiaSharpView.Extensions.GaugeItem[])">
+            <summary>
+            Builds a solid Gauge, it generates a series collectio of
+            <see cref="T:LiveChartsCore.SkiaSharpView.PieSeries`3"/>, these series
+            are ready to be plotted in a pie chart, and will render the gauge, this reuses all the power and
+            functionality of the <see cref="T:LiveChartsCore.PieChart`1"/> class.
+            </summary>
+            <param name="items">The items.</param>
+            <returns>A series collection of pie seires.</returns>
+        </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.Extensions.GaugeGenerator.BuildAngularGaugeSections(LiveChartsCore.SkiaSharpView.Extensions.GaugeItem[])">
+            <summary>
+            Builds an angular Gauge, it generates a series collectio of
+            <see cref="T:LiveChartsCore.SkiaSharpView.PieSeries`3"/>, these series
+            are ready to be plotted in a pie chart, and will render the gauge, this reuses all the power and
+            functionality of the <see cref="T:LiveChartsCore.PieChart`1"/> class.
+            </summary>
+            <param name="items">The items.</param>
+            <returns>A series collection of pie seires.</returns>
+        </member>
+        <member name="T:LiveChartsCore.SkiaSharpView.Extensions.GaugeItem">
+            <summary>
+            Defines a gauge item.
+            </summary>
+        </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.Extensions.GaugeItem.#ctor(System.Double,System.Action{LiveChartsCore.SkiaSharpView.PieSeries{LiveChartsCore.Defaults.ObservableValue}})">
+            <summary>
+            Initializes a new instance of the <see cref="T:LiveChartsCore.SkiaSharpView.Extensions.GaugeItem"/> class.
+            </summary>
+            <param name="value">The value.</param>
+            <param name="builder">The builder.</param>
+        </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.Extensions.GaugeItem.#ctor(LiveChartsCore.Defaults.ObservableValue,System.Action{LiveChartsCore.SkiaSharpView.PieSeries{LiveChartsCore.Defaults.ObservableValue}})">
+            <summary>
+            Initializes a new instance of the <see cref="T:LiveChartsCore.SkiaSharpView.Extensions.GaugeItem"/> class.
+            </summary>
+            <param name="value">The value.</param>
+            <param name="builder">The builder.</param>
+        </member>
+        <member name="T:LiveChartsCore.SkiaSharpView.Extensions.GaugeOptions">
+            <summary>
+            Defines the gauge options.
+            </summary>
+        </member>
+        <member name="F:LiveChartsCore.SkiaSharpView.Extensions.GaugeOptions.None">
+            <summary>
+            Not a gauge.
+            </summary>
+        </member>
+        <member name="F:LiveChartsCore.SkiaSharpView.Extensions.GaugeOptions.Solid">
+            <summary>
+            A solid gauge.
+            </summary>
+        </member>
+        <member name="F:LiveChartsCore.SkiaSharpView.Extensions.GaugeOptions.Angular">
+            <summary>
+            An angular gauge.
+            </summary>
+        </member>
+        <member name="T:LiveChartsCore.SkiaSharpView.Extensions.PieChartExtensions">
+            <summary>
+            Defines the pie chart esxtensions.
+            </summary>
+        </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.Extensions.PieChartExtensions.AsPieSeries``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0,LiveChartsCore.SkiaSharpView.PieSeries{``0}},LiveChartsCore.SkiaSharpView.Extensions.GaugeOptions)">
+            <summary>
+            Converts an IEnumerable to an ObservableCollection of pie series.
+            </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+            <param name="source">The data source.</param>
+            <param name="builder">An optional builder.</param>
+            <param name="gaugeOptions">Defines whether the series are treaded as gauge.</param>
+            <returns></returns>
+        </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.Extensions.PieChartExtensions.AsPieSeries``2(System.Collections.Generic.IEnumerable{``0},System.Action{``0,LiveChartsCore.SkiaSharpView.PieSeries{``0,``1}},LiveChartsCore.SkiaSharpView.Extensions.GaugeOptions)">
+            <summary>
+            Converts an IEnumerable to an ObservableCollection of pie series.
+            </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+            <typeparam name="TVisual">The type of the visual.</typeparam>
+            <param name="source">The data source.</param>
+            <param name="builder">An optional builder.</param>
+            <param name="gaugeOptions">Defines whether the series are treaded as gauge.</param>
+            <returns></returns>
+        </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.Extensions.PieChartExtensions.AsPieSeries``3(System.Collections.Generic.IEnumerable{``0},System.Action{``0,LiveChartsCore.SkiaSharpView.PieSeries{``0,``1,``2}},LiveChartsCore.SkiaSharpView.Extensions.GaugeOptions)">
+            <summary>
+            Converts an IEnumerable to an ObservableCollection of pie series.
+            </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+            <typeparam name="TVisual">The type of the visual.</typeparam>
+            <typeparam name="TLabel">The type of the label.</typeparam>
+            <param name="source">The data source.</param>
+            <param name="builder">An optional builder.</param>
+            <param name="gaugeOptions">Defines whether the series are treaded as gauge.</param>
+            <returns></returns>
+        </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.Extensions.PieChartExtensions.AsPieSeries``2(System.Collections.Generic.IEnumerable{``0},System.Action{``0,``1},LiveChartsCore.SkiaSharpView.Extensions.GaugeOptions)">
+            <summary>
+            Converts an IEnumerable to an ObservableCollection of pie series.
+            </summary>
+            <typeparam name="TModel">The type of the model.</typeparam>
+            <typeparam name="TSeries">The type of the series.</typeparam>
+            <param name="source">The data source.</param>
+            <param name="builder">An optional builder.</param>
+            <param name="gaugeOptions">Defines whether the series are treaded as gauge.</param>
+            <returns></returns>
         </member>
         <member name="T:LiveChartsCore.SkiaSharpView.GaugeBuilder">
             <summary>
@@ -1324,37 +1594,7 @@
             <param name="char"></param>
             <returns></returns>
         </member>
-        <member name="M:LiveChartsCore.SkiaSharpView.LiveChartsSkiaSharp.AsPieSeries``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0,LiveChartsCore.SkiaSharpView.PieSeries{``0}})">
-            <summary>
-            Converts an IEnumerable to an ObservableCollection of pie series.
-            </summary>
-            <typeparam name="TModel">The type of the model.</typeparam>
-            <param name="source">The data source.</param>
-            <param name="builder">An optional builder.</param>
-            <returns></returns>
-        </member>
-        <member name="M:LiveChartsCore.SkiaSharpView.LiveChartsSkiaSharp.AsPieSeries``2(System.Collections.Generic.IEnumerable{``0},System.Action{``0,LiveChartsCore.SkiaSharpView.PieSeries{``0,``1}})">
-            <summary>
-            Converts an IEnumerable to an ObservableCollection of pie series.
-            </summary>
-            <typeparam name="TModel">The type of the model.</typeparam>
-            <typeparam name="TVisual">The type of the visual.</typeparam>
-            <param name="source">The data source.</param>
-            <param name="builder">An optional builder.</param>
-            <returns></returns>
-        </member>
-        <member name="M:LiveChartsCore.SkiaSharpView.LiveChartsSkiaSharp.AsPieSeries``3(System.Collections.Generic.IEnumerable{``0},System.Action{``0,LiveChartsCore.SkiaSharpView.PieSeries{``0,``1,``2}})">
-            <summary>
-            Converts an IEnumerable to an ObservableCollection of pie series.
-            </summary>
-            <typeparam name="TModel">The type of the model.</typeparam>
-            <typeparam name="TVisual">The type of the visual.</typeparam>
-            <typeparam name="TLabel">The type of the label.</typeparam>
-            <param name="source">The data source.</param>
-            <param name="builder">An optional builder.</param>
-            <returns></returns>
-        </member>
-        <member name="M:LiveChartsCore.SkiaSharpView.LiveChartsSkiaSharp.AsLiveChartsPieSeries``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0,LiveChartsCore.SkiaSharpView.PieSeries{``0}})">
+        <member name="M:LiveChartsCore.SkiaSharpView.LiveChartsSkiaSharp.AsLiveChartsPieSeries``1(System.Collections.Generic.IEnumerable{``0},System.Action{``0,LiveChartsCore.SkiaSharpView.PieSeries{``0,LiveChartsCore.SkiaSharpView.Drawing.Geometries.DoughnutGeometry,LiveChartsCore.SkiaSharpView.Drawing.Geometries.LabelGeometry}})">
             <summary>
             Converts an IEnumerable to an ObservableCollection of pie series.
             </summary>
@@ -1370,6 +1610,17 @@
             <param name="target">The target.</param>
             <param name="location">The location.</param>
             <returns>The distance in pixels.</returns>
+        </member>
+        <member name="T:LiveChartsCore.SkiaSharpView.LogaritmicAxis">
+            <summary>
+            Defines a logarithmic axis.
+            </summary>
+        </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.LogaritmicAxis.#ctor(System.Double)">
+            <summary>
+            Initializes a new instance of the <see cref="T:LiveChartsCore.SkiaSharpView.LogaritmicAxis"/> class.
+            </summary>
+            <param name="base">The log base.</param>
         </member>
         <member name="T:LiveChartsCore.SkiaSharpView.MapFactory">
             <summary>
@@ -1944,6 +2195,11 @@
             (<see cref="P:LiveChartsCore.Series`4.Mapping"/>).
             </typeparam>
         </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.PieSeries`1.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:LiveChartsCore.SkiaSharpView.PieSeries`1"/> class.
+            </summary>
+        </member>
         <member name="M:LiveChartsCore.SkiaSharpView.PieSeries`1.#ctor(System.Boolean,System.Boolean)">
             <summary>
             Initializes a new instance of the <see cref="T:LiveChartsCore.SkiaSharpView.PieSeries`1"/> class.
@@ -1965,6 +2221,11 @@
             <typeparam name="TVisual">
             The type of the geometry of every point of the series.
             </typeparam>
+        </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.PieSeries`2.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:LiveChartsCore.SkiaSharpView.PieSeries`1"/> class.
+            </summary>
         </member>
         <member name="M:LiveChartsCore.SkiaSharpView.PieSeries`2.#ctor(System.Boolean,System.Boolean)">
             <summary>
@@ -1990,6 +2251,11 @@
             <typeparam name="TLabel">
             The type of the data label of every point.
             </typeparam>
+        </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.PieSeries`3.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:LiveChartsCore.SkiaSharpView.PieSeries`1"/> class.
+            </summary>
         </member>
         <member name="M:LiveChartsCore.SkiaSharpView.PieSeries`3.#ctor(System.Boolean,System.Boolean)">
             <summary>
@@ -2185,6 +2451,15 @@
             <summary>
             Gets the current <see cref="T:SkiaSharp.SKSurface"/>.
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.SKCharts.InMemorySkiaSharpChart.SaveImage(System.IO.Stream,SkiaSharp.SKEncodedImageFormat,System.Int32)">
+            <summary>
+            Saves the image to the specified path.
+            </summary>
+            <param name="stream">The stream.</param>
+            <param name="format">The format.</param>
+            <param name="quality">The quality, an integer from 0 to 100.</param>
             <returns></returns>
         </member>
         <member name="M:LiveChartsCore.SkiaSharpView.SKCharts.InMemorySkiaSharpChart.SaveImage(System.String,SkiaSharp.SKEncodedImageFormat,System.Int32)">
@@ -2488,6 +2763,12 @@
         </member>
         <member name="P:LiveChartsCore.SkiaSharpView.SKCharts.SKPieChart.Total">
             <inheritdoc cref="P:LiveChartsCore.Kernel.Sketches.IPieChartView`1.Total"/>
+        </member>
+        <member name="P:LiveChartsCore.SkiaSharpView.SKCharts.SKPieChart.MaxValue">
+            <inheritdoc cref="P:LiveChartsCore.Kernel.Sketches.IPieChartView`1.MaxValue"/>
+        </member>
+        <member name="P:LiveChartsCore.SkiaSharpView.SKCharts.SKPieChart.MinValue">
+            <inheritdoc cref="P:LiveChartsCore.Kernel.Sketches.IPieChartView`1.MinValue"/>
         </member>
         <member name="P:LiveChartsCore.SkiaSharpView.SKCharts.SKPieChart.AutoUpdateEnabled">
             <inheritdoc cref="P:LiveChartsCore.Kernel.Sketches.IChartView`1.AutoUpdateEnabled"/>
@@ -2952,6 +3233,23 @@
             <param name="additionalStyles">The additional styles.</param>
             <returns></returns>
         </member>
+        <member name="T:LiveChartsCore.SkiaSharpView.TimeSpanAxis">
+            <summary>
+            Defines a TimeSpan axis.
+            </summary>
+        </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.TimeSpanAxis.#ctor(System.TimeSpan,System.Func{System.TimeSpan,System.String})">
+            <summary>
+            Initializes a new instance of the <see cref="T:LiveChartsCore.SkiaSharpView.DateTimeAxis"/> class.
+            </summary>
+            <param name="unit">The unit of the axis (hours, days, months, years).</param>
+            <param name="formatter">The labels formatter.</param>
+        </member>
+        <member name="T:LiveChartsCore.SkiaSharpView.VisualElements.AngularTicksVisual">
+            <summary>
+            Defines the angulaar ticks visual.
+            </summary>
+        </member>
         <member name="T:LiveChartsCore.SkiaSharpView.VisualElements.BaseGeometryVisual">
             <inheritdoc cref="T:LiveChartsCore.VisualElements.BaseGeometryVisual`1"/>
         </member>
@@ -2960,6 +3258,9 @@
         </member>
         <member name="T:LiveChartsCore.SkiaSharpView.VisualElements.LabelVisual">
             <inheritdoc cref="T:LiveChartsCore.VisualElements.LabelVisual`2"/>
+        </member>
+        <member name="T:LiveChartsCore.SkiaSharpView.VisualElements.NeedleVisual">
+            <inheritdoc cref="T:LiveChartsCore.VisualElements.NeedleVisual`3"/>
         </member>
         <member name="T:LiveChartsCore.SkiaSharpView.VisualElements.SVGVisual">
             <summary>

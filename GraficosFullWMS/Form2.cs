@@ -117,7 +117,7 @@ namespace GraficosFullWMS
 
                 if (connectionObject.Find(x => x.nomeConexao.Equals(NomeConexao)) != null)
                 {
-                    DialogResult result = MessageBox.Show("Aviso - Já existe uma base salva com este mesmo nome, deseja continuar mesmo assim?", "Aviso!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    DialogResult result = MessageBox.Show("Aviso - Já existe uma base salva com este mesmo nome, deseja atualiza-la?", "Aviso!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                     if (result.Equals(DialogResult.Yes))
                     {
                         string ConnectionString = $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={Server})(PORT={Porta}))(CONNECT_DATA=(SERVICE_NAME={DataBase})));User Id={Usuario};Password={UsuarioSenha};";

@@ -41,6 +41,7 @@ namespace GraficosFullWMS
             this.button3 = new GraficosFullWMS.Custom.CustomButtons();
             this.button1 = new GraficosFullWMS.Custom.CustomButtons();
             this.label3 = new System.Windows.Forms.Label();
+            this.customButtons2 = new GraficosFullWMS.Custom.CustomButtons();
             this.SuspendLayout();
             // 
             // label1
@@ -50,7 +51,7 @@ namespace GraficosFullWMS
             this.label1.Font = new System.Drawing.Font("Arial", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(12, 15);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(571, 26);
+            this.label1.Size = new System.Drawing.Size(457, 21);
             this.label1.TabIndex = 2;
             this.label1.Text = "Conecte-se ao banco de dados para gerar o Gráfico";
             // 
@@ -58,9 +59,9 @@ namespace GraficosFullWMS
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Arial", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(741, 22);
+            this.label2.Location = new System.Drawing.Point(988, 25);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(161, 24);
+            this.label2.Size = new System.Drawing.Size(129, 19);
             this.label2.TabIndex = 8;
             this.label2.Text = "Progresso Atual:";
             // 
@@ -105,7 +106,7 @@ namespace GraficosFullWMS
             this.progressBar1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.progressBar1.ForeBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(10)))), ((int)(((byte)(14)))));
             this.progressBar1.ForeColor = System.Drawing.Color.White;
-            this.progressBar1.Location = new System.Drawing.Point(745, 46);
+            this.progressBar1.Location = new System.Drawing.Point(992, 46);
             this.progressBar1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.ShowMaximun = false;
@@ -129,7 +130,7 @@ namespace GraficosFullWMS
             this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button2.Font = new System.Drawing.Font("Arial", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button2.ForeColor = System.Drawing.Color.White;
-            this.button2.Location = new System.Drawing.Point(499, 46);
+            this.button2.Location = new System.Drawing.Point(745, 46);
             this.button2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(241, 60);
@@ -190,11 +191,33 @@ namespace GraficosFullWMS
             this.label3.Size = new System.Drawing.Size(6944, 3);
             this.label3.TabIndex = 15;
             // 
+            // customButtons2
+            // 
+            this.customButtons2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(10)))), ((int)(((byte)(14)))));
+            this.customButtons2.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(156)))), ((int)(((byte)(10)))), ((int)(((byte)(14)))));
+            this.customButtons2.BorderColor = System.Drawing.Color.CornflowerBlue;
+            this.customButtons2.BorderRadius = 20;
+            this.customButtons2.BorderSize = 0;
+            this.customButtons2.FlatAppearance.BorderSize = 0;
+            this.customButtons2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.customButtons2.Font = new System.Drawing.Font("Arial", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.customButtons2.ForeColor = System.Drawing.Color.White;
+            this.customButtons2.Location = new System.Drawing.Point(498, 46);
+            this.customButtons2.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.customButtons2.Name = "customButtons2";
+            this.customButtons2.Size = new System.Drawing.Size(241, 60);
+            this.customButtons2.TabIndex = 16;
+            this.customButtons2.Text = "Importar Dados";
+            this.customButtons2.TextColor = System.Drawing.Color.White;
+            this.customButtons2.UseVisualStyleBackColor = false;
+            this.customButtons2.Click += new System.EventHandler(this.ImportaDados);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1816, 910);
+            this.Controls.Add(this.customButtons2);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.customButtons1);
             this.Controls.Add(this.cartesianChart1);
@@ -227,6 +250,7 @@ namespace GraficosFullWMS
         private Custom.CustomButtons customButtons1;
         private LiveChartsCore.SkiaSharpView.WinForms.CartesianChart cartesianChart1;
         private Label label3;
+        private Custom.CustomButtons customButtons2;
     }
 }
 

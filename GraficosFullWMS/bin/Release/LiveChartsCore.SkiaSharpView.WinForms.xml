@@ -181,6 +181,12 @@
         <member name="M:LiveChartsCore.SkiaSharpView.WinForms.Chart.GetVisualsAt(LiveChartsCore.Drawing.LvcPoint)">
             <inheritdoc cref="M:LiveChartsCore.Kernel.Sketches.IChartView`1.GetVisualsAt(LiveChartsCore.Drawing.LvcPoint)"/>
         </member>
+        <member name="M:LiveChartsCore.SkiaSharpView.WinForms.Chart.GetDrawnControl">
+            <summary>
+            Gets the drawn control.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:LiveChartsCore.SkiaSharpView.WinForms.Chart.InitializeCore">
             <summary>
             Initializes the core.
@@ -384,6 +390,12 @@
         </member>
         <member name="P:LiveChartsCore.SkiaSharpView.WinForms.PieChart.Total">
             <inheritdoc cref="P:LiveChartsCore.Kernel.Sketches.IPieChartView`1.Total" />
+        </member>
+        <member name="P:LiveChartsCore.SkiaSharpView.WinForms.PieChart.MaxValue">
+            <inheritdoc cref="P:LiveChartsCore.Kernel.Sketches.IPieChartView`1.MaxValue" />
+        </member>
+        <member name="P:LiveChartsCore.SkiaSharpView.WinForms.PieChart.MinValue">
+            <inheritdoc cref="P:LiveChartsCore.Kernel.Sketches.IPieChartView`1.MinValue" />
         </member>
         <member name="M:LiveChartsCore.SkiaSharpView.WinForms.PieChart.GetPointsAt(LiveChartsCore.Drawing.LvcPoint,LiveChartsCore.Measure.TooltipFindingStrategy)">
             <inheritdoc cref="M:LiveChartsCore.Kernel.Sketches.IChartView`1.GetPointsAt(LiveChartsCore.Drawing.LvcPoint,LiveChartsCore.Measure.TooltipFindingStrategy)"/>

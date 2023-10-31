@@ -66,8 +66,7 @@ create table GER_LOGADOS
 
                                 //Cria as Triggers
 
-                                const string triggerColaboradores = @"
-create or replace trigger trg_wms_colaboradores_logados
+                                const string triggerColaboradores = @"create or replace trigger trg_wms_colaboradores_logados
    before insert on wms_colaboradores_logados
    for each row
 declare
@@ -80,12 +79,14 @@ begin
      into v_aux
      from wms_colaboradores_logados c
     where c.empr_codemp = :new.empr_codemp
+      and c.dthr_ent > sysdate - 0.5 -- BOMBANA (Somente considerar os logados até 12 horas atrás)
       and c.dthr_saida is null;
 
-   select count(1) + 1 + v_aux
+   select count(1) + v_aux
      into v_total
      from ger_usuarios_logados l
     where l.empresa = :new.empr_codemp
+      and l.dthr > sysdate - 0.5 -- BOMBANA (Somente considerar os logados até 12 horas atrás)
       and l.dthr_saida is null;
 
    insert into ger_logados
@@ -117,8 +118,7 @@ end;
                                 };
                                 createTrigger1.ExecuteNonQuery();
 
-                                const string triggerUsuarios = @"
-create or replace trigger trg_ger_usuarios_logados
+                                const string triggerUsuarios = @"create or replace trigger trg_ger_usuarios_logados
    before insert on ger_usuarios_logados
    for each row
 declare
@@ -130,12 +130,14 @@ begin
      into v_aux
      from ger_usuarios_logados l
     where l.empresa = :new.empresa
+      and l.dthr > sysdate - 0.5 -- BOMBANA (Somente considerar os logados até 12 horas atrás)
       and l.dthr_saida is null;
 
-   select count(1) + 1
-     into v_aux
+   select count(1) + 1 + v_aux
+     into v_total
      from wms_colaboradores_logados c
     where c.empr_codemp = :new.empresa
+      and c.dthr_ent > sysdate - 0.5 -- BOMBANA (Somente considerar os logados até 12 horas atrás)
       and c.dthr_saida is null;
 
    insert into ger_logados
@@ -285,14 +287,16 @@ begin
         into v_aux
         from ger_usuarios_logados l
        where (p_codemp is null or l.empresa = p_codemp)
-         and p_data between l.dthr and nvl(l.dthr_saida - 1 / 24 / 60 / 60, sysdate + 1);
+         and p_data between l.dthr and nvl(l.dthr_saida - 1 / 24 / 60 / 60, sysdate + 1)
+         and l.dthr > p_data - 0.5; -- BOMBANA
    end if;
    if p_tipo in ('C', 'T') then
       select count(1) + v_aux
         into v_aux
         from wms_colaboradores_logados c
        where (p_codemp is null or c.empr_codemp = p_codemp)
-         and p_data between c.dthr_ent and nvl(c.dthr_saida - 1 / 24 / 60 / 60, sysdate + 1);
+         and p_data between c.dthr_ent and nvl(c.dthr_saida - 1 / 24 / 60 / 60, sysdate + 1)
+         and c.dthr_ent > p_data - 0.5; -- BOMBANA
    end if;
    return v_aux;
 exception
@@ -352,7 +356,8 @@ create or replace package pkg_wms_full_lic is
    /* prc_aud_ger_logados                                                    */
    /*------------------------------------------------------------------------*/
 
-   procedure prc_aud_ger_logados(p_tipo in varchar2);
+   procedure prc_aud_ger_logados(p_tipo        in varchar2 default 'T',
+                                 p_data_inicio in varchar2);
 
    /*------------------------------------------------------------------------*/
    /* prc_fullwms_licencas                                                   */
@@ -383,14 +388,21 @@ create or replace package body pkg_wms_full_lic is
    ----------------------
 
    /*------------------------------------------------------------------------*/
-   /* prc_seleciona_almox_cd                                                 */
+   /* prc_aud_ger_logados                                                 */
    /*------------------------------------------------------------------------*/
 
-   procedure prc_aud_ger_logados(p_tipo in varchar2) as
+   procedure prc_aud_ger_logados(p_tipo        in varchar2 default 'T',
+                                 p_data_inicio in varchar2) as
+   
+      v_data_inicio date;
    
    begin
    
-      if p_tipo = 'U' then
+      if p_data_inicio is not null then
+         v_data_inicio := to_date(p_data_inicio, 'DD/MM/YYYY');
+      end if;
+   
+      if p_tipo in ('U', 'T') then
       
          for c in (select l.dthr as dthr,
                           'U' as tipo,
@@ -402,8 +414,9 @@ create or replace package body pkg_wms_full_lic is
                      from ger_usuarios_logados l
                     where not exists (select 1
                              from ger_logados gl
-                            where gl.id_login = l.ger_usuariologado_id)
-                      and l.dthr >= sysdate - 55)
+                            where gl.id_login = l.ger_usuariologado_id
+                              and gl.tipo = 'U')
+                      and (v_data_inicio is null or l.dthr >= v_data_inicio))
          loop
             insert into ger_logados
                (dthr,
@@ -424,7 +437,9 @@ create or replace package body pkg_wms_full_lic is
             commit;
          end loop;
       
-      elsif p_tipo = 'C' then
+      end if;
+   
+      if p_tipo in ('C', 'T') then
       
          for c in (select c.dthr_ent as dthr,
                           'C' as tipo,
@@ -436,74 +451,9 @@ create or replace package body pkg_wms_full_lic is
                      from wms_colaboradores_logados c
                     where not exists (select 1
                              from ger_logados gl
-                            where gl.id_login = c.colog_id)
-                      and c.dthr_ent >= sysdate - 55)
-         loop
-            insert into ger_logados
-               (dthr,
-                tipo,
-                empresa,
-                codigo,
-                id_login,
-                logado,
-                total)
-            values
-               (c.dthr,
-                c.tipo,
-                c.empresa,
-                c.codigo,
-                c.id_login,
-                c.colaboradores_logados,
-                c.total);
-            commit;
-         end loop;
-      
-      elsif p_tipo = 'T' then
-      
-         for c in (select l.dthr as dthr,
-                          'U' as tipo,
-                          l.empresa as empresa,
-                          l.ger_usuario_id as codigo,
-                          l.ger_usuariologado_id as id_login,
-                          fnc_usu_log3('U', '', l.dthr) as usuarios_logados,
-                          fnc_usu_log3('T', '', l.dthr) as total
-                     from ger_usuarios_logados l
-                    where not exists (select 1
-                             from ger_logados gl
-                            where gl.id_login = l.ger_usuariologado_id)
-                      and l.dthr >= sysdate - 55)
-         loop
-            insert into ger_logados
-               (dthr,
-                tipo,
-                empresa,
-                codigo,
-                id_login,
-                logado,
-                total)
-            values
-               (c.dthr,
-                c.tipo,
-                c.empresa,
-                c.codigo,
-                c.id_login,
-                c.usuarios_logados,
-                c.total);
-            commit;
-         end loop;
-      
-         for c in (select c.dthr_ent as dthr,
-                          'C' as tipo,
-                          c.empr_codemp as empresa,
-                          c.colab_cod_colab as codigo,
-                          c.colog_id as id_login,
-                          fnc_usu_log3('C', '', c.dthr_ent) as colaboradores_logados,
-                          fnc_usu_log3('T', '', c.dthr_ent) as total
-                     from wms_colaboradores_logados c
-                    where not exists (select 1
-                             from ger_logados gl
-                            where gl.id_login = c.colog_id)
-                      and c.dthr_ent >= sysdate - 55)
+                            where gl.id_login = c.colog_id
+                              and gl.tipo = 'C')
+                      and (v_data_inicio is null or c.dthr_ent >= v_data_inicio))
          loop
             insert into ger_logados
                (dthr,
@@ -526,7 +476,7 @@ create or replace package body pkg_wms_full_lic is
       
       end if;
    
-   end;
+   end prc_aud_ger_logados;
 
    /*------------------------------------------------------------------------*/
    /* prc_fullwms_licencas                                                   */
@@ -590,6 +540,7 @@ create or replace package body pkg_wms_full_lic is
               from ger_logados gl
              where (gl.dthr >= v_data_inicio)
                and gl.dthr < v_data_fim + 1
+               and (gl.dthr - 1 / 24) - 12 <= gl.dthr 
                and (p_codemp is null or gl.empresa = p_codemp)
              order by 1;
       
@@ -637,7 +588,7 @@ create or replace package body pkg_wms_full_lic is
       
       end if;
    
-   end;
+   end prc_fullwms_licencas;
 
 end pkg_wms_full_lic;
 ";
